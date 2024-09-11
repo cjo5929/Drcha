@@ -6,7 +6,6 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import java.util.Arrays;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,14 +22,14 @@ public class SwaggerConfig {
                 .description(
                         "<h2>특화 프로젝트</h2>" +
                                 "<h3>Swagger를 이용한 API 명세서</h3><br>" +
-                                "<img src=\"/images/Dr_cha_LOGO.png\" alt = '프로젝트 로고'  width=\"450\">" +
+                                "<img src=\"/images/Dr_cha_LOGO.png\" alt = '프로젝트 로고'  width=\"200\">" +
                                 "<h3>프로젝트 정보</h3>" +
                                 "차용박사")
                 .version("v1.0.0")
                 .contact(new Contact()
-                        .name("조현수")
+                        .name("차용박사")
                         .email("ssafyhyunsoo@gmail.com")
-                        .url("http://i11a209.p.ssafy.io:8080")
+                        .url("http://j11a205.p.ssafy.io:8080")
                 );
 
         // JWT 보안 스키마 정의
@@ -55,7 +54,7 @@ public class SwaggerConfig {
     public GroupedOpenApi authApi() {
         return GroupedOpenApi.builder()
                 .group("auth")
-                .pathsToMatch("/qufit/auth/**")
+                .pathsToMatch("/api/v1/auth/**")
                 .build();
     }
 
@@ -64,7 +63,7 @@ public class SwaggerConfig {
     public GroupedOpenApi memberApi() {
         return GroupedOpenApi.builder()
                 .group("member")
-                .pathsToMatch("/qufit/member/**")
+                .pathsToMatch("/api/v1/member/**")
                 .build();
     }
 
@@ -73,16 +72,7 @@ public class SwaggerConfig {
     public GroupedOpenApi chatApi() {
         return GroupedOpenApi.builder()
                 .group("chat")
-                .pathsToMatch("/qufit/chat/**")
-                .build();
-    }
-
-    // ! admin 관련 API 모음
-    @Bean
-    public GroupedOpenApi adminApi() {
-        return GroupedOpenApi.builder()
-                .group("admin")
-                .pathsToMatch("/qufit/admin/**")
+                .pathsToMatch("/api/v1/chat/**")
                 .build();
     }
 
@@ -96,26 +86,19 @@ public class SwaggerConfig {
 
     // ! transaction 관련 API 모음
     @Bean
-    public GroupedOpenApi videoApi() {
+    public GroupedOpenApi transactionApi() {
         return GroupedOpenApi.builder()
                 .group("transaction")
-                .pathsToMatch("/api/transaction/**")
+                .pathsToMatch("/api/v1/transaction/**")
                 .build();
     }
 
+    // ! 차용증 관련 API 모음
     @Bean
-    public GroupedOpenApi friendApi() {
+    public GroupedOpenApi iouApi() {
         return GroupedOpenApi.builder()
-                .group("friend")
-                .pathsToMatch("/api/friend/**")
-                .build();
-    }
-
-    @Bean
-    public GroupedOpenApi balanceGameApi() {
-        return GroupedOpenApi.builder()
-                .group("loan")
-                .pathsToMatch("/api/loan/**")
+                .group("iou")
+                .pathsToMatch("/api/v1/iou/**")
                 .build();
     }
 }

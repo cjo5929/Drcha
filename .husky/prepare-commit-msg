@@ -3,7 +3,7 @@ BRANCH_NAME=$(git symbolic-ref --short HEAD)
 BRANCH_NAME="${BRANCH_NAME##*/}"
 
 # master 및 develop 브랜치에서는 작업을 스킵
-if [ "$BRANCH_NAME" = "master" ] || [ "$BRANCH_NAME" = "develop" ]; then
+if [ "$BRANCH_NAME" = "master" ] || [ "$BRANCH_NAME" = "develop" ] || [ "$BRANCH_NAME" = "frontend" ] || [ "$BRANCH_NAME" = "backend" ] || [ "$BRANCH_NAME" = "infra" ]; then
   exit 0
 fi
 

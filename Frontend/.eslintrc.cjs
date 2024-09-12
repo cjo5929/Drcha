@@ -85,5 +85,6 @@ module.exports = {
     'consistent-return': 'off',
     'linebreak-style': 'off',
     'react/react-in-jsx-scope': 'off',
+    'implicit-arrow-linebreak': 'off',
   },
 };

@@ -1,0 +1,56 @@
+@import '@/styles/theme.module.scss';
+@import '@/styles/font.module.scss';
+
+.button {
+  @include Pretendard;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5rem;
+}
+
+.blue {
+  color: $white;
+  background-color: $blue;
+}
+
+.lightblue {
+  color: $blue;
+  background-color: $lightblue;
+}
+
+.red {
+  color: $white;
+  background-color: $red;
+}
+
+.lightred {
+  color: $red;
+  background-color: $lightred;
+}
+
+.large {
+  padding: 2.2rem;
+  height: auto;
+  font-size: 2.4rem;
+}
+
+.small {
+  padding: 1.2rem;
+  height: 3.8rem;
+  font-size: 1.6rem;
+}
+
+.long {
+  padding: 2.2rem;
+  height: auto;
+  width: 100%;
+  font-size: 1.6rem;
+}
+
+.disabled {
+  color: $white;
+  background-color: $gray;
+  border: 2px solid $gray;
+  cursor: not-allowed;
+}

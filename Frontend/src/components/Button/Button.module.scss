@@ -12,40 +12,61 @@
 .blue {
   color: $white;
   background-color: $blue;
+
+  &:hover {
+    background-color: darken($blue, 10%);
+  }
 }
 
 .lightblue {
   color: $blue;
   background-color: $lightblue;
+
+  &:hover {
+    background-color: darken($lightblue, 10%);
+  }
 }
 
 .red {
   color: $white;
   background-color: $red;
+
+  &:hover {
+    background-color: darken($red, 10%);
+  }
 }
 
 .lightred {
   color: $red;
   background-color: $lightred;
+
+  &:hover {
+    background-color: darken($lightred, 10%);
+  }
 }
 
 .large {
   padding: 2.2rem;
-  height: auto;
+  width: 15.7rem;
+  height: 6.7rem;
   font-size: 2.4rem;
+  border-radius: 2rem;
 }
 
 .small {
   padding: 1.2rem;
-  height: 3.8rem;
+  width: 9.5rem;
+  height: 4.5rem;
   font-size: 1.6rem;
+  border-radius: 1rem;
 }
 
 .long {
   padding: 2.2rem;
   height: auto;
   width: 100%;
-  font-size: 1.6rem;
+  font-size: 2.4rem;
+  border-radius: 2rem;
 }
 
 .disabled {

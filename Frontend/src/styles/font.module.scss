@@ -5,3 +5,14 @@
   font-weight: 400;
   font-style: normal;
 }
+
+@font-face {
+  font-family: 'Hanna';
+  src: url('@/assets/fonts/BMHANNAPro.ttf');
+}
+
+@mixin Hanna {
+  font-family: 'Hanna';
+  font-weight: 400;
+  font-style: normal;
+}

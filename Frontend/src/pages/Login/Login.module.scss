@@ -1,0 +1,95 @@
+@import '@/styles/theme.module.scss';
+@import '@/styles/font.module.scss';
+
+.container {
+  position: absolute;
+  height: 100%;
+  width: 100dvw;
+  max-width: 43rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+
+  .title {
+    @include Hanna;
+    position: relative;
+    margin-top: 16rem;
+    font-size: 7rem;
+
+    .main {
+      animation: vibrate 0.1s 0.8s 2 ease-in-out;
+
+      @keyframes vibrate {
+        from {
+          transform: translate(-0.5rem);
+        }
+        to {
+          transform: translate(0.5rem);
+        }
+      }
+    }
+
+    .logo {
+      position: absolute;
+      top: 100%;
+      left: 100%;
+      transform: rotate(-37.525deg);
+      z-index: -1;
+      animation: stamp1 2s step-end;
+    }
+
+    @keyframes stamp1 {
+      0% {
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .stamp {
+      position: absolute;
+      top: 100%;
+      left: 100%;
+      width: 28rem;
+      transform: translate(-9.5rem, -12rem) rotate(-2deg);
+      animation: stamp2 2s 1 ease-in-out;
+      opacity: 0;
+    }
+
+    @keyframes stamp2 {
+      0% {
+        transform: translate(-9.5rem, -200rem);
+        opacity: 1;
+      }
+      40% {
+        transform: translate(-9.5rem, -12rem);
+        opacity: 1;
+      }
+      60% {
+        transform: translate(-9.5rem, -12rem);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-9.5rem, -200rem);
+        opacity: 1;
+      }
+    }
+  }
+
+  .loginButton {
+    @include Pretendard;
+    margin-top: 16rem;
+    padding: 1.1rem 0;
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    background-color: $kakao;
+    border-radius: 12px;
+    font-size: 2.8rem;
+    font-weight: bold;
+  }
+}

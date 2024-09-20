@@ -28,11 +28,15 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private String redirectUri;
 
     /**
-     * @param request
-     * @param response
-     * @param authentication
-     * @throws IOException
+     * OAuth2 인증 성공 시 호출되는 메서드
+     * 사용자 정보를 처리하고 JWT 토큰을 생성하여 쿠키에 저장한 후 리다이렉트
+     *
+     * @param request 현재 HTTP 요청
+     * @param response 현재 HTTP 응답
+     * @param authentication 인증 정보
+     * @throws IOException 리다이렉트 중 발생할 수 있는 예외
      */
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
@@ -50,8 +54,10 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     }
 
     /**
-     * @param oAuth2User
-     * @return
+     * OAuth2User 객체에서 필요한 사용자 정보를 추출하고 처리
+     *
+     * @param oAuth2User OAuth2 인증으로 받아온 사용자 정보
+     * @return 처리된 Member 객체
      */
     private Member processOAuth2User(OAuth2User oAuth2User) {
         Map<String, Object> userInfo = extractKakaoUserInfo(oAuth2User);
@@ -66,9 +72,11 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     //== build ==//
 
     /**
-     * @param response
-     * @param accessToken
-     * @param refreshToken
+     * 응답에 액세스 토큰과 리프레시 토큰을 쿠키로 설정
+     *
+     * @param response HTTP 응답 객체
+     * @param accessToken 생성된 액세스 토큰
+     * @param refreshToken 생성된 리프레시 토큰
      */
     private void setTokenCookies(HttpServletResponse response, String accessToken, String refreshToken) {
         ResponseCookie accessTokenCookie = createCookie("access_token", accessToken);
@@ -79,9 +87,11 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     }
 
     /**
-     * @param name
-     * @param value
-     * @return
+     * 주어진 이름과 값으로 보안 쿠키를 생성
+     *
+     * @param name 쿠키 이름
+     * @param value 쿠키 값
+     * @return 생성된 ResponseCookie 객체
      */
     private ResponseCookie createCookie(String name, String value) {
         return ResponseCookie.from(name, value)
@@ -92,6 +102,12 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 .build();
     }
 
+    /**
+     * OAuth2User 객체에서 카카오 사용자 정보를 추출
+     *
+     * @param oAuth2User OAuth2 인증으로 받아온 사용자 정보
+     * @return 추출된 카카오 사용자 정보를 담은 Map 객체
+     */
     private Map<String, Object> extractKakaoUserInfo(OAuth2User oAuth2User) {
         Map<String, Object> attributes = oAuth2User.getAttributes();
         Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");

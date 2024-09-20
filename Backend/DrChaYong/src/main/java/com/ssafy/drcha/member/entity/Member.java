@@ -1,7 +1,7 @@
 package com.ssafy.drcha.member.entity;
 
-import com.ssafy.drcha.member.enumeration.IsVerified;
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Getter
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +26,8 @@ public class Member {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "is_verified")
-    private IsVerified isVerified;
+    private boolean isVerified;
 
     @CreatedDate
     @Column(name = "created_at")

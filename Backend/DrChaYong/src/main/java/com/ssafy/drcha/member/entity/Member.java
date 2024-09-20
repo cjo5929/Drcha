@@ -36,4 +36,12 @@ public class Member {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public void savePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void markAsVerified() {
+        this.isVerified = true;
+    }
 }

@@ -20,8 +20,13 @@ public enum ErrorCode {
 	MEMBER_FORBIDDEN_ERROR(FORBIDDEN, "MEMBER-000", "사용자의 접근 권한이 없습니다."),
 	MEMBER_NOT_FOUND(UNAUTHORIZED, "MEMBER-001", "사용자가 존재하지 않습니다."),
 
-	INVALID_REFRESH_TOKEN(UNAUTHORIZED, "TOKEN-001", "유효하지 않은 리프레시 토큰입니다."),
-	REFRESH_TOKEN_NOT_FOUND(BAD_REQUEST, "TOKEN-002", "리프레시 토큰을 찾을 수 없습니다.");
+	/**
+	 * Token
+	 */
+	ACCESS_TOKEN_INVALID(UNAUTHORIZED, "TOKEN-001", "유효하지 않은 토큰입니다."),
+	ACCESS_TOKEN_NOT_FOUND(UNAUTHORIZED, "TOKEN-002", "토큰을 찾을 수 없습니다."),
+	REFRESH_TOKEN_INVALID(UNAUTHORIZED, "TOKEN-003", "유효하지 않은 리프레시 토큰입니다."),
+	REFRESH_TOKEN_NOT_FOUND(BAD_REQUEST, "TOKEN-004", "리프레시 토큰을 찾을 수 없습니다.");
 
 
 	private final HttpStatus httpStatus;

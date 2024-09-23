@@ -1,7 +1,7 @@
 package com.ssafy.drcha.member.entity;
 
 import com.ssafy.drcha.global.basetime.BaseTimeEntity;
-import com.ssafy.drcha.member.enums.MemberRoleStatus;
+import com.ssafy.drcha.member.enums.MemberRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -46,10 +46,10 @@ public class Member extends BaseTimeEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private MemberRoleStatus role;
+    private MemberRole role;
 
     //==생성 메서드==//
-    public static Member createMember(String username, String email, String avatarUrl, MemberRoleStatus role) {
+    public static Member createMember(String username, String email, String avatarUrl, MemberRole role) {
         return Member.builder()
                 .username(username)
                 .email(email)

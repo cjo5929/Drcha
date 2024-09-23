@@ -2,7 +2,6 @@ package com.ssafy.drcha.global.config;
 
 import com.ssafy.drcha.global.security.filter.JwtAuthenticationFilter;
 import com.ssafy.drcha.global.security.handler.OAuth2LoginSuccessHandler;
-import com.ssafy.drcha.member.enums.MemberRoleStatus;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

@@ -4,6 +4,7 @@ import static com.ssafy.drcha.member.entity.Member.createMember;
 
 import com.ssafy.drcha.global.error.ErrorCode;
 import com.ssafy.drcha.global.error.type.UserNotFoundException;
+import com.ssafy.drcha.member.dto.PhoneNumberRequest;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.enums.MemberRole;
 import com.ssafy.drcha.member.repository.MemberRepository;
@@ -27,6 +28,8 @@ public class MemberService {
                 .orElseGet(() ->
                         memberRepository.save(createMember(name, email, avatarUrl, MemberRole.MEMBER))
                 );
+    }
+
     @Transactional(readOnly = true)
     public boolean getVerificationStatusByEmail(String email) {
         Member member = memberRepository.findByEmail(email)

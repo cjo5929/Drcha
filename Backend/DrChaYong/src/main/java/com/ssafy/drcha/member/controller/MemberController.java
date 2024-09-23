@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,16 +39,18 @@ public class MemberController {
     })
     @GetMapping("/auth/status")
     public ResponseEntity<?> getVerificationStatus(
-//            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        return ResponseEntity.ok(memberService.getVerificationStatusByEmail(""));
+        return ResponseEntity.ok(memberService.getVerificationStatusByEmail(userDetails.getUsername()));
     }
 
+    @Operation(summary = "휴대폰 번호 등록", description = "휴대폰 번호를 등록한다.")
+    @ApiResponse(responseCode = "200", description = "휴대폰 번호 등록 성공")
     @PostMapping("/phone-number")
-    public ResponseEntity<?> savePhoneNumber(@RequestBody @Valid PhoneNumberRequest phoneNumberRequest
-//            @AuthenticationPrincipal UserDetails userDetails
+    public ResponseEntity<Void> savePhoneNumber(@RequestBody @Valid PhoneNumberRequest phoneNumberRequest,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-//        return ResponseEntity.ok(memberService.savePhoneNumber(userDetails.getUsername(), phoneNumberRequest));
-        return ResponseEntity.ok(true);
+        memberService.savePhoneNumber(userDetails.getUsername(), phoneNumberRequest);
+        return ResponseEntity.ok().build();
     }
 }

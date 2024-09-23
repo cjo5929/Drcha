@@ -37,6 +37,7 @@ public class MemberService {
         return member.isVerified();
     }
 
+    @Transactional
     public void savePhoneNumber(String email, PhoneNumberRequest phoneNumberRequest) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.MEMBER_NOT_FOUND));

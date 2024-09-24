@@ -1,9 +1,13 @@
-import { Main } from '@/pages/Main';
+import { RouterProvider } from 'react-router-dom';
+
+import { useRouter } from '@/hooks/useRouter';
 
 import './reset.css';
 
 function App() {
-  return <Main />;
+  const router = useRouter();
+
+  return <RouterProvider router={router} />;
 }
 
 export default App;

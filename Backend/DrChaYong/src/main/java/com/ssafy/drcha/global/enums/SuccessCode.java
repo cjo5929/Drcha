@@ -12,6 +12,7 @@ public enum SuccessCode {
      * Member
      */
     LOGIN_SUCCESS(OK, "MEMBER-001", "로그인 성공했습니다."),
+    LOGOUT_SUCCESS(OK, "MEMBER-002", "로그아웃 성공했습니다"),
 
     /**
      * Token

@@ -9,7 +9,7 @@ import com.ssafy.drcha.global.security.util.CookieUtil;
 import com.ssafy.drcha.global.security.util.JwtUtil;
 import com.ssafy.drcha.member.dto.PhoneNumberRequest;
 import com.ssafy.drcha.member.entity.Member;
-import com.ssafy.drcha.member.enums.MemberRole;
+import com.ssafy.drcha.member.enums.Role;
 import com.ssafy.drcha.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,7 +32,7 @@ public class MemberService {
                     return memberRepository.save(member);
                 })
                 .orElseGet(() ->
-                        memberRepository.save(createMember(name, email, avatarUrl, MemberRole.MEMBER))
+                        memberRepository.save(createMember(name, email, avatarUrl, Role.MEMBER))
                 );
     }
 

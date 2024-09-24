@@ -1,5 +1,5 @@
 package com.ssafy.drcha.member.enums;
 
-public enum MemberRole {
+public enum Role {
     MEMBER, ADMIN
 }

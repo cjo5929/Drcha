@@ -1,4 +1,8 @@
+@import '@/styles/theme.module.scss';
+@import '@/styles/font.module.scss';
+
 .navbar {
+  @include Pretendard;
   position: fixed;
   bottom: 0;
   max-width: 43rem;
@@ -15,6 +19,7 @@
 }
 
 .navItem {
+  @include Pretendard;
   display: flex;
   flex-direction: column;
   font-size: 1.2rem;

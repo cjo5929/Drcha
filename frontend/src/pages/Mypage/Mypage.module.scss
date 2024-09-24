@@ -1,9 +1,14 @@
+@import '@/styles/theme.module.scss';
+@import '@/styles/font.module.scss';
+
 .container {
+  @include Pretendard;
   width: 100%;
   height: 100%;
 }
 
 .myinfo {
+  @include Pretendard;
   width: 100%;
   height: 35%;
   padding-left: 5%;
@@ -12,6 +17,7 @@
 }
 
 .kakaoinfo {
+  @include Pretendard;
   width: 100%;
   height: 20%;
   display: flex;
@@ -19,6 +25,7 @@
 }
 
 .kakaoprofileimg {
+  @include Pretendard;
   width: 20%;
   height: 100%;
   display: flex;
@@ -29,6 +36,7 @@
 }
 
 .kakaoprofileimg img {
+  @include Pretendard;
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -39,6 +47,7 @@
 }
 
 .kakaoprofiledetail {
+  @include Pretendard;
   width: 80%;
   height: 100%;
   display: flex;
@@ -48,15 +57,18 @@
 }
 
 .kakaonickname {
+  @include Pretendard;
   font-weight: bold;
   font-size: 2.5rem;
 }
 
 .kakaoemail {
+  @include Pretendard;
   font-size: 1.3rem;
 }
 
 .accountinfo {
+  @include Pretendard;
   width: 100%;
   height: 65%;
   padding-left: 5%;
@@ -66,6 +78,7 @@
 }
 
 .card {
+  @include Pretendard;
   width: 100%;
   height: 100%;
   background-color: #3288ff;
@@ -81,6 +94,7 @@
 }
 
 .bankinfo {
+  @include Pretendard;
   width: 100%;
   height: 40%;
   display: flex;
@@ -88,22 +102,26 @@
 }
 
 .bankinfodetail {
+  @include Pretendard;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
 }
 
 .bankname {
+  @include Pretendard;
   font-size: 1.5rem;
   font-weight: bold;
 }
 
 .accountnum {
+  @include Pretendard;
   font-size: 1.4rem;
   text-decoration: underline;
 }
 
 .certokay {
+  @include Pretendard;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -113,6 +131,7 @@
 }
 
 .certokay div {
+  @include Pretendard;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -120,6 +139,7 @@
 }
 
 .balance {
+  @include Pretendard;
   width: 100%;
   height: 60%;
   display: flex;
@@ -127,11 +147,13 @@
 }
 
 .balance span {
+  @include Pretendard;
   font-size: 3rem;
   font-weight: bold;
 }
 
 .accountbtn {
+  @include Pretendard;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -143,6 +165,7 @@
 }
 
 .accountbtn button {
+  @include Pretendard;
   flex: 1;
   height: 100%;
   border: none;
@@ -152,6 +175,7 @@
 
 .accountbtn::before {
   content: '';
+  @include Pretendard;
   position: absolute;
   left: 50%;
   top: 0;
@@ -162,6 +186,7 @@
 }
 
 .cardnoncert {
+  @include Pretendard;
   width: 100%;
   height: 100%;
   background-color: #3288ff;
@@ -177,6 +202,7 @@
 }
 
 .cardnoncert div {
+  @include Pretendard;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -184,11 +210,13 @@
 }
 
 .cardnoncert div span {
+  @include Pretendard;
   font-weight: bold;
   font-size: 1.3rem;
 }
 
 .sumofmoney {
+  @include Pretendard;
   width: 100%;
   height: 10%;
   padding-left: 7%;
@@ -199,6 +227,7 @@
 }
 
 .moneydetail {
+  @include Pretendard;
   flex: 1;
   height: 100%;
   border: none;
@@ -220,6 +249,7 @@
 }
 
 .listContainer {
+  @include Pretendard;
   width: 100%;
   height: 45%;
   padding-left: 5%;
@@ -227,6 +257,7 @@
 }
 
 .tabContainer {
+  @include Pretendard;
   width: 100%;
   height: 13%;
   display: flex;
@@ -234,6 +265,7 @@
 }
 
 .tabButton {
+  @include Pretendard;
   flex: 1;
   font-size: 1.6rem;
   color: #999;
@@ -255,6 +287,7 @@
 }
 
 .listContent {
+  @include Pretendard;
   width: 100%;
   height: 87%;
   padding: 8%;
@@ -264,10 +297,12 @@
 }
 
 .category {
+  @include Pretendard;
   margin-bottom: 10px;
   cursor: pointer;
 
   span {
+    @include Pretendard;
     display: flex;
     align-items: center;
     font-size: 1.5rem;
@@ -277,11 +312,13 @@
 }
 
 .details {
+  @include Pretendard;
   margin-left: 10px;
   padding: 5px 0;
 }
 
 .dealItem {
+  @include Pretendard;
   padding: 5px 0;
   border-bottom: 1px solid #ddd;
 }

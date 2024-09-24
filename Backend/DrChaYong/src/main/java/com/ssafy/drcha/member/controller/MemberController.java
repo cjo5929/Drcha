@@ -67,7 +67,7 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "리프레쉬 토큰을 찾을 수 없음",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject(value = "{\"error\": \"Bad Request\", \"message\": \"리프레시 토큰이 없습니다.\"}")))
+                            examples = @ExampleObject(value = "{\"error\": \"Not Found\", \"message\": \"리프레시 토큰이 없습니다.\"}")))
     })
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {

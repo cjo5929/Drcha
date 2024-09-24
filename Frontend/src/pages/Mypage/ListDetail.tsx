@@ -1,25 +1,33 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import DownSVG from '@/assets/icons/downarrow.svg?react';
 import RightSVG from '@/assets/icons/rightarrow.svg?react';
 import styles from '@/pages/Mypage/Mypage.module.scss';
+import { TransactionHistory } from '@/types/history';
+
+import { Dealitem } from './Dealitem';
 
 export function ListDetail({
   items,
   types,
+  expanding,
+  onToggle,
 }: {
-  items: Array<object>;
+  items: Array<TransactionHistory>;
   types: string;
+  expanding: boolean;
+  onToggle: () => void;
 }) {
-  const [expanding, setExpanding] = useState<boolean>(false);
+  const [curItem, setCurItem] = useState<Array<TransactionHistory>>([]);
 
-  const handleCategoryToggle = () => {
-    setExpanding(!expanding);
-  };
+  useEffect(() => {
+    const filteredItems = items.filter((item) => item.types === types);
+    setCurItem(filteredItems);
+  }, [items, types]);
 
   return (
     <div className={styles.category}>
-      <button onClick={() => handleCategoryToggle()}>
+      <button onClick={onToggle}>
         <span>
           {expanding ? <DownSVG /> : <RightSVG />}
           &nbsp;
@@ -28,8 +36,9 @@ export function ListDetail({
       </button>
       {expanding && (
         <div className={styles.details}>
-          {/* 내역 컴포넌트 - 돌려쓰기 가능 */}
-          {/* <DealItem type={activeTab} status="pending" /> */}
+          {curItem.map((item) => (
+            <Dealitem key={item.name + item.dates} item={item} />
+          ))}
         </div>
       )}
     </div>

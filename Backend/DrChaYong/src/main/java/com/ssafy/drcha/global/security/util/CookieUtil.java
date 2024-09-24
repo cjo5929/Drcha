@@ -52,6 +52,6 @@ public class CookieUtil {
         deleteCookie(response, "access_token");
         deleteCookie(response, "refresh_token");
 
-        return SuccessCode.LOGIN_SUCCESS.getMessage();
+        return SuccessCode.LOGOUT_SUCCESS.getMessage();
     }
 }

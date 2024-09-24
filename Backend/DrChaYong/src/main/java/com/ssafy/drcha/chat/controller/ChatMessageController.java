@@ -18,7 +18,7 @@ public class ChatMessageController {
 
 	@MessageMapping("/chat/message")
 	public void message(ChatMessageRequestDTO message, @AuthenticationPrincipal UserDetails userDetails) {
-		chatService.sendChatMessage(message, userDetails.getUsername());
+		// chatService.sendChatMessage(message, userDetails.getUsername());
 	}
 
 

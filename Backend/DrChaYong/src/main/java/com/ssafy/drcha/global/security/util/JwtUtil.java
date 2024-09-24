@@ -79,7 +79,17 @@ public class JwtUtil {
 
     public Boolean validateRefreshToken(String token, String email) {
         final String storedToken = getStoredRefreshToken(email);
-        return (token.equals(storedToken) && isTokenExpired(token));
+        return (token.equals(storedToken) && isTokenExpired(token) && !isTokenBlacklisted(token));
+    }
+
+    public void addToBlacklist(String token, long expirationTime) {
+        String key = "blacklist:" + token;
+        redisTemplate.opsForValue().set(key, "blacklisted", expirationTime, TimeUnit.MILLISECONDS);
+    }
+
+    public boolean isTokenBlacklisted(String token) {
+        String key = "blacklist:" + token;
+        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 
     //== common ==//

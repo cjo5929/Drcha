@@ -13,7 +13,7 @@ export function Input({ type }: InputProps) {
         <SearchSVG width={24} height={24} className={styles.icon} />
       )}
       <input
-        className={styles[type]}
+        className={`${styles[type]} ${styles.input}`}
         placeholder={type === 'search' ? '사람 이름 검색' : '채팅을 입력하세요'}
       />
     </div>

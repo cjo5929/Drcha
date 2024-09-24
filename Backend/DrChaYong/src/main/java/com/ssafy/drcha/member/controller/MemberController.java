@@ -1,5 +1,6 @@
 package com.ssafy.drcha.member.controller;
 
+import com.ssafy.drcha.member.dto.MemberInfoResponse;
 import com.ssafy.drcha.member.dto.PhoneNumberRequest;
 import com.ssafy.drcha.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,5 +53,14 @@ public class MemberController {
     ) {
         memberService.savePhoneNumber(userDetails.getUsername(), phoneNumberRequest);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "회원 정보", description = "회원 정보를 조회한다.")
+    @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = MemberInfoResponse.class)))
+    @GetMapping("/info")
+    public ResponseEntity<?> getMemberInfo(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(memberService.getMemberInfo(userDetails.getUsername()));
     }
 }

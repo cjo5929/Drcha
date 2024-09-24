@@ -12,6 +12,8 @@ export function TransactionHistories() {
         </div>
         <GotodetailSVG />
       </div>
+      {/* 상환일자 */}
+      <div className={styles.repayment} />
     </div>
   );
 }

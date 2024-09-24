@@ -1,5 +1,6 @@
 package com.ssafy.drcha.member.controller;
 
+import com.ssafy.drcha.member.dto.MemberInfoResponse;
 import com.ssafy.drcha.member.dto.PhoneNumberRequest;
 import com.ssafy.drcha.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,14 +18,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.ErrorResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/member")
+@RequestMapping("api/v1/member")
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
@@ -72,5 +69,14 @@ public class MemberController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         return new ResponseEntity<>(memberService.logout(request, response), HttpStatus.OK);
+    }
+
+    @Operation(summary = "회원 정보", description = "회원 정보를 조회한다.")
+    @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = MemberInfoResponse.class)))
+    @GetMapping("/info")
+    public ResponseEntity<?> getMemberInfo(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(memberService.getMemberInfo(userDetails.getUsername()));
     }
 }

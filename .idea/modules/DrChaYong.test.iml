@@ -8,10 +8,10 @@
     </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_17">
-    <output-test url="file://$MODULE_DIR$/../../backend/DrChaYong/build/classes/java/test" />
+    <output-test url="file://$MODULE_DIR$/../../Backend/DrChaYong/build/classes/java/test" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../backend/DrChaYong/src/test">
-      <sourceFolder url="file://$MODULE_DIR$/../../backend/DrChaYong/src/test/java" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../Backend/DrChaYong/src/test">
+      <sourceFolder url="file://$MODULE_DIR$/../../Backend/DrChaYong/src/test/java" isTestSource="true" />
     </content>
     <orderEntry type="jdk" jdkName="17" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />

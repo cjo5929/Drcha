@@ -3,8 +3,6 @@ package com.ssafy.drcha.global.redis;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
-
-import com.ssafy.drcha.chat.dto.ChatMessageDTO;
 import com.ssafy.drcha.chat.dto.ChatMessageRequestDTO;
 
 @Service

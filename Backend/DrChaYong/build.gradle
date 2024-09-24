@@ -42,6 +42,10 @@ dependencies {
 	implementation 'org.mariadb.jdbc:mariadb-java-client:3.1.4'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.redisson:redisson-spring-boot-starter:3.33.0'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+	//websocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'

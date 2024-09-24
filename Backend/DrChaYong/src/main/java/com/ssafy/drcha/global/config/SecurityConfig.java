@@ -2,7 +2,7 @@ package com.ssafy.drcha.global.config;
 
 import com.ssafy.drcha.global.security.filter.JwtAuthenticationFilter;
 import com.ssafy.drcha.global.security.handler.OAuth2LoginSuccessHandler;
-import com.ssafy.drcha.member.enums.MemberRole;
+import com.ssafy.drcha.member.enums.Role;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +48,7 @@ public class SecurityConfig {
                                         "/h2-console", "/swagger-ui/index.html", "/swagger",
                                         "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**")
                                 .permitAll()
-                                .requestMatchers("/api/v1/**").hasAuthority(MemberRole.MEMBER.name())
+                                .requestMatchers("/api/v1/**").hasAuthority(Role.MEMBER.name())
                                 .anyRequest().authenticated()
 //                        .anyRequest().permitAll()
                 )

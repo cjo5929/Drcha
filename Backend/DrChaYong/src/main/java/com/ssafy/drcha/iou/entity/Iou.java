@@ -27,7 +27,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "iou")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Iou extends BaseTimeEntity {
@@ -46,7 +45,7 @@ public class Iou extends BaseTimeEntity {
 	private Member debtor;
 
 	@Column(name = "iou_amount", nullable = false)
-	private Long iouAmount;
+	private long iouAmount;
 
 	@Column(name = "contract_start_date", nullable = false)
 	private LocalDateTime contractStartDate;
@@ -55,7 +54,7 @@ public class Iou extends BaseTimeEntity {
 	private LocalDateTime contractEndDate;
 
 	@Column(name = "interest_rate", nullable = false)
-	private Double interestRate;
+	private double interestRate;
 
 	@Column(name = "contract_status", nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -65,24 +64,24 @@ public class Iou extends BaseTimeEntity {
 	private Long chatRoomId;
 
 	@Column(name = "notification_schedule", nullable = false)
-	private Integer notificationSchedule;
+	private int notificationSchedule;
 
-	public static Iou createIou(Member creditor, Member debtor, Long iouAmount,
+
+	@Builder
+	private Iou(Member creditor, Member debtor, long iouAmount,
 		LocalDateTime contractStartDate, LocalDateTime contractEndDate,
-		Double interestRate, ContractStatus contractStatus,
-		Long chatRoomId, Integer notificationSchedule) {
+		double interestRate, ContractStatus contractStatus,
+		long chatRoomId, int notificationSchedule) {
 
-		return Iou.builder()
-			.creditor(creditor)
-			.debtor(debtor)
-			.iouAmount(iouAmount)
-			.contractStartDate(contractStartDate)
-			.contractEndDate(contractEndDate)
-			.interestRate(interestRate)
-			.contractStatus(contractStatus)
-			.chatRoomId(chatRoomId)
-			.notificationSchedule(notificationSchedule)
-			.build();
+		this.creditor = creditor;
+		this.debtor = debtor;
+		this.iouAmount = iouAmount;
+		this.contractStartDate = contractStartDate;
+		this.contractEndDate = contractEndDate;
+		this.interestRate = interestRate;
+		this.contractStatus = contractStatus;
+		this.chatRoomId = chatRoomId;
+		this.notificationSchedule = notificationSchedule;
 
 	}
 

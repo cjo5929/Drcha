@@ -7,6 +7,7 @@ import com.ssafy.drcha.global.error.type.TokenNotFoundException;
 import com.ssafy.drcha.global.error.type.UserNotFoundException;
 import com.ssafy.drcha.global.security.util.CookieUtil;
 import com.ssafy.drcha.global.security.util.JwtUtil;
+import com.ssafy.drcha.member.dto.MemberInfoResponse;
 import com.ssafy.drcha.member.dto.PhoneNumberRequest;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.enums.MemberRole;
@@ -69,5 +70,19 @@ public class MemberService {
         jwtUtil.addToBlacklist(refreshToken, expirationTime);
         jwtUtil.deleteRefreshToken(email);
         return CookieUtil.deleteAuthTokens(request, response);
+    }
+
+    @Transactional(readOnly = true)
+    public MemberInfoResponse getMemberInfo(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+        return MemberInfoResponse.builder()
+                .username(member.getUsername())
+                .email(member.getEmail())
+                .avatarUrl(member.getAvatarUrl())
+                .phoneNumber(member.getPhoneNumber())
+                .isVerified(member.isVerified())
+                .build();
     }
 }

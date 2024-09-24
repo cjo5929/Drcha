@@ -1,3 +1,4 @@
+import { Navbar } from '@/components/Navbar/Navbar';
 import styles from '@/pages/Mypage/Mypage.module.scss';
 
 import { MyDealList } from './MyDealList';
@@ -28,6 +29,7 @@ export function Mypage() {
         </div>
       </div>
       <MyDealList />
+      <Navbar />
     </div>
   );
 }

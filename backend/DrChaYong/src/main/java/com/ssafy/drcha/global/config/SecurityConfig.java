@@ -46,7 +46,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/", "/login","/api/v1/member/logout", "/error", "/oauth2/**",
                                         "/h2-console", "/swagger-ui/index.html", "/swagger",
-                                        "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**")
+                                        "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**",
+                                    "/ws/**", "/sub/**", "/pub/**")
                                 .permitAll()
                                 .requestMatchers("/api/v1/**").hasAuthority(Role.MEMBER.name())
                                 .anyRequest().authenticated()
@@ -82,6 +83,10 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
+
+        // WebSocket을 위한 설정 추가
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

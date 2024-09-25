@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
-@EnableMongoRepositories(basePackages = "com.ssafy.drcha.chat.message.repository")
+@EnableMongoRepositories(basePackages = "com.ssafy.drcha.chat.repository")
 public class MongoConfig {
 
 	private final MongoProperties mongoProperties;

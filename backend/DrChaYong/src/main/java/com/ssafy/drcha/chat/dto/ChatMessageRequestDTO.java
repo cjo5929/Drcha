@@ -15,14 +15,14 @@ public class ChatMessageRequestDTO {
 
 	private Long chatRoomId;
 	private String content;
+	private Long senderId;
 
 
-	public ChatMessage toEntity(Long senderId) {
+	public ChatMessage toEntity() {
 		return ChatMessage.builder()
 			.chatRoomId(chatRoomId)
 			.senderId(senderId)
 			.content(content)
-			.createdAt(LocalDateTime.now())
 			.isRead(false)
 			.build();
 	}

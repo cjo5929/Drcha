@@ -24,4 +24,12 @@ public class ChatMessage {
 	private LocalDateTime createdAt;
 	private boolean isRead;
 
+	private ChatMessage(Long chatRoomId, Long senderId, String content, boolean isRead) {
+		this.chatRoomId = chatRoomId;
+		this.senderId = senderId;
+		this.content = content;
+		this.createdAt = LocalDateTime.now();
+		this.isRead = isRead;
+	}
+
 }

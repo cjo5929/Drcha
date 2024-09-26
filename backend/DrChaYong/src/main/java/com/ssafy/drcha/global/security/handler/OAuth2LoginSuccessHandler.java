@@ -1,5 +1,6 @@
 package com.ssafy.drcha.global.security.handler;
 
+import com.ssafy.drcha.account.service.AccountService;
 import com.ssafy.drcha.global.security.util.JwtUtil;
 import com.ssafy.drcha.global.util.api.RestClientUtil;
 import com.ssafy.drcha.global.util.api.dto.UserResponse;
@@ -28,6 +29,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final JwtUtil jwtUtil;
     private final MemberService memberService;
     private final RestClientUtil restClientUtil;
+    private final AccountService accountService;
 
     @Value("${app.url.front}")
     private String redirectUri;
@@ -89,6 +91,12 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         }
 
         userKey = userResponse.getUserKey();
+        try {
+            accountService.saveNewBankAccount(email);
+            log.info("새로운 계좌가 생성되었습니다: {}", email);
+        } catch (Exception e) {
+            log.error("계좌 생성 중 오류가 발생했습니다: {}", e.getMessage());
+        }
 
         // 3. 얻은 userKey를 저장한 Member 객체 반환
         return memberService.saveOrUpdateMember(name, email, avatarUrl, userKey);

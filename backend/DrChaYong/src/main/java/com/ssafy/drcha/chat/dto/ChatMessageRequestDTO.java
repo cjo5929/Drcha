@@ -1,11 +1,7 @@
 package com.ssafy.drcha.chat.dto;
 
-import java.time.LocalDateTime;
-
 import com.ssafy.drcha.chat.entity.ChatMessage;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChatMessageRequestDTO {
 
-	private Long chatRoomId;
+	private String chatRoomId;
 	private String content;
-	private Long senderId;
+	private String senderId;
 
 
 	public ChatMessage toEntity() {

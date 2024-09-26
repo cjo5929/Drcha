@@ -6,5 +6,5 @@ import com.ssafy.drcha.chat.entity.ChatMessage;
 
 
 @Repository
-public interface ChatMessageRepository extends MongoRepository<ChatMessage, Long> {
+public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
 }

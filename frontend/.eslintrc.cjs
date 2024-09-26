@@ -89,5 +89,6 @@ module.exports = {
     'object-curly-newline': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/button-has-type': 'off',
+    'react/jsx-one-expression-per-line': 'off',
   },
 };

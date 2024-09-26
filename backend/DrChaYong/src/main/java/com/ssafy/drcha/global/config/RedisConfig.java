@@ -3,6 +3,7 @@ package com.ssafy.drcha.global.config;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
@@ -17,15 +18,10 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-
-import com.ssafy.drcha.global.redis.RedisSubscriber;
 
 @Configuration
 public class RedisConfig {
@@ -118,29 +114,5 @@ public class RedisConfig {
                 .build();
     }
 
-    // Pub/Sub 채널 설정
-    @Bean
-    public ChannelTopic topic() {
-        return new ChannelTopic("chatroom");  // 채팅방 관련 topic 설정
-    }
-
-    /**
-     * redis 에 발행(publish)된 메시지 처리를 위한 리스너 설정
-     */
-    @Bean
-    public RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory,
-        MessageListenerAdapter listenerAdapter,
-        ChannelTopic topic) {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(listenerAdapter, topic);  // 메시지를 수신할 topic 설정
-        return container;
-    }
-
-    /** 실제 메시지를 처리하는 subscriber 설정 추가*/
-    @Bean
-    public MessageListenerAdapter messageListener(RedisSubscriber redisSubscriber) {
-        return new MessageListenerAdapter(redisSubscriber, "onMessage");
-    }
 
 }

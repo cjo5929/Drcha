@@ -10,10 +10,5 @@
         <module name="DrChaYong.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="DrChaYong" target="17" />
-      <module name="DrChaYong.main" target="17" />
-      <module name="DrChaYong.test" target="17" />
-    </bytecodeTargetLevel>
   </component>
 </project>

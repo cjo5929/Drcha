@@ -5,6 +5,7 @@ import com.ssafy.drcha.account.entity.Account;
 import com.ssafy.drcha.account.repository.AccountRepository;
 import com.ssafy.drcha.global.error.ErrorCode;
 import com.ssafy.drcha.global.error.type.UserNotFoundException;
+import com.ssafy.drcha.global.util.api.RestClientUtil;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final MemberRepository memberRepository;
+    private final RestClientUtil restClientUtil;
 
     @Transactional(readOnly = true)
     public List<AccountResponse> getAccountList(String email) {

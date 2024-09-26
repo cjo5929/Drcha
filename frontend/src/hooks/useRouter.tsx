@@ -7,6 +7,7 @@ import { Auth } from '@/pages/Auth/Auth';
 import { Complete } from '@/pages/Auth/Complete';
 import { Number } from '@/pages/Auth/Number';
 import { PhoneNumber } from '@/pages/Auth/PhoneNumber';
+import { Histories } from '@/pages/Histories/Histories';
 import { Login } from '@/pages/Login/Login';
 import { Main } from '@/pages/Main';
 import { Mypage } from '@/pages/Mypage/Mypage';
@@ -30,6 +31,10 @@ export const useRouter = () =>
         {
           path: 'detail',
           element: <TransactionDetail />,
+        },
+        {
+          path: 'histories',
+          element: <Histories />,
         },
         {
           path: 'auth',

@@ -5,7 +5,6 @@
   @include Pretendard;
   width: 100%;
   height: 100%;
-  border: solid 1px;
 }
 
 .header {
@@ -166,7 +165,11 @@
 
 .histories {
   width: 100%;
-  padding: 5%;
+  padding-left: 5%;
+  padding-right: 5%;
+  padding-top: 8%;
+  padding-bottom: 8%;
+  border-bottom: solid 1rem #e5e5e5;
 }
 
 .historyhead {
@@ -190,4 +193,129 @@
   font-size: 1.5rem;
   font-weight: bold;
   color: gray;
+}
+
+.repayment {
+  padding-top: 5%;
+}
+
+.repaydate {
+  display: flex;
+  gap: 5rem;
+  align-items: center;
+  padding-top: 8%;
+  padding-bottom: 8%;
+  border-bottom: solid 0.1rem gray;
+}
+
+.repaydatetitle {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.repaydatedetail {
+  font-size: 1.7rem;
+  font-weight: bold;
+  color: gray;
+}
+
+.repaydetail {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-top: 8%;
+  padding-bottom: 8%;
+  border-bottom: solid 0.1rem gray;
+}
+
+.principal,
+.interest,
+.total {
+  display: flex;
+  gap: 5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: gray;
+}
+
+.repayuser {
+  display: flex;
+  padding-top: 8%;
+  gap: 5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: gray;
+  align-items: center;
+}
+
+.graph {
+  width: 100%;
+  padding-left: 5%;
+  padding-right: 5%;
+  padding-top: 8%;
+  padding-bottom: 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.graphtitle {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.chartContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #f6f6f6;
+  border-radius: 1rem;
+  height: 10rem;
+  padding-top: 5%;
+  padding-bottom: 5%;
+  padding-left: 8%;
+  padding-right: 8%;
+  gap: 1.5rem;
+  position: relative;
+}
+
+.chart {
+  width: 100%;
+  height: 2rem;
+  background-color: #d0d0d0;
+  border-radius: 1.2rem;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  background-color: #3288ff;
+  border-radius: 1.2rem 0 0 1.2rem;
+  transition: width 0.5s ease;
+}
+
+.percentage {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #3288ff;
+  text-align: right;
+  position: absolute;
+  right: 3rem;
+  bottom: 1.5rem;
+}
+
+.amountInfo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: gray;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
+}
+
+.description {
+  font-size: 2rem;
+  font-weight: bold;
+  color: black;
+  text-align: center;
 }

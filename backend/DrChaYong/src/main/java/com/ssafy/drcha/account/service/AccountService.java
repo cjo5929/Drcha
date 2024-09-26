@@ -5,6 +5,8 @@ import com.ssafy.drcha.account.entity.Account;
 import com.ssafy.drcha.account.repository.AccountRepository;
 import com.ssafy.drcha.global.error.ErrorCode;
 import com.ssafy.drcha.global.error.type.UserNotFoundException;
+import com.ssafy.drcha.global.util.api.RestClientUtil;
+import com.ssafy.drcha.global.util.api.dto.CreateDemandDepositAccountResponse;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final MemberRepository memberRepository;
+    private final RestClientUtil restClientUtil;
 
     @Transactional(readOnly = true)
     public List<AccountResponse> getAccountList(String email) {
@@ -28,11 +31,17 @@ public class AccountService {
         return accounts.stream().map(account -> AccountResponse.builder()
                         .bankName(account.getBankName())
                         .accountNumber(account.getAccountNumber())
-                        .accountHolderName(account.getAccountHolderName())
                         .balance(account.getBalance())
                         .isPrimary(account.isPrimary())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void saveNewBankAccount(String email) {
+        Member member = getMemberByEmail(email);
+        CreateDemandDepositAccountResponse response = restClientUtil.createDemandDepositAccount(member.getUserKey());
+        accountRepository.save(Account.createAccount(member, response.getRec().getBankCode(), response.getRec().getAccountNo()));
     }
 
     private Member getMemberByEmail(String email) {

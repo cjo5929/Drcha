@@ -1,6 +1,9 @@
 package com.ssafy.drcha.global.security.handler;
 
+import com.ssafy.drcha.account.service.AccountService;
 import com.ssafy.drcha.global.security.util.JwtUtil;
+import com.ssafy.drcha.global.util.api.RestClientUtil;
+import com.ssafy.drcha.global.util.api.dto.UserResponse;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -17,12 +21,15 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
     private final MemberService memberService;
+    private final RestClientUtil restClientUtil;
+    private final AccountService accountService;
 
     @Value("${app.url.front}")
     private String redirectUri;
@@ -66,7 +73,33 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String email = (String) userInfo.get("email");
         String avatarUrl = (String) userInfo.get("avatarUrl");
 
-        return memberService.saveOrUpdateMember(name, email, avatarUrl);
+        // 1. 사용자 계정 조회 (싸피 은행 API)
+        UserResponse userResponse = null;
+        try {
+            userResponse = restClientUtil.searchUser(email);
+        } catch (Exception e) {
+            log.info("사용자 계정이 존재하지 않음, 새로운 계정을 생성합니다: {}", email);
+        }
+
+        String userKey;
+        // 2. 사용자 계정이 없으면 createUser 호출하여 생성
+        if (userResponse == null) {
+            userResponse = restClientUtil.createUser(email);
+            log.info("새로운 사용자 계정이 생성되었습니다. userKey: {}", userResponse.getUserKey());
+        } else {
+            log.info("기존 사용자 계정을 찾았습니다. userKey: {}", userResponse.getUserKey());
+        }
+
+        userKey = userResponse.getUserKey();
+        try {
+            accountService.saveNewBankAccount(email);
+            log.info("새로운 계좌가 생성되었습니다: {}", email);
+        } catch (Exception e) {
+            log.error("계좌 생성 중 오류가 발생했습니다: {}", e.getMessage());
+        }
+
+        // 3. 얻은 userKey를 저장한 Member 객체 반환
+        return memberService.saveOrUpdateMember(name, email, avatarUrl, userKey);
     }
 
     //== build ==//

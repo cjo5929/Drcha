@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 @Builder
 @Getter
 @ToString
-public class Header {
+public class HeaderRequest {
     private String apiName;
     private String transmissionDate;
     private String transmissionTime;

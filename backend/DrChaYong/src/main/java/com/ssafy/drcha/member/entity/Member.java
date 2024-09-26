@@ -48,19 +48,27 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(name = "user_key")
+    private String userKey;
+
     //==생성 메서드==//
-    public static Member createMember(String username, String email, String avatarUrl, Role role) {
+    public static Member createMember(String username, String email, String avatarUrl, Role role, String userKey) {
         return Member.builder()
                 .username(username)
                 .email(email)
                 .avatarUrl(avatarUrl)
                 .role(role)
+                .userKey(userKey)
                 .build();
     }
 
     //==비즈니스 로직==//
     public void changeAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public void changeUserKey(String userKey) {
+        this.userKey = userKey;
     }
 
     public void savePhoneNumber(String phoneNumber) {

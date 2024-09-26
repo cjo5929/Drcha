@@ -26,14 +26,15 @@ public class MemberService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public Member saveOrUpdateMember(String name, String email, String avatarUrl) {
+    public Member saveOrUpdateMember(String name, String email, String avatarUrl, String userKey) {
         return memberRepository.findByEmail(email)
                 .map(member -> {
                     member.changeAvatarUrl(avatarUrl);
+                    member.changeUserKey(userKey);
                     return memberRepository.save(member);
                 })
                 .orElseGet(() ->
-                        memberRepository.save(createMember(name, email, avatarUrl, Role.MEMBER))
+                        memberRepository.save(createMember(name, email, avatarUrl, Role.MEMBER, userKey))
                 );
     }
 

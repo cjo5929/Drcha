@@ -90,5 +90,6 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'react/button-has-type': 'off',
     'react/jsx-one-expression-per-line': 'off',
+    'no-nested-ternary': 'off',
   },
 };

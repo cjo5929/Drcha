@@ -1,6 +1,5 @@
 import styles from './Chat.module.scss';
 import { ChatContent } from './ChatContent';
-import { ChatInput } from './ChatInput';
 import { Header } from './Header';
 
 export function Chat() {
@@ -8,7 +7,17 @@ export function Chat() {
     <div className={styles.container}>
       <Header />
       <ChatContent />
-      <ChatInput />
+      <div className={styles.chatinput}>
+        <textarea
+          className={styles.inputField}
+          placeholder="Type your message..."
+          //   value={message}
+          //   onChange={(e) => setMessage(e.target.value)}
+          //   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+          rows={1}
+        />
+        <button className={styles.sendButton}>➤</button>
+      </div>
     </div>
   );
 }

@@ -10,7 +10,7 @@ import { PhoneNumber } from '@/pages/Auth/PhoneNumber';
 import { Chat } from '@/pages/Chat/Chat';
 import { Histories } from '@/pages/Histories/Histories';
 import { Login } from '@/pages/Login/Login';
-import { Main } from '@/pages/Main';
+import { Main } from '@/pages/Main/Main';
 import { Mypage } from '@/pages/Mypage/Mypage';
 import { TransactionDetail } from '@/pages/TransactionDetail/TransactionDetail';
 
@@ -37,7 +37,7 @@ export const useRouter = () =>
           path: 'histories',
           element: <Histories />,
         },
-        { path: 'chat', element: <Chat /> },
+        { path: 'chat/:chatRoomId', element: <Chat /> },
         {
           path: 'auth',
           element: <Auth />,

@@ -91,5 +91,6 @@ module.exports = {
     'react/button-has-type': 'off',
     'react/jsx-one-expression-per-line': 'off',
     'no-nested-ternary': 'off',
+    'operator-linebreak': 'off',
   },
 };

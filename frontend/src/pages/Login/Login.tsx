@@ -6,7 +6,10 @@ import styles from './Login.module.scss';
 
 export function Login() {
   // TODO : login
-  const handleLogin = () => {};
+  const handleLogin = () => {
+    window.location.href =
+      'https://j11a205.p.ssafy.io/api/oauth2/authorization/kakao';
+  };
 
   return (
     <div className={styles.container}>

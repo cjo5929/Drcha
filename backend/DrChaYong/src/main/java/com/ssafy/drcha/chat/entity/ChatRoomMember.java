@@ -20,12 +20,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Table(name = "chat_room_member")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Slf4j
 public class ChatRoomMember {
 
 	@Id
@@ -62,6 +64,12 @@ public class ChatRoomMember {
 		this.member = member;
 		this.chatRoom = chatRoom;
 		this.memberRole = role;
+	}
+
+	public static ChatRoomMember  createMember(Member member, ChatRoom chatRoom, MemberRole role) {
+		ChatRoomMember chatRoomMember = new ChatRoomMember(member, chatRoom, role);
+		chatRoom.getChatRoomMembers().add(chatRoomMember);
+		return chatRoomMember;
 	}
 
 	public void incrementUnreadCount() {

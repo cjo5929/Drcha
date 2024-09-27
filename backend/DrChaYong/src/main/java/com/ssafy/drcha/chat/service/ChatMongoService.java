@@ -16,9 +16,9 @@ public class ChatMongoService {
 	private final ChatMessageRepository chatMessageRepository;
 
 	@Transactional
-	public void saveChatMessage(ChatMessage chatMessage) {
-		log.info("saveChatMessage" + chatMessage.getContent());
+	public ChatMessage saveChatMessage(ChatMessage chatMessage) {
 		chatMessageRepository.save(chatMessage);
+		return chatMessage;
 	}
 
 }

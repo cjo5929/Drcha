@@ -1,4 +1,4 @@
-package com.ssafy.drcha.global.util.api.header;
+package com.ssafy.drcha.global.api.header;
 
 import lombok.Builder;
 import lombok.Data;

@@ -1,10 +1,12 @@
-package com.ssafy.drcha.global.util.api;
+package com.ssafy.drcha.global.api;
 
-import com.ssafy.drcha.global.util.api.dto.*;
-import com.ssafy.drcha.global.util.api.header.HeaderRequest;
+import com.ssafy.drcha.global.api.dto.*;
+import com.ssafy.drcha.global.api.header.HeaderRequest;
+import com.ssafy.drcha.global.api.header.HeaderResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -29,6 +31,8 @@ public class RestClientUtil {
     private static final String BASE = "https://finopenapi.ssafy.io/ssafy/api/v1/";
     private final RestClient restClient = RestClient.create();
     private final String ACCOUNT_TYPE_UNIQUE_NO = "999-1-1caa8e4919db47"; // 싸피은행 상품
+    private final String DR_CHA = "차용박사";
+    private final String SUCCESS_CODE = "H0000";
 
     // 2.2.1 사용자 계정 생성
     public UserResponse createUser(String userId) {
@@ -82,6 +86,34 @@ public class RestClientUtil {
         return executePost(prefix + apiName, request, CreateDemandDepositAccountResponse.class).getBody();
     }
 
+    // 2.9.1 1원 송금 요청
+    public OpenAccountAuthResponse openAccountAuth(String userKey, String accountNo) {
+        String prefix = "edu/accountAuth/";
+        String apiName = "openAccountAuth";
+
+        OpenAccountAuthRequest request = OpenAccountAuthRequest.builder()
+                .headerRequest(createHeader(apiName, userKey))
+                .accountNo(accountNo)
+                .authText(DR_CHA)
+                .build();
+
+        return executePost(prefix + apiName, request, OpenAccountAuthResponse.class).getBody();
+    }
+
+    // 2.4.13 계좌 거래 내역 조회 (단건)
+    public InquireTransactionHistoryResponse inquireTransactionHistory(String userKey, String accountNo, Long transactionUniqueNo) {
+        String prefix = "edu/demandDeposit/";
+        String apiName = "inquireTransactionHistory";
+
+        InquireTransactionHistoryRequest request = InquireTransactionHistoryRequest.builder()
+                .headerRequest(createHeader(apiName, userKey))
+                .accountNo(accountNo)
+                .transactionUniqueNo(transactionUniqueNo)
+                .build();
+
+        return executePost(prefix + apiName, request, InquireTransactionHistoryResponse.class).getBody();
+    }
+
     // API 호출용 HeaderRequest 생성
     public HeaderRequest createHeader(String apiName, String userKey) {
         LocalDateTime today = LocalDateTime.now();
@@ -118,4 +150,11 @@ public class RestClientUtil {
                 .toEntity(responseType);
     }
 
+    public void validateApiResponse(HeaderResponse headerResponse) {
+        String responseCode = headerResponse.getResponseCode();
+
+        if (!SUCCESS_CODE.equals(responseCode)) {
+            throw new RuntimeException("은행 API 요청 실패");
+        }
+    }
 }

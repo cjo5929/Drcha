@@ -47,6 +47,7 @@ public class SecurityConfig {
                                 .requestMatchers("/", "/login","/api/v1/member/logout", "/error", "/oauth2/**",
                                         "/h2-console", "/swagger-ui/index.html", "/swagger",
                                         "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**",
+                                        "/api/swagger-ui.html", "/api/swagger-ui/**", "/api/api-docs", "/api/api-docs/**",
                                     "/ws/**", "/sub/**", "/pub/**")
                                 .permitAll()
                                 .requestMatchers("/api/v1/**").hasAuthority(Role.MEMBER.name())
@@ -55,11 +56,11 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth2 -> oauth2
                                 .authorizationEndpoint(authorizationEndpoint ->
-//                                        authorizationEndpoint.baseUri("/api/oauth2/authorization"))
-                                authorizationEndpoint.baseUri("/oauth2/authorization"))
+                                        authorizationEndpoint.baseUri("/api/oauth2/authorization"))
+//                                authorizationEndpoint.baseUri("/oauth2/authorization"))
                                 .redirectionEndpoint(redirectionEndpoint ->
-//                                        redirectionEndpoint.baseUri("/api/login/oauth2/code/*"))
-                                redirectionEndpoint.baseUri("/login/oauth2/code/*"))
+                                        redirectionEndpoint.baseUri("/api/login/oauth2/code/*"))
+//                                redirectionEndpoint.baseUri("/login/oauth2/code/*"))
                                 .successHandler(oAuth2LoginSuccessHandler)
                 )
                 .sessionManagement(session -> session

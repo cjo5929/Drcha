@@ -67,6 +67,15 @@ public class SwaggerConfig {
                 .build();
     }
 
+    // ! account 관련 API 모음
+    @Bean
+    public GroupedOpenApi accountApi() {
+        return GroupedOpenApi.builder()
+                .group("account")
+                .pathsToMatch("/api/v1/account/**")
+                .build();
+    }
+
     // ! chat 관련 API 모음
     @Bean
     public GroupedOpenApi chatApi() {

@@ -1,0 +1,190 @@
+@import '@/styles/theme.module.scss';
+@import '@/styles/font.module.scss';
+
+.container {
+  @include Pretendard;
+  width: 100%;
+  height: 100%;
+  border: solid 1px;
+}
+
+.header {
+  width: 100%;
+  height: 8%;
+  display: flex;
+  justify-content: space-between;
+  padding: 5%;
+  align-items: center;
+}
+
+.userinfo {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.chatcontainer {
+  width: 100%;
+  height: 82%;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+}
+
+.chatcontainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chatcontainer::-webkit-scrollbar-track {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+}
+
+.chatcontainer::-webkit-scrollbar-thumb {
+  background-color: #dedede;
+  border-radius: 10px;
+  border: 2px solid #f0f0f0;
+}
+
+.chatcontainer::-webkit-scrollbar-thumb:hover {
+  background-color: #c3c3c3;
+}
+
+.doctor {
+  width: 100%;
+  padding-left: 5%;
+  padding-right: 5%;
+  padding-top: 2.5%;
+  padding-bottom: 2.5%;
+  background-color: #b4dbff;
+  display: flex;
+}
+
+.doctorinfo {
+  display: flex;
+  flex-direction: column;
+  margin-right: 2rem;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0.06rem 0.06rem 0.13rem rgba(0, 0, 0, 0.5);
+}
+
+.doctorprofile {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.doctorbubble {
+  background-color: #eff5ff;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  font-size: 1.4rem;
+  font-weight: bold;
+  position: relative;
+  box-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.2);
+}
+
+.doctorbubblearrow {
+  position: absolute;
+  left: -0.8rem;
+  top: 1rem;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid #eff5ff;
+}
+
+.mychat,
+.partnerchat {
+  width: 100%;
+  padding-left: 5%;
+  padding-right: 5%;
+  padding-top: 2.5%;
+  padding-bottom: 2.5%;
+  display: flex;
+}
+
+.partnerchat {
+  justify-content: flex-start;
+}
+
+.mychat {
+  justify-content: flex-end;
+}
+
+.partnerbubble {
+  max-width: 70%;
+  background-color: #f8f9fe;
+  padding: 1.5rem;
+  border-radius: 0.7rem;
+  font-size: 1.4rem;
+  font-weight: bold;
+  position: relative;
+  box-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.2);
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+.partnerbubblearrow {
+  position: absolute;
+  left: -0.8rem;
+  top: 0.7rem;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid #f8f9fe;
+}
+
+.mybubble {
+  max-width: 70%;
+  background-color: #3288ff;
+  padding: 1.5rem;
+  border-radius: 0.7rem;
+  color: white;
+  font-size: 1.4rem;
+  font-weight: bold;
+  position: relative;
+  box-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.2);
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+.mybubblearrow {
+  position: absolute;
+  right: -0.8rem;
+  top: 0.7rem;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid #3288ff;
+}
+
+.chatinput {
+  width: 100%;
+  height: 10%;
+  padding-left: 5%;
+  padding-right: 5%;
+  padding-top: 3%;
+  padding-bottom: 3%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.chatinput input {
+  width: 90%;
+  height: 100%;
+}

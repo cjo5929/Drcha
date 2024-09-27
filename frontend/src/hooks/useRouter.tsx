@@ -37,7 +37,7 @@ export const useRouter = () =>
           path: 'histories',
           element: <Histories />,
         },
-        { path: 'chat', element: <Chat /> },
+        { path: 'chat/:chatRoomId', element: <Chat /> },
         {
           path: 'auth',
           element: <Auth />,

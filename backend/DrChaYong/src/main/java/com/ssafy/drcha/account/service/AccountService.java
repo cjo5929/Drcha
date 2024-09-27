@@ -31,6 +31,7 @@ public class AccountService {
         return accounts.stream().map(account -> AccountResponse.builder()
                         .bankName(account.getBankName())
                         .accountNumber(account.getAccountNumber())
+                        .accountHolderName(member.getUsername())
                         .balance(account.getBalance())
                         .isPrimary(account.isPrimary())
                         .build())

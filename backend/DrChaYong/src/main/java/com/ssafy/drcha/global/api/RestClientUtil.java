@@ -1,12 +1,12 @@
-package com.ssafy.drcha.global.util.api;
+package com.ssafy.drcha.global.api;
 
-import com.rabbitmq.client.AMQP;
-import com.ssafy.drcha.global.util.api.dto.*;
-import com.ssafy.drcha.global.util.api.header.HeaderRequest;
-import com.ssafy.drcha.global.util.api.header.HeaderResponse;
+import com.ssafy.drcha.global.api.dto.*;
+import com.ssafy.drcha.global.api.header.HeaderRequest;
+import com.ssafy.drcha.global.api.header.HeaderResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;

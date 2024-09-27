@@ -2,8 +2,8 @@ package com.ssafy.drcha.global.security.handler;
 
 import com.ssafy.drcha.account.service.AccountService;
 import com.ssafy.drcha.global.security.util.JwtUtil;
-import com.ssafy.drcha.global.util.api.RestClientUtil;
-import com.ssafy.drcha.global.util.api.dto.UserResponse;
+import com.ssafy.drcha.global.api.RestClientUtil;
+import com.ssafy.drcha.global.api.dto.UserResponse;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.ssafy.drcha.global.util.api.dto;
+package com.ssafy.drcha.global.api.dto;
 
 import lombok.Getter;
 import lombok.Setter;

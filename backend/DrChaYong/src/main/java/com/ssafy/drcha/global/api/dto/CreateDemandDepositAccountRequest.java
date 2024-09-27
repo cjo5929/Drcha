@@ -1,7 +1,7 @@
-package com.ssafy.drcha.global.util.api.dto;
+package com.ssafy.drcha.global.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ssafy.drcha.global.util.api.header.HeaderRequest;
+import com.ssafy.drcha.global.api.header.HeaderRequest;
 import lombok.Builder;
 import lombok.Data;
 

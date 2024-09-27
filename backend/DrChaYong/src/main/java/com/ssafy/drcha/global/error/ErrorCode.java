@@ -26,8 +26,13 @@ public enum ErrorCode {
 	ACCESS_TOKEN_INVALID(UNAUTHORIZED, "TOKEN-001", "유효하지 않은 토큰입니다."),
 	ACCESS_TOKEN_NOT_FOUND(NOT_FOUND, "TOKEN-002", "토큰을 찾을 수 없습니다."),
 	REFRESH_TOKEN_INVALID(UNAUTHORIZED, "TOKEN-003", "유효하지 않은 리프레시 토큰입니다."),
-	REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "TOKEN-004", "리프레시 토큰을 찾을 수 없습니다.");
+	REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "TOKEN-004", "리프레시 토큰을 찾을 수 없습니다."),
 
+	/**
+	 * Account
+	 */
+	ACCOUNT_NOT_FOUND(NOT_FOUND, "ACCOUNT-001", "계좌가 존재하지 않습니다."),
+	;
 
 	private final HttpStatus httpStatus;
 	private final String code;

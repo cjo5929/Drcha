@@ -86,9 +86,5 @@ public class ChatRoomMember {
 		resetUnreadCount();
 	}
 
-	public void toggleNotification() {
-		this.notificationEnabled = !this.notificationEnabled;
-	}
-
 
 }

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatRoomCreateRequestDTO {
+public final class ChatRoomCreateRequestDTO {
 
 	private Long creditorId;
 

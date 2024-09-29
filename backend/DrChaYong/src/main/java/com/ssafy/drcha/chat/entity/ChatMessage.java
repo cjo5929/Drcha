@@ -24,16 +24,14 @@ public class ChatMessage {
 	private String senderId;
 	private String content;
 	private LocalDateTime createdAt;
-	private boolean isRead;
 	private ChatMessageType messageType;
 
 	@Builder
-	public ChatMessage(String chatRoomId, String senderId, String content, boolean isRead, ChatMessageType messageType) {
+	public ChatMessage(String chatRoomId, String senderId, String content, ChatMessageType messageType) {
 		this.chatRoomId = chatRoomId;
 		this.senderId = senderId;
 		this.content = content;
 		this.createdAt = LocalDateTime.now();
-		this.isRead = isRead;
 		this.messageType = messageType;
 	}
 

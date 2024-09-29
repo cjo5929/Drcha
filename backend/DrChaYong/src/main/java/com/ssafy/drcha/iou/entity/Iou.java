@@ -5,24 +5,8 @@ import com.ssafy.drcha.global.basetime.BaseTimeEntity;
 import com.ssafy.drcha.iou.enums.ContractStatus;
 import com.ssafy.drcha.member.entity.Member;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "iou")
@@ -45,7 +29,7 @@ public class Iou extends BaseTimeEntity {
 	private Member debtor;
 
 	@Column(name = "iou_amount", nullable = false)
-	private long iouAmount;
+	private Long iouAmount;
 
 	@Column(name = "contract_start_date", nullable = false)
 	private LocalDateTime contractStartDate;
@@ -54,25 +38,32 @@ public class Iou extends BaseTimeEntity {
 	private LocalDateTime contractEndDate;
 
 	@Column(name = "interest_rate", nullable = false)
-	private double interestRate;
+	private Double interestRate;
 
-	@Column(name = "contract_status", nullable = false)
 	@Enumerated(EnumType.STRING)
+	@Column(name = "contract_status", nullable = false)
 	private ContractStatus contractStatus;
 
 	@Column(name = "chat_room_id", nullable = false)
 	private Long chatRoomId;
 
 	@Column(name = "notification_schedule", nullable = false)
-	private int notificationSchedule;
+	private Integer notificationSchedule;
 
+	@Column(name = "borrower_agreement", nullable = false)
+	private Boolean borrowerAgreement;
+
+	@Column(name = "lender_agreement", nullable = false)
+	private Boolean lenderAgreement;
+
+	@Column(name = "agreement_date")
+	private LocalDateTime agreementDate;
 
 	@Builder
-	private Iou(Member creditor, Member debtor, long iouAmount,
+	private Iou(Member creditor, Member debtor, Long iouAmount,
 		LocalDateTime contractStartDate, LocalDateTime contractEndDate,
-		double interestRate, ContractStatus contractStatus,
-		long chatRoomId, int notificationSchedule) {
-
+		Double interestRate, ContractStatus contractStatus,
+		Long chatRoomId, Integer notificationSchedule) {
 		this.creditor = creditor;
 		this.debtor = debtor;
 		this.iouAmount = iouAmount;
@@ -82,11 +73,34 @@ public class Iou extends BaseTimeEntity {
 		this.contractStatus = contractStatus;
 		this.chatRoomId = chatRoomId;
 		this.notificationSchedule = notificationSchedule;
-
+		this.borrowerAgreement = false;
+		this.lenderAgreement = false;
 	}
 
+	public void updateLoanInfo(Long iouAmount, Double interestRate, LocalDateTime contractEndDate) {
+		this.iouAmount = iouAmount;
+		this.interestRate = interestRate;
+		this.contractEndDate = contractEndDate;
+	}
 
 	public void updateContractStatus(ContractStatus newStatus) {
 		this.contractStatus = newStatus;
+	}
+
+	public void setBorrowerAgreement(Boolean agreement) {
+		this.borrowerAgreement = agreement;
+		this.checkAndSetAgreementDate();
+	}
+
+	public void setLenderAgreement(Boolean agreement) {
+		this.lenderAgreement = agreement;
+		this.checkAndSetAgreementDate();
+	}
+
+	private void checkAndSetAgreementDate() {
+		if (this.borrowerAgreement && this.lenderAgreement && this.agreementDate == null) {
+			this.agreementDate = LocalDateTime.now();
+			this.contractStatus = ContractStatus.ACTIVE;
+		}
 	}
 }

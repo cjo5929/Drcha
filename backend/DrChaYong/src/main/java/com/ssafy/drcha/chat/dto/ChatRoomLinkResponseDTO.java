@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ChatRoomLinkResponseDTO {
+public final class ChatRoomLinkResponseDTO {
 	private String inviteLink;
 
 	public static ChatRoomLinkResponseDTO from(ChatRoom chatRoom) {

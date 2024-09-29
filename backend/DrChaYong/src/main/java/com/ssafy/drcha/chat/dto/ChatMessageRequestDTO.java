@@ -5,12 +5,10 @@ import com.ssafy.drcha.chat.enums.ChatMessageType;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @NoArgsConstructor
-public class ChatMessageRequestDTO {
+public final class ChatMessageRequestDTO {
 
 	private String chatRoomId;
 	private String content;
@@ -22,8 +20,8 @@ public class ChatMessageRequestDTO {
 			.chatRoomId(chatRoomId)
 			.senderId(senderId)
 			.content(content)
-			.isRead(false)
 			.messageType(messageType)
 			.build();
 	}
+
 }

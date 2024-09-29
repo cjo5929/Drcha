@@ -1,5 +1,7 @@
 package com.ssafy.drcha.chat.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,7 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.drcha.chat.dto.ChatEnterResponseDTO;
+import com.ssafy.drcha.chat.dto.ChatMessageResponseDTO;
 import com.ssafy.drcha.chat.dto.ChatRoomLinkResponseDTO;
+import com.ssafy.drcha.chat.dto.ChatRoomListResponseDTO;
+import com.ssafy.drcha.chat.enums.MemberRole;
 import com.ssafy.drcha.chat.service.ChatRoomService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,7 +44,7 @@ public class ChatController {
 				schema = @Schema(implementation = ErrorResponse.class)
 			)),
 	})
-	@PostMapping("")
+	@PostMapping
 	public ResponseEntity<ChatRoomLinkResponseDTO> createChatRoom(@AuthenticationPrincipal UserDetails userDetails) {
 		return ResponseEntity.ok(chatRoomService.createChatRoom(userDetails.getUsername()));
 	}
@@ -65,9 +71,54 @@ public class ChatController {
 	@GetMapping("/{chatRoomId}/join")
 	public ResponseEntity<Void> joinChatRoom(@PathVariable Long chatRoomId, @AuthenticationPrincipal UserDetails userDetails) {
 		chatRoomService.addDebtorToChatRoom(chatRoomId, userDetails.getUsername());
-
 		return ResponseEntity.ok().build();
 	}
 
+	@Operation(summary = "빌려준 채팅방 목록 조회", description = "사용자가 빌려준 모든 채팅방의 목록을 조회합니다.")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "채팅방 목록 조회 성공",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ChatRoomListResponseDTO.class))),
+		@ApiResponse(responseCode = "401", description = "사용자 인증 필요",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ErrorResponse.class)))
+	})
+	@GetMapping("/lent")
+	public ResponseEntity<List<ChatRoomListResponseDTO>> getLentChatRoomList(@AuthenticationPrincipal UserDetails userDetails) {
+		return ResponseEntity.ok(chatRoomService.getChatRoomListByRole(userDetails.getUsername(), MemberRole.CREDITOR));
+	}
 
+	@Operation(summary = "빌린 채팅방 목록 조회", description = "사용자가 빌린 모든 채팅방의 목록을 조회합니다.")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "채팅방 목록 조회 성공",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ChatRoomListResponseDTO.class))),
+		@ApiResponse(responseCode = "401", description = "사용자 인증 필요",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ErrorResponse.class)))
+	})
+	@GetMapping("/borrowed")
+	public ResponseEntity<List<ChatRoomListResponseDTO>> getBorrowedChatRoomList(@AuthenticationPrincipal UserDetails userDetails) {
+		return ResponseEntity.ok(chatRoomService.getChatRoomListByRole(userDetails.getUsername(), MemberRole.DEBTOR));
+	}
+
+	@Operation(summary = "채팅방 입장", description = "사용자가 특정 채팅방에 입장하여 메시지를 조회합니다.")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "채팅방 입장 및 메시지 조회 성공",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ChatMessageResponseDTO.class))),
+		@ApiResponse(responseCode = "401", description = "사용자 인증 필요",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ErrorResponse.class))),
+		@ApiResponse(responseCode = "404", description = "채팅방 또는 사용자를 찾을 수 없음",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ErrorResponse.class)))
+	})
+	@GetMapping("/{chatRoomId}/enter")
+	public ResponseEntity<List<ChatEnterResponseDTO>> enterChatRoom(
+		@PathVariable Long chatRoomId,
+		@AuthenticationPrincipal UserDetails userDetails) {
+
+		return ResponseEntity.ok(chatRoomService.enterChatRoom(chatRoomId, userDetails.getUsername()));
+	}
 }

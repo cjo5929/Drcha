@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 import com.ssafy.drcha.chat.entity.ChatRoom;
+import com.ssafy.drcha.chat.entity.ChatRoomMember;
+import com.ssafy.drcha.iou.entity.Iou;
 import com.ssafy.drcha.iou.enums.ContractStatus;
 import com.ssafy.drcha.member.entity.Member;
 
@@ -21,18 +23,43 @@ public final class ChatRoomListResponseDTO {
 	private String lastMessage;
 	private Double iouAmount;
 	private Long daysUntilDue;
+	private String email;
 	private int unreadCount;
 
-	public static ChatRoomListResponseDTO from(ChatRoom chatRoom, Member member, int unreadCount, ContractStatus contractStatus, Double iouAmount, LocalDateTime contractEndDate) {
+	public static ChatRoomListResponseDTO from(ChatRoomMember chatRoomMember, Iou iou) {
+		ChatRoom chatRoom = chatRoomMember.getChatRoom();
+		// 상대방 Member 찾기
+		Member opponent = chatRoom.getChatRoomMembers().stream()
+			.filter(member -> !member.getMember().getUsername().equals(chatRoomMember.getMember().getUsername()))
+			.map(ChatRoomMember::getMember)
+			.findFirst()
+			.orElseThrow(() -> new IllegalArgumentException("상대방 사용자를 찾을 수 없습니다."));
+
 		return new ChatRoomListResponseDTO(
 			chatRoom.getChatRoomId(),
-			member.getUsername(),
-			member.getAvatarUrl(),
-			contractStatus.name(),
+			opponent.getUsername(),
+			opponent.getAvatarUrl(),
+			getContractStatus(iou),
 			chatRoom.getLastMessage(),
-			iouAmount,
-			contractEndDate != null ? ChronoUnit.DAYS.between(LocalDateTime.now(), contractEndDate) : null,
-			unreadCount
+			getIouAmount(iou),
+			getDaysUntilDue(iou),
+			opponent.getEmail(),
+			chatRoomMember.getUnreadCount()
 		);
+	}
+
+	private static String getContractStatus(Iou iou) {
+		return (iou != null) ? iou.getContractStatus().name() : ContractStatus.DRAFTING.name();
+	}
+
+	private static Double getIouAmount(Iou iou) {
+		return (iou != null) ? iou.getIouAmount().doubleValue() : null;
+	}
+
+	private static Long getDaysUntilDue(Iou iou) {
+		if (iou != null && iou.getContractEndDate() != null) {
+			return ChronoUnit.DAYS.between(LocalDateTime.now(), iou.getContractEndDate());
+		}
+		return null;
 	}
 }

@@ -10,6 +10,8 @@ import com.ssafy.drcha.global.error.type.BadRequestException;
 import com.ssafy.drcha.global.error.type.BusinessException;
 import com.ssafy.drcha.global.error.type.DataNotFoundException;
 import com.ssafy.drcha.global.error.type.ForbiddenException;
+import com.ssafy.drcha.global.error.type.NeedsRegistrationException;
+import com.ssafy.drcha.global.error.type.NeedsVerificationException;
 import com.ssafy.drcha.global.error.type.UserNotFoundException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +24,6 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(ErrorResponse.of(errorCode.getCode(), errorCode.getMessage()),
 			errorCode.getHttpStatus());
 	}
-
 
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException e) {
@@ -55,6 +56,21 @@ public class GlobalExceptionHandler {
 		return createErrorResponse(e.getErrorCode());
 	}
 
+	@ExceptionHandler(NeedsRegistrationException.class)
+	public ResponseEntity<Void> handleNeedsRegistrationException(NeedsRegistrationException e) {
+		log.error("NeedsRegistrationException: ", e);
+		return ResponseEntity.status(HttpStatus.FOUND)
+			.header("Location", e.getInvitationLink())
+			.build();
+	}
+
+	@ExceptionHandler(NeedsVerificationException.class)
+	public ResponseEntity<Void> handleNeedsVerificationException(NeedsVerificationException e) {
+		log.error("NeedsVerificationException: ", e);
+		return ResponseEntity.status(HttpStatus.FOUND)
+			.header("Location", "/verify?invitationLink=" + e.getInvitationLink())
+			.build();
+	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleException(Exception e) {

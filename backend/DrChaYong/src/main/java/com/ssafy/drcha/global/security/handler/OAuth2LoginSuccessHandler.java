@@ -1,18 +1,9 @@
 package com.ssafy.drcha.global.security.handler;
 
-import com.ssafy.drcha.account.service.AccountService;
-import com.ssafy.drcha.global.security.util.JwtUtil;
-import com.ssafy.drcha.global.api.RestClientUtil;
-import com.ssafy.drcha.global.api.dto.UserResponse;
-import com.ssafy.drcha.member.entity.Member;
-import com.ssafy.drcha.member.service.MemberService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -20,6 +11,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+
+import com.ssafy.drcha.account.service.AccountService;
+import com.ssafy.drcha.global.api.RestClientUtil;
+import com.ssafy.drcha.global.api.dto.UserResponse;
+import com.ssafy.drcha.global.security.util.JwtUtil;
+import com.ssafy.drcha.member.entity.Member;
+import com.ssafy.drcha.member.service.MemberService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component

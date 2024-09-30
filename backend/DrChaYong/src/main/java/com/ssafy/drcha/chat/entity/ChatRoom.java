@@ -3,6 +3,7 @@ package com.ssafy.drcha.chat.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.ssafy.drcha.chat.enums.MemberRole;
 import com.ssafy.drcha.global.basetime.BaseTimeEntity;
@@ -43,6 +44,9 @@ public class ChatRoom extends BaseTimeEntity {
 	@Column(name = "last_message_time")
 	private LocalDateTime lastMessageTime;
 
+	@Column(name = "invitation_link", unique = true)
+	private String invitationLink;
+
 	@OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ChatRoomMember> chatRoomMembers = new ArrayList<>();
 
@@ -52,6 +56,7 @@ public class ChatRoom extends BaseTimeEntity {
 		this.lastMessage = lastMessage;
 		this.lastMessageTime = lastMessageTime;
 		this.chatRoomMembers = new ArrayList<>();
+		this.invitationLink = generateInvitationLink();
 	}
 
 	public void updateLastMessage(String messageId, String message, LocalDateTime messageTime) {
@@ -65,7 +70,8 @@ public class ChatRoom extends BaseTimeEntity {
 		this.chatRoomMembers.add(chatRoomMember);
 	}
 
-	public void removeMember(ChatRoomMember member) {
-		chatRoomMembers.remove(member);
+	private String generateInvitationLink() {
+		return UUID.randomUUID().toString();
 	}
+
 }

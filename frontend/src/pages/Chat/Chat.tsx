@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import HamburgerSVG from '@/assets/icons/hamburger.svg?react';
 import LeftarrowSVG from '@/assets/icons/leftArrow.svg?react';
@@ -9,7 +10,17 @@ import { Menu } from './Menu';
 
 export function Chat() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [modalType, setModalType] = useState<'create' | 'check' | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  const handleOpenModal = (type: 'create' | 'check') => {
+    setModalType(type);
+  };
+
+  const handleCloseModal = () => {
+    setModalType(null);
+  };
 
   useEffect(() => {
     // 햄버거 메뉴판 바깥 클릭 방지
@@ -23,11 +34,17 @@ export function Chat() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [menuRef]);
+
   return (
     <div className={styles.container}>
       {/* Header */}
       <div className={styles.header}>
-        <LeftarrowSVG fill="blue" />
+        <LeftarrowSVG
+          fill="blue"
+          onClick={() => {
+            navigate(-1);
+          }}
+        />
         <div className={styles.userinfo}>조현수</div>
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -55,7 +72,11 @@ export function Chat() {
       )}
       {/* 메뉴 */}
       <div ref={menuRef}>
-        <Menu isOpen={isMenuOpen} />
+        <Menu
+          isOpen={isMenuOpen}
+          onClose={() => setIsMenuOpen(false)}
+          onOpenModal={handleOpenModal}
+        />
       </div>
     </div>
   );

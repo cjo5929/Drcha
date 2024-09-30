@@ -87,13 +87,13 @@ public class Iou extends BaseTimeEntity {
 		this.contractStatus = newStatus;
 	}
 
-	public void setBorrowerAgreement(Boolean agreement) {
-		this.borrowerAgreement = agreement;
+	public void borrowerAgree() {
+		this.borrowerAgreement = true;
 		this.checkAndSetAgreementDate();
 	}
 
-	public void setLenderAgreement(Boolean agreement) {
-		this.lenderAgreement = agreement;
+	public void lenderAgree() {
+		this.lenderAgreement = true;
 		this.checkAndSetAgreementDate();
 	}
 

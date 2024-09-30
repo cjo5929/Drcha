@@ -27,7 +27,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/chat")
+@RequestMapping("ws/api/v1/chat")
 @RequiredArgsConstructor
 public class ChatController {
 
@@ -47,31 +47,6 @@ public class ChatController {
 	@PostMapping
 	public ResponseEntity<ChatRoomLinkResponseDTO> createChatRoom(@AuthenticationPrincipal UserDetails userDetails) {
 		return ResponseEntity.ok(chatRoomService.createChatRoom(userDetails.getUsername()));
-	}
-
-	@Operation(summary = "채팅방 참여", description = "초대 링크를 클릭하여 채팅방에 참여합니다.")
-	@ApiResponses({
-		@ApiResponse(responseCode = "200", description = "채팅방 참여 성공",
-			content = @Content(mediaType = "application/json",
-				schema = @Schema(implementation = String.class)
-			)),
-		@ApiResponse(responseCode = "409", description = "채무자가 이미 채팅방에 등록된 경우",
-			content = @Content(mediaType = "application/json",
-				schema = @Schema(implementation = String.class)
-			)),
-		@ApiResponse(responseCode = "401", description = "사용자 인증 필요",
-			content = @Content(mediaType = "application/json",
-				schema = @Schema(implementation = String.class)
-			)),
-		@ApiResponse(responseCode = "404", description = "채팅방을 찾을 수 없음",
-			content = @Content(mediaType = "application/json",
-				schema = @Schema(implementation = String.class)
-			))
-	})
-	@GetMapping("/{chatRoomId}/join")
-	public ResponseEntity<Void> joinChatRoom(@PathVariable Long chatRoomId, @AuthenticationPrincipal UserDetails userDetails) {
-		chatRoomService.addDebtorToChatRoom(chatRoomId, userDetails.getUsername());
-		return ResponseEntity.ok().build();
 	}
 
 	@Operation(summary = "빌려준 채팅방 목록 조회", description = "사용자가 빌려준 모든 채팅방의 목록을 조회합니다.")
@@ -121,4 +96,31 @@ public class ChatController {
 
 		return ResponseEntity.ok(chatRoomService.enterChatRoom(chatRoomId, userDetails.getUsername()));
 	}
+
+	@Operation(summary = "초대 링크로 채팅방 입장", description = "사용자가 초대 링크를 통해 채팅방에 입장하여 메시지를 조회합니다.")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "채팅방 입장 및 메시지 조회 성공",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ChatEnterResponseDTO.class))),
+		@ApiResponse(responseCode = "302", description = "회원가입 또는 본인인증 필요로 인한 리다이렉트",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ErrorResponse.class))),
+		@ApiResponse(responseCode = "401", description = "사용자 인증 필요",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ErrorResponse.class))),
+		@ApiResponse(responseCode = "404", description = "채팅방 또는 사용자를 찾을 수 없음",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ErrorResponse.class))),
+		@ApiResponse(responseCode = "400", description = "잘못된 요청",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ErrorResponse.class)))
+	})
+	@GetMapping("/{invitationLink}/link/enter")
+	public ResponseEntity<List<ChatEnterResponseDTO>> enterChatRoomViaInvitationLink(
+		@PathVariable String invitationLink,
+		@AuthenticationPrincipal UserDetails userDetails) {
+		return ResponseEntity.ok(chatRoomService.enterChatRoomViaLink(invitationLink, userDetails));
+	}
 }
+
+

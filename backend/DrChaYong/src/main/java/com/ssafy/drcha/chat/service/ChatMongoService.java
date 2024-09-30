@@ -3,8 +3,10 @@ package com.ssafy.drcha.chat.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.drcha.chat.dto.ChatMessageParam;
 import com.ssafy.drcha.chat.entity.ChatMessage;
 import com.ssafy.drcha.chat.repository.ChatMessageRepository;
 import com.ssafy.drcha.chat.repository.ChatRoomMemberRepository;
@@ -37,10 +39,18 @@ public class ChatMongoService {
 			.collect(Collectors.joining("\n"));
 	}
 
-	public List<ChatMessage> getChatMessages(String chatRoomId) {
-		return chatMessageRepository.findByChatRoomId(chatRoomId);
+	/*
+	 무한 스크롤
+	 */
+	public List<ChatMessage> getChatScrollMessages(String chatRoomId, ChatMessageParam param) {
+		Long topId = param != null ? param.getTop() : null;
+		return chatMessageRepository.getChatMessagesAllByChatRoomAndTopId(chatRoomId, topId);
 	}
 
-
-
+	/*
+	  채팅방 입장 시 메시지 호출
+	 */
+	public List<ChatMessage> getRecentChatMessages(String chatRoomId, int limit) {
+		return chatMessageRepository.findByChatRoomIdOrderByCreatedAtDesc(chatRoomId, PageRequest.of(0, limit));
+	}
 }

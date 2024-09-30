@@ -12,12 +12,12 @@ export function Chat() {
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // 햄버거 메뉴판 바깥 클릭 방지
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsMenuOpen(false);
       }
     }
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);

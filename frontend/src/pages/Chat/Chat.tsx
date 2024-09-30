@@ -1,22 +1,61 @@
+import { useState, useRef, useEffect } from 'react';
+
+import HamburgerSVG from '@/assets/icons/hamburger.svg?react';
+import LeftarrowSVG from '@/assets/icons/leftArrow.svg?react';
+
 import styles from './Chat.module.scss';
 import { ChatContent } from './ChatContent';
-import { Header } from './Header';
+import { Menu } from './Menu';
 
 export function Chat() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [menuRef]);
   return (
     <div className={styles.container}>
-      <Header />
+      {/* Header */}
+      <div className={styles.header}>
+        <LeftarrowSVG fill="blue" />
+        <div className={styles.userinfo}>조현수</div>
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className={styles.hamburgerButton}
+        >
+          <HamburgerSVG />
+        </button>
+      </div>
+      {/* 채팅 내용 */}
       <ChatContent />
+      {/* 채팅 입력창 */}
       <div className={styles.chatinput}>
         <textarea
           className={styles.inputField}
-          placeholder="Type your message..."
+          placeholder="메세지를 입력하세요."
           //   value={message}
           //   onChange={(e) => setMessage(e.target.value)}
           //   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
           rows={1}
         />
-        <button className={styles.sendButton}>➤</button>
+      </div>
+      {/* 오버레이 */}
+      {isMenuOpen && (
+        <div className={styles.overlay} onClick={() => setIsMenuOpen(false)} />
+      )}
+      {/* 메뉴 */}
+      <div ref={menuRef}>
+        <Menu isOpen={isMenuOpen} />
       </div>
     </div>
   );

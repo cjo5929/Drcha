@@ -92,5 +92,7 @@ module.exports = {
     'react/jsx-one-expression-per-line': 'off',
     'no-nested-ternary': 'off',
     'operator-linebreak': 'off',
+    'jsx-a11y/click-events-have-key-events': 'off',
+    'jsx-a11y/no-static-element-interactions': 'off',
   },
 };

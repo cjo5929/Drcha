@@ -1,5 +1,6 @@
 package com.ssafy.drcha.iou.entity;
 
+import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
 import java.time.LocalDateTime;
 import com.ssafy.drcha.global.basetime.BaseTimeEntity;
 import com.ssafy.drcha.iou.enums.ContractStatus;
@@ -58,6 +59,9 @@ public class Iou extends BaseTimeEntity {
 
 	@Column(name = "agreement_date")
 	private LocalDateTime agreementDate;
+
+	@OneToOne(mappedBy = "iou", cascade = CascadeType.ALL, orphanRemoval = true)
+	private VirtualAccount virtualAccount;
 
 	@Builder
 	private Iou(Member creditor, Member debtor, Long iouAmount,

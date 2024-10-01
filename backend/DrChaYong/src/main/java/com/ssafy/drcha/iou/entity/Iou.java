@@ -107,4 +107,12 @@ public class Iou extends BaseTimeEntity {
 			this.contractStatus = ContractStatus.ACTIVE;
 		}
 	}
+
+	// ======== 가상계좌와의 연관관계 메서드 ======= //
+	public void linkVirtualAccount(VirtualAccount virtualAccount) {
+		this.virtualAccount = virtualAccount;
+		if (virtualAccount != null && virtualAccount.getIou() != this) {
+			virtualAccount.linkIou(this);
+		}
+	}
 }

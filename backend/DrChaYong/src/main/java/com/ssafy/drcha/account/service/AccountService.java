@@ -20,7 +20,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -55,7 +57,7 @@ public class AccountService {
         accountRepository.save(Account.createAccount(member, response.getRec().getBankCode(), response.getRec().getAccountNo()));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public SendVerificationCodeResponse sendVerificationCode(String email) {
         String userKey = getMemberByEmail(email).getUserKey();
         List<AccountResponse> accountList = getAccountList(email);
@@ -79,18 +81,41 @@ public class AccountService {
                 3600,
                 TimeUnit.SECONDS
         );
-        return new SendVerificationCodeResponse(email, verificationCode);
+        return new SendVerificationCodeResponse(accountNo, verificationCode);
     }
 
     private String getVerificationCode(String userKey, String accountNo, Long transactionUniqueNo) {
         InquireTransactionHistoryResponse response = restClientUtil.inquireTransactionHistory(userKey, accountNo, transactionUniqueNo);
+        log.info("계좌 잔액 조회 -> {}", response.getRec().getTransactionBalance());
+        log.info("계좌 잔액 조회 -> {}", response.getRec().getTransactionAfterBalance());
+        changeBalance(accountNo, new BigDecimal(response.getRec().getTransactionAfterBalance()));
         return response.getRec().getTransactionSummary();
+    }
+
+    private void changeBalance(String accountNo, BigDecimal transactionBalance) {
+        Account account = accountRepository.findByAccountNumber(accountNo)
+                .orElseThrow(() -> new AccountNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND));
+        account.changeBalance(transactionBalance);
     }
 
     @Transactional(readOnly = true)
     public VerifyCodeResponse verifyCode(String email, String code) {
         String verificationCode = redisTemplate.opsForValue().get("code:" + email);
         return new VerifyCodeResponse(email, verificationCode != null && verificationCode.equals(code));
+    }
+
+    @Transactional(readOnly = true)
+    public AccountResponse getDetail(String username) {
+        Member member = getMemberByEmail(username); // 멤버 찾기
+        Account account = accountRepository.findByMember(member)
+                .orElseThrow(() -> new AccountNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND));
+        return AccountResponse.builder()
+                .accountHolderName(member.getUsername())
+                .accountNumber(account.getAccountNumber())
+                .balance(account.getBalance())
+                .bankName(account.getBankName())
+                .isPrimary(account.isPrimary())
+                .build();
     }
 
     private Member getMemberByEmail(String email) {

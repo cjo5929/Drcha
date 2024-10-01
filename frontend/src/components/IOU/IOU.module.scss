@@ -3,10 +3,10 @@
 
 .container {
   @include Pretendard;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: start;
   font-size: 1.8rem;
 
   .header {
@@ -16,43 +16,51 @@
     justify-content: space-between;
   }
 
-  .title {
-    padding: 2rem 0;
-    font-size: 3rem;
-    font-weight: bold;
-  }
-
-  .description {
-    padding: 2rem 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    line-height: 2.4rem;
-  }
-
-  .content {
+  .iou {
     width: 100%;
-    padding: 2rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: 2.5rem;
+    justify-content: center;
+    align-items: center;
 
-    .detail {
-      display: flex;
-      justify-content: space-between;
+    .title {
+      padding: 2rem 0;
+      font-size: 3rem;
+      font-weight: bold;
     }
-  }
 
-  .agreement {
-    width: 100%;
-    padding: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 23px;
-    font-weight: bold;
-    color: #1c5ad4;
+    .description {
+      padding: 2rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 2.4rem;
+    }
+
+    .content {
+      width: 100%;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 2.5rem;
+
+      .detail {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+
+    .agreement {
+      width: 100%;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 23px;
+      font-weight: bold;
+      color: #1c5ad4;
+    }
   }
 }
 

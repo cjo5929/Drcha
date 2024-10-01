@@ -3,6 +3,7 @@ package com.ssafy.drcha.chat.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -42,14 +43,13 @@ public class ChatMongoService {
 	/*
 	 무한 스크롤
 	 */
-	public List<ChatMessage> getChatScrollMessages(String chatRoomId, ChatMessageParam param) {
-		Long topId = param != null ? param.getTop() : null;
-		return chatMessageRepository.getChatMessagesAllByChatRoomAndTopId(chatRoomId, topId);
+	public Page<ChatMessage> getChatScrollMessages(String chatRoomId, ChatMessageParam param) {
+		int page = param.getPage() != 0 ? param.getPage() : 0;
+		int size = param.getSize() != 0 ? param.getSize() : 20;
+		return chatMessageRepository.findByRoomIdWithPaging(chatRoomId, page, size);
 	}
 
-	/*
-	  채팅방 입장 시 메시지 호출
-	 */
+
 	public List<ChatMessage> getRecentChatMessages(String chatRoomId, int limit) {
 		return chatMessageRepository.findByChatRoomIdOrderByCreatedAtDesc(chatRoomId, PageRequest.of(0, limit));
 	}

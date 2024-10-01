@@ -5,12 +5,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ssafy.drcha.chat.dto.ChatEnterResponseDTO;
 import com.ssafy.drcha.chat.dto.ChatMessageParam;
+import com.ssafy.drcha.chat.dto.ChatMessageResponseDTO;
 import com.ssafy.drcha.chat.dto.ChatRoomEntryStatus;
 import com.ssafy.drcha.chat.dto.ChatRoomLinkResponseDTO;
 import com.ssafy.drcha.chat.dto.ChatRoomListResponseDTO;
@@ -72,19 +73,20 @@ public class ChatRoomService {
 	}
 
 	@Transactional
-	public List<ChatEnterResponseDTO> enterChatRoom(Long chatRoomId, String email) {
+	public List<ChatMessageResponseDTO> enterChatRoom(Long chatRoomId, String email) {
 		ChatRoom chatRoom = findChatRoomById(chatRoomId);
 		Member member = findMemberByEmail(email);
 		ChatRoomMember chatRoomMember = findChatRoomMember(chatRoom, member);
-		List<ChatMessage> messages = chatMongoService.getRecentChatMessages(chatRoomId.toString(), 20);
-		updateLastReadMessage(chatRoomMember, messages);
+		ChatMessageParam param = new ChatMessageParam(0, 20);
+		Page<ChatMessage> messages = chatMongoService.getChatScrollMessages(chatRoomId.toString(), param);
+		updateLastReadMessage(chatRoomMember, messages.getContent());
 		return messages.stream()
-			.map(chatMessage -> ChatEnterResponseDTO.from(chatMessage, member.getAvatarUrl()))
+			.map(ChatMessageResponseDTO::from)
 			.collect(Collectors.toList());
 	}
 
 	@Transactional
-	public List<ChatEnterResponseDTO> enterChatRoomViaLink(String invitationLink, UserDetails userDetails) {
+	public List<ChatMessageResponseDTO> enterChatRoomViaLink(String invitationLink, UserDetails userDetails) {
 		ChatRoomEntryStatus entryStatus = processEntryRequest(invitationLink, userDetails.getUsername());
 
 		if (entryStatus.isNeedsRegistration()) {
@@ -102,14 +104,15 @@ public class ChatRoomService {
 
 		ChatRoomMember chatRoomMember = addDebtorToChatRoom(chatRoom, debtor);
 
-		List<ChatMessage> messages = chatMongoService.getRecentChatMessages(chatRoom.getChatRoomId().toString(), 20);
+		ChatMessageParam param = new ChatMessageParam(0, 20);
+		Page<ChatMessage> messages = chatMongoService.getChatScrollMessages(chatRoom.getChatRoomId().toString(), param);
 		ChatMessage enterMessage = createAndSaveEnterMessage(chatRoom, debtor);
-		messages.add(enterMessage);
+		messages.getContent().add(enterMessage);
 
-		updateLastReadMessage(chatRoomMember, messages);
+		updateLastReadMessage(chatRoomMember, messages.getContent());
 
 		return messages.stream()
-			.map(chatMessage -> ChatEnterResponseDTO.from(chatMessage, debtor.getAvatarUrl()))
+			.map(ChatMessageResponseDTO::from)
 			.collect(Collectors.toList());
 	}
 
@@ -132,13 +135,13 @@ public class ChatRoomService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ChatEnterResponseDTO> loadMoreMessages(Long chatRoomId, String email, ChatMessageParam param) {
+	public List<ChatMessageResponseDTO> loadMoreMessages(Long chatRoomId, String email, ChatMessageParam param) {
 		Member member = findMemberByEmail(email);
 
-		List<ChatMessage> messages = chatMongoService.getChatScrollMessages(chatRoomId.toString(), param);
+		Page<ChatMessage> messages = chatMongoService.getChatScrollMessages(chatRoomId.toString(), param);
 
 		return messages.stream()
-			.map(chatMessage -> ChatEnterResponseDTO.from(chatMessage, member.getAvatarUrl()))
+			.map(ChatMessageResponseDTO::from)
 			.collect(Collectors.toList());
 	}
 
@@ -200,8 +203,8 @@ public class ChatRoomService {
 
 	private Member findOpponentMember(ChatRoom chatRoom, Member currentMember) {
 		return chatRoom.getChatRoomMembers().stream()
-			.filter(member -> !member.getMember().equals(currentMember))
 			.map(ChatRoomMember::getMember)
+			.filter(member -> !member.equals(currentMember))
 			.findFirst()
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 	}

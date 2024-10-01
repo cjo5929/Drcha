@@ -17,6 +17,8 @@ public final class ChatMessageResponseDTO {
 	private String senderId;
 	private ChatMessageType messageType;
 	private LocalDateTime createdAt;
+	private String avatarUrl;
+
 
 	public static ChatMessageResponseDTO from(ChatMessage chatMessage) {
 		return new ChatMessageResponseDTO(
@@ -25,7 +27,8 @@ public final class ChatMessageResponseDTO {
 			chatMessage.getContent(),
 			chatMessage.getSenderId(),
 			chatMessage.getMessageType(),
-			chatMessage.getCreatedAt()
+			chatMessage.getCreatedAt(),
+			chatMessage.getAvatarUrl()
 		);
 	}
 

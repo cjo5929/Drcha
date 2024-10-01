@@ -10,7 +10,4 @@ public class ChatRoomEntryStatus {
 	private final boolean needsRegistration;
 	private final boolean needsVerification;
 
-	public boolean isReadyToEnter() {
-		return !needsRegistration && !needsVerification;
-	}
 }

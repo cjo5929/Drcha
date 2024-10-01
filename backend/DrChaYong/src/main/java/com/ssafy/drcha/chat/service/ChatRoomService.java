@@ -185,7 +185,7 @@ public class ChatRoomService {
 		ChatRoom chatRoom = chatRoomMember.getChatRoom();
 		Member currentMember = chatRoomMember.getMember();
 		Member opponent = findOpponentMember(chatRoom, currentMember);
-		Iou iou = iouRepository.findLatestByChatRoomId(chatRoom.getChatRoomId()).orElse(null);
+		Iou iou = iouRepository.findLatestByChatRoomId(chatRoom).orElse(null);
 
 		String contractStatus = getContractStatus(iou);
 		Double iouAmount = getIouAmount(iou);

@@ -1,20 +1,27 @@
+/* eslint-disable @typescript-eslint/indent */
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import HamburgerSVG from '@/assets/icons/hamburger.svg?react';
 import LeftarrowSVG from '@/assets/icons/leftArrow.svg?react';
+import { CheckIouModal } from '@/components/Modal/CheckIouModal';
+import { CorrectionIouModal } from '@/components/Modal/CorrectionIouModal';
+import { CreateIouModal } from '@/components/Modal/CreateIouModal';
 
 import styles from './Chat.module.scss';
 import { ChatContent } from './ChatContent';
 import { Menu } from './Menu';
+import { SendButton } from './SendButton';
 
 export function Chat() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [modalType, setModalType] = useState<'create' | 'check' | null>(null);
+  const [modalType, setModalType] = useState<
+    'create' | 'correction' | 'check' | null
+  >(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const handleOpenModal = (type: 'create' | 'check') => {
+  const handleOpenModal = (type: 'create' | 'correction' | 'check') => {
     setModalType(type);
   };
 
@@ -65,6 +72,7 @@ export function Chat() {
           //   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
           rows={1}
         />
+        <SendButton />
       </div>
       {/* 오버레이 */}
       {isMenuOpen && (
@@ -78,6 +86,27 @@ export function Chat() {
           onOpenModal={handleOpenModal}
         />
       </div>
+
+      {/* Modals */}
+      {modalType === 'create' && (
+        <CreateIouModal
+          isOpen={modalType === 'create'}
+          onClose={handleCloseModal}
+        />
+      )}
+      {modalType === 'correction' && (
+        <CorrectionIouModal
+          isOpen={modalType === 'correction'}
+          onClose={handleCloseModal}
+        />
+      )}
+
+      {modalType === 'check' && (
+        <CheckIouModal
+          isOpen={modalType === 'check'}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 }

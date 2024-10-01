@@ -94,7 +94,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         }
 
         userKey = userResponse.getUserKey();
+        Member member = memberService.saveOrUpdateMember(name, email, avatarUrl, userKey);
         try {
+            log.info("회원가입 중 이메일 -> {}", email);
             accountService.saveNewBankAccount(email);
             log.info("새로운 계좌가 생성되었습니다: {}", email);
         } catch (Exception e) {
@@ -102,7 +104,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         }
 
         // 3. 얻은 userKey를 저장한 Member 객체 반환
-        return memberService.saveOrUpdateMember(name, email, avatarUrl, userKey);
+        return member;
     }
 
     //== build ==//

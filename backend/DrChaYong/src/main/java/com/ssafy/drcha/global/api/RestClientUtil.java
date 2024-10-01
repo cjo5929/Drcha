@@ -114,6 +114,89 @@ public class RestClientUtil {
         return executePost(prefix + apiName, request, InquireTransactionHistoryResponse.class).getBody();
     }
 
+    // ======= 거래 프로세스에 필요한 API 목록 ======= //
+
+    // ! 2.4.8 계좌 출금
+    public WithdrawResponse withdraw(String userKey, String accountNo, Long transactionBalance,
+                                     String transactionSummary) {
+        String prefix = "edu/demandDeposit/";
+        String apiName = "updateDemandDepositAccountWithdrawal";
+
+        WithdrawRequest request = WithdrawRequest.builder()
+                 .headerRequest(createHeader(apiName, userKey))
+                 .accountNo(accountNo)
+                 .transactionBalance(transactionBalance)
+                 .transactionSummary(transactionSummary)
+                 .build();
+
+        return executePost(prefix + apiName, request, WithdrawResponse.class).getBody();
+    }
+
+    // ! 2.4.9 계좌 입금 API
+    public DepositResponse deposit(String userKey,         // 사용자 키
+                                   String accountNo,       // 계좌번호
+                                   Long transactionBalance, // 입금금액
+                                   String transactionSummary) { // 입금계좌요약
+        String prefix = "edu/demandDeposit/";
+        String apiName = "updateDemandDepositAccountDeposit";
+
+        DepositRequest request = DepositRequest.builder()
+                   .headerRequest(createHeader(apiName, userKey))
+                   .accountNo(accountNo)
+                   .transactionBalance(transactionBalance)
+                   .transactionSummary(transactionSummary)
+                   .build();
+
+        return executePost(prefix + apiName, request, DepositResponse.class).getBody();
+    }
+
+    // ! 2.4.10 계좌 이체
+    public TransferResponse transfer(String userKey,               // 사용자 키
+                                     String withdrawalAccountNo,   // 출금계좌번호
+                                     String depositAccountNo,      // 입금계좌번호
+                                     Long transactionBalance,      // 거래금액
+                                     String transactionSummary) {  // 거래요약내용
+        String prefix = "edu/transfer/";
+        String apiName = "updateDemandDepositAccountTransfer";
+
+        TransferRequest request = TransferRequest.builder()
+                     .headerRequest(createHeader(apiName, userKey))
+                     .withdrawalAccountNo(withdrawalAccountNo)
+                     .depositAccountNo(depositAccountNo)
+                     .transactionBalance(transactionBalance)
+                     .transactionSummary(transactionSummary)
+                     .build();
+
+        return executePost(prefix + apiName, request, TransferResponse.class).getBody();
+    }
+
+    // ! 2.4.12 계좌 거래 내역 조회 (목록)
+    public TransactionHistoryListResponse inquireTransactionHistoryList(
+            String userKey,           // 사용자 키
+            String accountNo,         // 계좌번호
+            String startDate,         // 조회시작일자 (YYYYMMDD)
+            String endDate,           // 조회종료일자 (YYYYMMDD)
+            String transactionType,   // 거래구분 (M:입금, D:출금, A:전체)
+            String orderByType) {     // 정렬순서 (ASC:오름차순, DESC:내림차순)
+        String prefix = "edu/demandDeposit/";
+        String apiName = "inquireTransactionHistoryList";
+
+        TransactionHistoryListRequest request = TransactionHistoryListRequest.builder()
+                     .headerRequest(createHeader(apiName, userKey))
+                     .accountNo(accountNo)
+                     .startDate(startDate)
+                     .endDate(endDate)
+                     .transactionType(transactionType)
+                     .orderByType(orderByType)
+                     .build();
+
+        return executePost(prefix + apiName, request, TransactionHistoryListResponse.class).getBody();
+    }
+
+    // ! 2.4.14 계좌 해지
+
+
+
     // API 호출용 HeaderRequest 생성
     public HeaderRequest createHeader(String apiName, String userKey) {
         LocalDateTime today = LocalDateTime.now();

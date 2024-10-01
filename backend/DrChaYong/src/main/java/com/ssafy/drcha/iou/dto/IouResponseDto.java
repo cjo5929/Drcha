@@ -4,38 +4,30 @@ import java.time.LocalDateTime;
 
 import com.ssafy.drcha.iou.entity.Iou;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@Builder
-public class IouResponseDto {
+@AllArgsConstructor
+public final class IouResponseDto {
 
 	private Long iouId;
-	private String creditorName;
-	private String debtorName;
 	private Long iouAmount;
 	private LocalDateTime contractStartDate;
 	private LocalDateTime contractEndDate;
 	private Double interestRate;
-	private Boolean borrowerAgreement;
-	private Boolean lenderAgreement;
-	private Long totalAmount;  // 원리금 합산 필드
+	private Long totalAmount;
 
 
 	public static IouResponseDto from(Iou iou) {
-		return IouResponseDto.builder()
-			.iouId(iou.getIouId())
-			.creditorName(iou.getCreditor().getUsername())
-			.debtorName(iou.getDebtor().getUsername())
-			.iouAmount(iou.getIouAmount())
-			.contractStartDate(iou.getContractStartDate())
-			.contractEndDate(iou.getContractEndDate())
-			.interestRate(iou.getInterestRate())
-			.borrowerAgreement(iou.getBorrowerAgreement())
-			.lenderAgreement(iou.getLenderAgreement())
-			.totalAmount(calculateTotalAmount(iou.getIouAmount(), iou.getInterestRate()))  // 원리금 계산하여 추가
-			.build();
+		return new IouResponseDto(
+			iou.getIouId(),
+			iou.getIouAmount(),
+			iou.getContractStartDate(),
+			iou.getContractEndDate(),
+			iou.getInterestRate(),
+			calculateTotalAmount(iou.getIouAmount(), iou.getInterestRate())
+		);
 	}
 
 	/**

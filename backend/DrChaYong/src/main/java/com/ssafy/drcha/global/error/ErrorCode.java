@@ -44,7 +44,12 @@ public enum ErrorCode {
 	/**
 	 * Account
 	 */
-	ACCOUNT_NOT_FOUND(NOT_FOUND, "ACCOUNT-001", "계좌가 존재하지 않습니다.");
+	ACCOUNT_NOT_FOUND(NOT_FOUND, "ACCOUNT-001", "계좌가 존재하지 않습니다."),
+
+	/**
+	 * Iou
+	 */
+	IOU_NOT_FOUND(NOT_FOUND, "IOU-001", "차용증을 찾을 수 없습니다.");
 	;
 
 	private final HttpStatus httpStatus;

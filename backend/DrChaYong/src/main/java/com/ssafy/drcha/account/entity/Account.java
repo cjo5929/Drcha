@@ -44,4 +44,9 @@ public class Account extends BaseTimeEntity {
                 .isPrimary(true)
                 .build();
     }
+
+    //==비즈니스 로직==//
+    public void changeBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
 }

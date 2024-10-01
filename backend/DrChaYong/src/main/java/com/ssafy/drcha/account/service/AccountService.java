@@ -20,6 +20,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -56,7 +57,7 @@ public class AccountService {
         accountRepository.save(Account.createAccount(member, response.getRec().getBankCode(), response.getRec().getAccountNo()));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public SendVerificationCodeResponse sendVerificationCode(String email) {
         String userKey = getMemberByEmail(email).getUserKey();
         List<AccountResponse> accountList = getAccountList(email);
@@ -80,12 +81,21 @@ public class AccountService {
                 3600,
                 TimeUnit.SECONDS
         );
-        return new SendVerificationCodeResponse(email, verificationCode);
+        return new SendVerificationCodeResponse(accountNo, verificationCode);
     }
 
     private String getVerificationCode(String userKey, String accountNo, Long transactionUniqueNo) {
         InquireTransactionHistoryResponse response = restClientUtil.inquireTransactionHistory(userKey, accountNo, transactionUniqueNo);
+        log.info("계좌 잔액 조회 -> {}", response.getRec().getTransactionBalance());
+        log.info("계좌 잔액 조회 -> {}", response.getRec().getTransactionAfterBalance());
+        changeBalance(accountNo, new BigDecimal(response.getRec().getTransactionAfterBalance()));
         return response.getRec().getTransactionSummary();
+    }
+
+    private void changeBalance(String accountNo, BigDecimal transactionBalance) {
+        Account account = accountRepository.findByAccountNumber(accountNo)
+                .orElseThrow(() -> new AccountNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND));
+        account.changeBalance(transactionBalance);
     }
 
     @Transactional(readOnly = true)

@@ -1,9 +1,9 @@
 package com.ssafy.drcha.chat.repository;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 import com.ssafy.drcha.chat.entity.ChatMessage;
 
 public interface ChatMessageRepositoryCustom {
-	List<ChatMessage> getChatMessagesAllByChatRoomAndTopId(String chatRoomId, Long top);
+	Page<ChatMessage> findByRoomIdWithPaging(String chatRoomId, int page, int size);
 }

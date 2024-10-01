@@ -19,7 +19,6 @@ public class ChatMessageController {
 	@MessageMapping("chat.message")
 	public void handleChatMessage(@Payload ChatMessageRequestDTO message) {
 		chatService.sendChatMessage(message);
-		log.info("Message saved successfully");
 	}
 
 

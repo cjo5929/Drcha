@@ -1,11 +1,14 @@
 package com.ssafy.drcha.chat.repository;
 
 import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.drcha.chat.entity.ChatMessage;
@@ -19,13 +22,18 @@ public class ChatMessageRepositoryImpl implements ChatMessageRepositoryCustom {
 	}
 
 	@Override
-	public List<ChatMessage> getChatMessagesAllByChatRoomAndTopId(String chatRoomId, Long top) {
-		Query query = new Query(Criteria.where("chatRoomId").is(chatRoomId));
-		if (top != null) {
-			query.addCriteria(Criteria.where("_id").lt(top));
-		}
-		query.with(Sort.by(Sort.Direction.DESC, "_id"));
-		query.limit(20);
-		return mongoTemplate.find(query, ChatMessage.class);
+	public Page<ChatMessage> findByRoomIdWithPaging(String chatRoomId, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+		Query query = new Query().with(pageable);
+		query.addCriteria(Criteria.where("chatRoomId").is(chatRoomId));
+
+		List<ChatMessage> filteredChatMessage = mongoTemplate.find(query, ChatMessage.class);
+
+		return PageableExecutionUtils.getPage(
+			filteredChatMessage,
+			pageable,
+			() -> mongoTemplate.count(Query.query(Criteria.where("chatRoomId").is(chatRoomId)), ChatMessage.class)
+		);
 	}
 }

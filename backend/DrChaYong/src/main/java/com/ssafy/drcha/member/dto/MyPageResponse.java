@@ -2,14 +2,18 @@ package com.ssafy.drcha.member.dto;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberInfoResponse {
+public class MyPageResponse {
     private String username;
     private String email;
     private String avatarUrl;
-    private String phoneNumber;
     private boolean isVerified;
+
+    private String accountNo;
+    private BigDecimal balance;
 }

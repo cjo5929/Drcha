@@ -47,4 +47,13 @@ public class AccountController {
     public ResponseEntity<?> verifyCode(@AuthenticationPrincipal UserDetails userDetails, @RequestParam("code") String code) {
         return ResponseEntity.ok(accountService.verifyCode(userDetails.getUsername(), code));
     }
+
+    @Operation(summary = "싸피 계좌 상세 조회", description = "회원가입 시 생성된 싸피 계좌 정보를 조회한다.")
+    @ApiResponse(responseCode = "200", description = "싸피 계좌 상세 조회 성공",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = AccountResponse.class)))
+    @GetMapping("/detail")
+    public ResponseEntity<?> getDetail(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(accountService.getDetail(userDetails.getUsername()));
+    }
 }

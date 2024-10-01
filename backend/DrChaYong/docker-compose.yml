@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   backend:
@@ -6,8 +6,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - redis
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=private
 
@@ -22,3 +22,13 @@ services:
       - "5672:5672"
       - "15672:15672"
       - "61613:61613"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: >
+      bash -c "
+        rabbitmq-plugins enable rabbitmq_stomp &&
+        rabbitmq-server
+      "

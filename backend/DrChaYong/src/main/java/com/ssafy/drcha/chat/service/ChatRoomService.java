@@ -106,8 +106,8 @@ public class ChatRoomService {
 
 		ChatMessageParam param = new ChatMessageParam(0, 20);
 		Page<ChatMessage> messages = chatMongoService.getChatScrollMessages(chatRoom.getChatRoomId().toString(), param);
-		ChatMessage enterMessage = createAndSaveEnterMessage(chatRoom, debtor);
-		messages.getContent().add(enterMessage);
+		// ChatMessage enterMessage = createAndSaveEnterMessage(chatRoom, debtor);
+		// messages.getContent().add(enterMessage);
 
 		updateLastReadMessage(chatRoomMember, messages.getContent());
 

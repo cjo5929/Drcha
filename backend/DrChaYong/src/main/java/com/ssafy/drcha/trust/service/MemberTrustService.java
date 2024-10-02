@@ -24,7 +24,7 @@ public class MemberTrustService {
      * @throws UserNotFoundException 해당 ID의 회원이 존재하지 않을 경우 발생
      */
     public MemberTrustInfoResponse getMemberTrustInfo(String email) {
-        MemberTrust memberTrust = memberTrustRepository.findByEmail(email)
+        MemberTrust memberTrust = memberTrustRepository.findByMemberEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(MEMBER_NOT_FOUND));
 
         int lateTrades = memberTrust.getCurrentLateTrades();

@@ -11,5 +11,5 @@ public interface MemberTrustRepository extends JpaRepository<MemberTrust, Long> 
      * @param email 조회할 회원의 email
      * @return 해당 회원의 MemberTrust Optional
      */
-    Optional<MemberTrust> findByEmail(String email);
+    Optional<MemberTrust> findByMemberEmail(String email);
 }

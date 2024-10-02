@@ -92,9 +92,9 @@ public class Iou extends BaseTimeEntity {
 
 	@Builder
 	private Iou(Member creditor, Member debtor, Long iouAmount,
-		LocalDateTime contractStartDate, LocalDateTime contractEndDate,
-		Double interestRate, ContractStatus contractStatus,
-		ChatRoom chatRoom, Integer notificationSchedule) {
+				LocalDateTime contractStartDate, LocalDateTime contractEndDate,
+				Double interestRate, ContractStatus contractStatus,
+				ChatRoom chatRoom, Integer notificationSchedule) {
 		this.creditor = creditor;
 		this.debtor = debtor;
 		this.iouAmount = iouAmount;

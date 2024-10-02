@@ -55,6 +55,7 @@ public class AccountService {
         Member member = getMemberByEmail(email);
         Optional<Account> byMember = accountRepository.findByMember(member);
         if (!byMember.isPresent()) {
+            log.info("계좌 생성 시도");
             CreateDemandDepositAccountResponse response = restClientUtil.createDemandDepositAccount(member.getUserKey());
             accountRepository.save(Account.createAccount(member, response.getRec().getBankCode(), response.getRec().getAccountNo()));
         }

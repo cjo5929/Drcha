@@ -1,12 +1,10 @@
-import DOCTOR_IMAGE from '@/assets/images/dr,chayongV1.png';
-
 import styles from './Chat.module.scss';
 
-export function MyChat() {
+export function MyChat({ content }: { content: string }) {
   return (
     <div className={styles.mychat}>
       <div className={styles.mybubble}>
-        <img src={DOCTOR_IMAGE} alt="doctor" />
+        {content}
         <div className={styles.mybubblearrow} />
       </div>
     </div>

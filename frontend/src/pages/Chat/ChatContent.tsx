@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react';
+
 import { ChatMessage } from '@/types/ChatMessage';
 
 import styles from './Chat.module.scss';
@@ -12,6 +14,16 @@ export function ChatContent({
   messages: ChatMessage[];
   currentUserId: string;
 }) {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
     <div className={styles.chatcontainer}>
       {messages.map((message: ChatMessage) => {
@@ -28,6 +40,7 @@ export function ChatContent({
             return null;
         }
       })}
+      <div ref={messagesEndRef} />
     </div>
   );
 }

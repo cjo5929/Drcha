@@ -34,9 +34,17 @@ export function Chat() {
   };
 
   const handleSend = () => {
-    if (message.trim()) {
-      sendMessage(message);
+    const trimmedMessage = message.trim().replace(/\n/g, ' ');
+    if (trimmedMessage) {
+      sendMessage(trimmedMessage);
       setMessage('');
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
     }
   };
 
@@ -80,7 +88,7 @@ export function Chat() {
           placeholder="메세지를 입력하세요."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+          onKeyDown={handleKeyDown}
           rows={1}
         />
         <SendButton onClick={handleSend} />

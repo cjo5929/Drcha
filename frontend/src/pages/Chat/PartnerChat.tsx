@@ -1,11 +1,11 @@
 import styles from './Chat.module.scss';
 
-export function PartnerChat() {
+export function PartnerChat({ content }: { content: string }) {
   return (
     <div className={styles.partnerchat}>
       <div className={styles.partnerbubble}>
         <div className={styles.partnerbubblearrow} />
-        얄라얄라얄랑셩
+        {content}
       </div>
     </div>
   );

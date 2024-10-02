@@ -1,11 +1,11 @@
-// interface SendButtonProps {
-//   onClick: () => void;
-// }
+interface SendButtonProps {
+  onClick: () => void;
+}
 
-export function SendButton() {
+export function SendButton({ onClick }: SendButtonProps) {
   return (
     <button
-      //   onClick={onClick}
+      onClick={onClick}
       style={{
         background: 'none',
         border: 'none',

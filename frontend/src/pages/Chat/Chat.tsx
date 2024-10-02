@@ -7,6 +7,7 @@ import LeftarrowSVG from '@/assets/icons/leftArrow.svg?react';
 import { CheckIouModal } from '@/components/Modal/CheckIouModal';
 import { CorrectionIouModal } from '@/components/Modal/CorrectionIouModal';
 import { CreateIouModal } from '@/components/Modal/CreateIouModal';
+import { useChatWebSocket } from '@/hooks/useChatWebsocket';
 
 import styles from './Chat.module.scss';
 import { ChatContent } from './ChatContent';
@@ -20,6 +21,9 @@ export function Chat() {
   >(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [message, setMessage] = useState('');
+
+  const { messages, sendMessage } = useChatWebSocket('10', '6');
 
   const handleOpenModal = (type: 'create' | 'correction' | 'check') => {
     setModalType(type);
@@ -27,6 +31,13 @@ export function Chat() {
 
   const handleCloseModal = () => {
     setModalType(null);
+  };
+
+  const handleSend = () => {
+    if (message.trim()) {
+      sendMessage(message);
+      setMessage('');
+    }
   };
 
   useEffect(() => {
@@ -61,18 +72,18 @@ export function Chat() {
         </button>
       </div>
       {/* 채팅 내용 */}
-      <ChatContent />
+      <ChatContent messages={messages} currentUserId="6" />
       {/* 채팅 입력창 */}
       <div className={styles.chatinput}>
         <textarea
           className={styles.inputField}
           placeholder="메세지를 입력하세요."
-          //   value={message}
-          //   onChange={(e) => setMessage(e.target.value)}
-          //   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
           rows={1}
         />
-        <SendButton />
+        <SendButton onClick={handleSend} />
       </div>
       {/* 오버레이 */}
       {isMenuOpen && (

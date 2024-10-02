@@ -2,7 +2,7 @@ import DOCTOR_IMAGE from '@/assets/images/dr,chayongV1.png';
 
 import styles from './Chat.module.scss';
 
-export function Doctor() {
+export function Doctor({ content }: { content: string }) {
   return (
     <div className={styles.doctor}>
       <div className={styles.doctorinfo}>
@@ -12,9 +12,7 @@ export function Doctor() {
       <div className={styles.doctorbubbles}>
         <div className={styles.doctorbubble}>
           <div className={styles.doctorbubblearrow} />
-          여기에 채팅 내용을 입력하시오. 여기에 채팅 내용을 입력하시오. 여기에
-          채팅 내용을 입력하시오. 여기에 채팅 내용을 입력하시오. 여기에 채팅
-          내용을 입력하시오.
+          {content}
         </div>
         <div className={styles.doctorbubble}>
           <div className={styles.doctorbubblearrow} />

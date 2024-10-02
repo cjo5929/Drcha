@@ -1,6 +1,8 @@
 package com.ssafy.drcha.iou.entity;
 
 import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 
 import com.ssafy.drcha.chat.entity.ChatRoom;

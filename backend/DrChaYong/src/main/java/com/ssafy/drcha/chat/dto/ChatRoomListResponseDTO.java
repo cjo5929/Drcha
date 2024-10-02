@@ -3,6 +3,7 @@ package com.ssafy.drcha.chat.dto;
 import com.ssafy.drcha.chat.entity.ChatRoom;
 import com.ssafy.drcha.member.entity.Member;
 
+import com.ssafy.drcha.trust.dto.MemberTrustInfoResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -16,7 +17,7 @@ public final class ChatRoomListResponseDTO {
 	private String lastMessage;
 	private Double iouAmount;
 	private Long daysUntilDue;
-	private String email;
+	private MemberTrustInfoResponse memberTrustInfoResponse;
 	private int unreadCount;
 
 	public static ChatRoomListResponseDTO from(
@@ -25,6 +26,7 @@ public final class ChatRoomListResponseDTO {
 		String contractStatus,
 		Double iouAmount,
 		Long daysUntilDue,
+		MemberTrustInfoResponse memberTrustInfoResponse,
 		int unreadCount) {
 		return new ChatRoomListResponseDTO(
 			chatRoom.getChatRoomId(),
@@ -34,7 +36,7 @@ public final class ChatRoomListResponseDTO {
 			chatRoom.getLastMessage(),
 			iouAmount,
 			daysUntilDue,
-			opponent.getEmail(),
+			memberTrustInfoResponse,
 			unreadCount
 		);
 	}

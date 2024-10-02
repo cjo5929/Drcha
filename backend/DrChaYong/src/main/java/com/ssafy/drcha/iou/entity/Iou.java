@@ -1,13 +1,31 @@
 package com.ssafy.drcha.iou.entity;
 
-import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
-import java.time.LocalDateTime;
+import com.ssafy.drcha.chat.entity.ChatRoom;
 import com.ssafy.drcha.global.basetime.BaseTimeEntity;
 import com.ssafy.drcha.iou.enums.ContractStatus;
 import com.ssafy.drcha.member.entity.Member;
-
-import jakarta.persistence.*;
-import lombok.*;
+import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "iou")
@@ -30,6 +48,7 @@ public class Iou extends BaseTimeEntity {
 	private Member debtor;
 
 	@Column(name = "iou_amount", nullable = false)
+	@Positive
 	private Long iouAmount;
 
 	@Column(name = "contract_start_date", nullable = false)
@@ -39,16 +58,19 @@ public class Iou extends BaseTimeEntity {
 	private LocalDateTime contractEndDate;
 
 	@Column(name = "interest_rate", nullable = false)
+	@PositiveOrZero
 	private Double interestRate;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "contract_status", nullable = false)
 	private ContractStatus contractStatus;
 
-	@Column(name = "chat_room_id", nullable = false)
-	private Long chatRoomId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "chat_room_id", nullable = false)
+	private ChatRoom chatRoom;
 
 	@Column(name = "notification_schedule", nullable = false)
+	@Positive
 	private Integer notificationSchedule;
 
 	@Column(name = "borrower_agreement", nullable = false)
@@ -65,9 +87,9 @@ public class Iou extends BaseTimeEntity {
 
 	@Builder
 	private Iou(Member creditor, Member debtor, Long iouAmount,
-		LocalDateTime contractStartDate, LocalDateTime contractEndDate,
-		Double interestRate, ContractStatus contractStatus,
-		Long chatRoomId, Integer notificationSchedule) {
+				LocalDateTime contractStartDate, LocalDateTime contractEndDate,
+				Double interestRate, ContractStatus contractStatus,
+				ChatRoom chatRoom, Integer notificationSchedule) {
 		this.creditor = creditor;
 		this.debtor = debtor;
 		this.iouAmount = iouAmount;
@@ -75,10 +97,14 @@ public class Iou extends BaseTimeEntity {
 		this.contractEndDate = contractEndDate;
 		this.interestRate = interestRate;
 		this.contractStatus = contractStatus;
-		this.chatRoomId = chatRoomId;
+		this.chatRoom = chatRoom;
 		this.notificationSchedule = notificationSchedule;
 		this.borrowerAgreement = false;
 		this.lenderAgreement = false;
+	}
+
+	public boolean isBothAgreed() {
+		return this.borrowerAgreement && this.lenderAgreement;
 	}
 
 	public void updateLoanInfo(Long iouAmount, Double interestRate, LocalDateTime contractEndDate) {

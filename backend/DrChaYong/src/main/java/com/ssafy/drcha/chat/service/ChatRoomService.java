@@ -1,5 +1,7 @@
 package com.ssafy.drcha.chat.service;
 
+import com.ssafy.drcha.trust.dto.MemberTrustInfoResponse;
+import com.ssafy.drcha.trust.service.MemberTrustService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -11,10 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.drcha.chat.dto.ChatMessageParam;
-import com.ssafy.drcha.chat.dto.ChatMessageResponseDTO;
+import com.ssafy.drcha.chat.dto.ChatMessageResponseDto;
 import com.ssafy.drcha.chat.dto.ChatRoomEntryStatus;
-import com.ssafy.drcha.chat.dto.ChatRoomLinkResponseDTO;
-import com.ssafy.drcha.chat.dto.ChatRoomListResponseDTO;
+import com.ssafy.drcha.chat.dto.ChatRoomLinkResponseDto;
+import com.ssafy.drcha.chat.dto.ChatRoomListResponseDto;
 import com.ssafy.drcha.chat.entity.ChatMessage;
 import com.ssafy.drcha.chat.entity.ChatRoom;
 import com.ssafy.drcha.chat.entity.ChatRoomMember;
@@ -49,9 +51,10 @@ public class ChatRoomService {
 	private final IouRepository iouRepository;
 	private final ChatMongoService chatMongoService;
 	private final MemberService memberService;
+	private final MemberTrustService memberTrustService;
 
 	@Transactional
-	public ChatRoomLinkResponseDTO createChatRoom(String email) {
+	public ChatRoomLinkResponseDto createChatRoom(String email) {
 		Member creditor = findMemberByEmail(email);
 		ChatRoom chatRoom = ChatRoom.builder()
 			.lastMessageId(null)
@@ -59,11 +62,11 @@ public class ChatRoomService {
 			.lastMessageTime(null)
 			.build();
 		chatRoom.addMember(creditor, MemberRole.CREDITOR);
-		return ChatRoomLinkResponseDTO.from(chatRoomRepository.save(chatRoom));
+		return ChatRoomLinkResponseDto.from(chatRoomRepository.save(chatRoom));
 	}
 
 	@Transactional(readOnly = true)
-	public List<ChatRoomListResponseDTO> getChatRoomListByRole(String email, MemberRole role) {
+	public List<ChatRoomListResponseDto> getChatRoomListByRole(String email, MemberRole role) {
 		Member member = findMemberByEmail(email);
 		List<ChatRoomMember> chatRoomMembers = chatRoomMemberRepository.findByMemberAndMemberRole(member, role);
 
@@ -73,7 +76,7 @@ public class ChatRoomService {
 	}
 
 	@Transactional
-	public List<ChatMessageResponseDTO> enterChatRoom(Long chatRoomId, String email) {
+	public List<ChatMessageResponseDto> enterChatRoom(Long chatRoomId, String email) {
 		ChatRoom chatRoom = findChatRoomById(chatRoomId);
 		Member member = findMemberByEmail(email);
 		ChatRoomMember chatRoomMember = findChatRoomMember(chatRoom, member);
@@ -81,12 +84,12 @@ public class ChatRoomService {
 		Page<ChatMessage> messages = chatMongoService.getChatScrollMessages(chatRoomId.toString(), param);
 		updateLastReadMessage(chatRoomMember, messages.getContent());
 		return messages.stream()
-			.map(ChatMessageResponseDTO::from)
+			.map(ChatMessageResponseDto::from)
 			.collect(Collectors.toList());
 	}
 
 	@Transactional
-	public List<ChatMessageResponseDTO> enterChatRoomViaLink(String invitationLink, UserDetails userDetails) {
+	public List<ChatMessageResponseDto> enterChatRoomViaLink(String invitationLink, UserDetails userDetails) {
 		ChatRoomEntryStatus entryStatus = processEntryRequest(invitationLink, userDetails.getUsername());
 
 		if (entryStatus.isNeedsRegistration()) {
@@ -106,13 +109,13 @@ public class ChatRoomService {
 
 		ChatMessageParam param = new ChatMessageParam(0, 20);
 		Page<ChatMessage> messages = chatMongoService.getChatScrollMessages(chatRoom.getChatRoomId().toString(), param);
-		ChatMessage enterMessage = createAndSaveEnterMessage(chatRoom, debtor);
-		messages.getContent().add(enterMessage);
+		// ChatMessage enterMessage = createAndSaveEnterMessage(chatRoom, debtor);
+		// messages.getContent().add(enterMessage);
 
 		updateLastReadMessage(chatRoomMember, messages.getContent());
 
 		return messages.stream()
-			.map(ChatMessageResponseDTO::from)
+			.map(ChatMessageResponseDto::from)
 			.collect(Collectors.toList());
 	}
 
@@ -135,13 +138,13 @@ public class ChatRoomService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ChatMessageResponseDTO> loadMoreMessages(Long chatRoomId, String email, ChatMessageParam param) {
+	public List<ChatMessageResponseDto> loadMoreMessages(Long chatRoomId, String email, ChatMessageParam param) {
 		Member member = findMemberByEmail(email);
 
 		Page<ChatMessage> messages = chatMongoService.getChatScrollMessages(chatRoomId.toString(), param);
 
 		return messages.stream()
-			.map(ChatMessageResponseDTO::from)
+			.map(ChatMessageResponseDto::from)
 			.collect(Collectors.toList());
 	}
 
@@ -181,22 +184,25 @@ public class ChatRoomService {
 		return enterMessage;
 	}
 
-	private ChatRoomListResponseDTO createChatRoomListResponseDTO(ChatRoomMember chatRoomMember) {
+	private ChatRoomListResponseDto createChatRoomListResponseDTO(ChatRoomMember chatRoomMember) {
 		ChatRoom chatRoom = chatRoomMember.getChatRoom();
 		Member currentMember = chatRoomMember.getMember();
 		Member opponent = findOpponentMember(chatRoom, currentMember);
-		Iou iou = iouRepository.findLatestByChatRoomId(chatRoom.getChatRoomId()).orElse(null);
+		Iou iou = iouRepository.findLatestByChatRoomId(chatRoom).orElse(null);
 
 		String contractStatus = getContractStatus(iou);
 		Double iouAmount = getIouAmount(iou);
 		Long daysUntilDue = getDaysUntilDue(iou);
 
-		return ChatRoomListResponseDTO.from(
+		MemberTrustInfoResponse memberTrustInfoResponse = memberTrustService.getMemberTrustInfo(chatRoomMember.getMember().getEmail());
+
+		return ChatRoomListResponseDto.from(
 			chatRoom,
 			opponent,
 			contractStatus,
 			iouAmount,
 			daysUntilDue,
+			memberTrustInfoResponse,
 			chatRoomMember.getUnreadCount()
 		);
 	}
@@ -206,7 +212,7 @@ public class ChatRoomService {
 			.map(ChatRoomMember::getMember)
 			.filter(member -> !member.equals(currentMember))
 			.findFirst()
-			.orElseThrow(() -> new DataNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+			.orElse(null);
 	}
 
 	private String getContractStatus(Iou iou) {

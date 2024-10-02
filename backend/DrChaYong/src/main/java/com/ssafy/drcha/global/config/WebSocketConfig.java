@@ -28,7 +28,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
-		config.setPathMatcher(new AntPathMatcher(".")); // url을 chat/room/3 -> chat.room.3으로 참조하기 위한 설정
+		config.setPathMatcher(new AntPathMatcher("."));
 		config.enableStompBrokerRelay("/queue", "/topic", "/exchange", "/amq/queue")
 			.setRelayHost(rabbitHost)
 			.setRelayPort(rabbitStompPort)
@@ -37,18 +37,19 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 			.setClientLogin(username)
 			.setClientPasscode(passcode);
 
-		// 클라이언트로부터 메시지를 받을 api의 prefix를 설정함
-		// publish
 		config.setApplicationDestinationPrefixes("/pub");
-		log.info("STOMP Broker 설정 완료: " + rabbitHost + ":" + rabbitStompPort);
 
 
 	}
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		registry.addEndpoint("/ws")
-			.setAllowedOrigins("http://127.0.0.1:5500", "http://localhost:5500")
+		registry.addEndpoint("/wss")
+			.setAllowedOrigins(
+				"https://127.0.0.1:5500",
+				"https://localhost:5173",
+				"https://j11a205.p.ssafy.io"
+			)
 			.withSockJS();
 	}
 }

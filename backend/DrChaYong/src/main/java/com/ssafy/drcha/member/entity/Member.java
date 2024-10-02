@@ -2,6 +2,7 @@ package com.ssafy.drcha.member.entity;
 
 import com.ssafy.drcha.global.basetime.BaseTimeEntity;
 import com.ssafy.drcha.member.enums.Role;
+import com.ssafy.drcha.trust.entity.MemberTrust;
 import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +12,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +56,9 @@ public class Member extends BaseTimeEntity {
 
     @Column(name = "user_key")
     private String userKey;
+
+    @OneToOne(mappedBy = "member")
+    private MemberTrust memberTrust;
 
     @OneToMany(mappedBy = "creditor")
     private List<VirtualAccount> creditorAccounts = new ArrayList<>();

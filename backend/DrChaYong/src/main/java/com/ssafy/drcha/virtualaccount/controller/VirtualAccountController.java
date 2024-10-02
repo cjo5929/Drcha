@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1/virtual-account")
 @RequiredArgsConstructor
 @Tag(name = "Virtual Account", description = "무통장 계좌 API")
+@Slf4j
 public class VirtualAccountController {
 
     private final VirtualAccountService virtualAccountService;
@@ -33,6 +35,7 @@ public class VirtualAccountController {
     public ResponseEntity<?> createVirtualAccount(
             @Parameter(description = "차용증 ID", required = true)
             @PathVariable("iouId") Long iouId) {
+        log.info("------ 차용증 ID : {}--------", iouId);
         VirtualAccount virtualAccount = virtualAccountService.createVirtualAccount(iouId);
         VirtualAccountResponse response = VirtualAccountResponse.of(virtualAccount);
 

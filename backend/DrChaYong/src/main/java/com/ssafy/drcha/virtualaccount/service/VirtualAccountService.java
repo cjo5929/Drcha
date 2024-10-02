@@ -42,9 +42,9 @@ public class VirtualAccountService {
         if (ObjectUtils.isNotEmpty(iou.getVirtualAccount())) {
             throw new VirtualAccountException(ErrorCode.VIRTUAL_ACCOUNT_ALREADY_EXISTS); // ! 이미 존재하면 안돼
         }
-
+        log.info("------- 이 부분 확인 --------");
         CreateDemandDepositAccountResponse response = restClientUtil.createDemandDepositAccount(iou.getCreditor().getUserKey());
-
+        log.info("------- 이 부분 통과 ----------");
         VirtualAccount virtualAccount = VirtualAccount.builder()
                   .iou(iou)
                   .creditor(iou.getCreditor())

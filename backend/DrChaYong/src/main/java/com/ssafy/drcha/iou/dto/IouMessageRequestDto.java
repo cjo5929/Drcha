@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public final class IouMessageRequestDTO {
+public final class IouMessageRequestDto {
 	private String messages;
 	private Long chatRoomId;
 

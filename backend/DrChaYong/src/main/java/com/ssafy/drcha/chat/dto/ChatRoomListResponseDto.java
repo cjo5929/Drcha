@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public final class ChatRoomListResponseDTO {
+public final class ChatRoomListResponseDto {
 	private Long chatRoomId;
 	private String name;
 	private String avatarUrl;
@@ -20,7 +20,7 @@ public final class ChatRoomListResponseDTO {
 	private MemberTrustInfoResponse memberTrustInfoResponse;
 	private int unreadCount;
 
-	public static ChatRoomListResponseDTO from(
+	public static ChatRoomListResponseDto from(
 		ChatRoom chatRoom,
 		Member opponent,
 		String contractStatus,
@@ -28,7 +28,7 @@ public final class ChatRoomListResponseDTO {
 		Long daysUntilDue,
 		MemberTrustInfoResponse memberTrustInfoResponse,
 		int unreadCount) {
-		return new ChatRoomListResponseDTO(
+		return new ChatRoomListResponseDto(
 			chatRoom.getChatRoomId(),
 			opponent != null ? opponent.getUsername() : "Unknown",
 			opponent != null ? opponent.getAvatarUrl() : null,

@@ -8,8 +8,8 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ssafy.drcha.chat.dto.ChatMessageRequestDTO;
-import com.ssafy.drcha.chat.dto.ChatMessageResponseDTO;
+import com.ssafy.drcha.chat.dto.ChatMessageRequestDto;
+import com.ssafy.drcha.chat.dto.ChatMessageResponseDto;
 import com.ssafy.drcha.chat.entity.ChatMessage;
 import com.ssafy.drcha.chat.entity.ChatRoom;
 import com.ssafy.drcha.chat.entity.ChatRoomMember;
@@ -37,10 +37,10 @@ public class ChatService {
 	private static final String ROUTING_KEY = "chat.message.";
 
 	@Transactional
-	public void sendChatMessage(ChatMessageRequestDTO message) {
+	public void sendChatMessage(ChatMessageRequestDto message) {
 		log.info(message.toString());
 		ChatMessage chatMessageEntity = message.toEntity();
-		ChatMessageResponseDTO responseDTO = ChatMessageResponseDTO.from(chatMongoService.saveChatMessage(chatMessageEntity));
+		ChatMessageResponseDto responseDTO = ChatMessageResponseDto.from(chatMongoService.saveChatMessage(chatMessageEntity));
 
 		updateChatRoomLastMessage(responseDTO.getChatRoomId(), responseDTO.getId(), responseDTO.getContent(), responseDTO.getCreatedAt());
 		incrementUnreadCount(responseDTO.getChatRoomId(), responseDTO.getSenderId());
@@ -56,21 +56,19 @@ public class ChatService {
 			"안녕하세요, 박사님입니다. 작성된 차용증을 확인해 주세요."
 		);
 
-		ChatMessageResponseDTO responseDTO = ChatMessageResponseDTO.from(chatMongoService.saveChatMessage(chatMessage));
+		ChatMessageResponseDto responseDTO = ChatMessageResponseDto.from(chatMongoService.saveChatMessage(chatMessage));
 		updateChatRoomLastMessage(responseDTO.getChatRoomId(), responseDTO.getId(), responseDTO.getContent(), responseDTO.getCreatedAt());
 		publishMessage(responseDTO);
 	}
 
 	@Transactional
 	public void updateChatRoomLastMessage(String chatRoomId, String messageId, String message, LocalDateTime messageTime) {
-		log.info(chatRoomId + "@@@@@@");
 		ChatRoom chatRoom = getChatRoomById(chatRoomId);
 		chatRoom.updateLastMessage(messageId, message, messageTime);
 	}
 
 	@Transactional
 	public void incrementUnreadCount(String chatRoomId, String senderId) {
-		log.info("asdasd" + chatRoomId, senderId);
 		ChatRoomMember recipientMember = chatRoomMemberRepository.findByChatRoom_ChatRoomIdAndMember_IdNot(
 				Long.parseLong(chatRoomId), Long.parseLong(senderId))
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
@@ -84,12 +82,12 @@ public class ChatService {
 	}
 
 
-	private void publishMessage(ChatMessageResponseDTO message) {
+	private void publishMessage(ChatMessageResponseDto message) {
 		rabbitTemplate.convertAndSend(CHAT_EXCHANGE_NAME, ROUTING_KEY + message.getChatRoomId(), message);
 	}
 
 	@RabbitListener(queues = "chat.queue")
-	public void receiveMessage(ChatMessageResponseDTO message) {
+	public void receiveMessage(ChatMessageResponseDto message) {
 		messagingTemplate.convertAndSend("/topic/chat." + message.getChatRoomId(), message);
 	}
 

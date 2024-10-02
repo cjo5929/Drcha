@@ -85,22 +85,24 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         }
 
         String userKey;
+        Member member = null;
         // 2. 사용자 계정이 없으면 createUser 호출하여 생성
         if (userResponse == null) {
             userResponse = restClientUtil.createUser(email);
             log.info("새로운 사용자 계정이 생성되었습니다. userKey: {}", userResponse.getUserKey());
-        } else {
-            log.info("기존 사용자 계정을 찾았습니다. userKey: {}", userResponse.getUserKey());
-        }
+            userKey = userResponse.getUserKey();
+            member = memberService.saveOrUpdateMember(name, email, avatarUrl, userKey);
 
-        userKey = userResponse.getUserKey();
-        Member member = memberService.saveOrUpdateMember(name, email, avatarUrl, userKey);
-        try {
-            log.info("회원가입 중 이메일 -> {}", email);
-            accountService.saveNewBankAccount(email);
-            log.info("새로운 계좌가 생성되었습니다: {}", email);
-        } catch (Exception e) {
-            log.error("계좌 생성 중 오류가 발생했습니다: {}", e.getMessage());
+            try {
+                log.info("회원가입 중 이메일 -> {}", email);
+                accountService.saveNewBankAccount(email);
+                log.info("새로운 계좌가 생성되었습니다: {}", email);
+            } catch (Exception e) {
+                log.error("계좌 생성 중 오류가 발생했습니다: {}", e.getMessage());
+            }
+        } else {
+            member = memberService.saveOrUpdateMember(name, email, avatarUrl, userResponse.getUserKey());
+            log.info("기존 사용자 계정을 찾았습니다. userKey: {}", userResponse.getUserKey());
         }
 
         // 3. 얻은 userKey를 저장한 Member 객체 반환

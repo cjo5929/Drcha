@@ -206,7 +206,7 @@ public class ChatRoomService {
 			.map(ChatRoomMember::getMember)
 			.filter(member -> !member.equals(currentMember))
 			.findFirst()
-			.orElseThrow(() -> new DataNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+			.orElse(null);
 	}
 
 	private String getContractStatus(Iou iou) {

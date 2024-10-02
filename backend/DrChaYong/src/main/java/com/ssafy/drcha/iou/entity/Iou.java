@@ -1,13 +1,14 @@
 package com.ssafy.drcha.iou.entity;
 
-import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
 import java.time.LocalDateTime;
 
 import com.ssafy.drcha.chat.entity.ChatRoom;
 import com.ssafy.drcha.global.basetime.BaseTimeEntity;
 import com.ssafy.drcha.iou.enums.ContractStatus;
 import com.ssafy.drcha.member.entity.Member;
+import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;

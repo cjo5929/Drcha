@@ -8,8 +8,8 @@ public interface MemberTrustRepository extends JpaRepository<MemberTrust, Long> 
 
     /**
      * 회원 ID로 MemberTrust를 조회합니다.
-     * @param memberId 조회할 회원의 ID
+     * @param email 조회할 회원의 email
      * @return 해당 회원의 MemberTrust Optional
      */
-    Optional<MemberTrust> findByMemberId(Long memberId);
+    Optional<MemberTrust> findByEmail(String email);
 }

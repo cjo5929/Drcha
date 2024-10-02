@@ -17,14 +17,14 @@ public class MemberTrustService {
     private final MemberTrustRepository memberTrustRepository;
 
     /**
-     * 주어진 회원 ID에 해당하는 회원의 신뢰도 정보를 조회합니다.
+     * 주어진 회원 email에 해당하는 회원의 신뢰도 정보를 조회합니다.
      *
-     * @param memberId 조회할 회원의 ID
+     * @param email 조회할 회원의 email
      * @return 회원의 신뢰도 정보를 담은 MemberTrustInfoResponse 객체
      * @throws UserNotFoundException 해당 ID의 회원이 존재하지 않을 경우 발생
      */
-    public MemberTrustInfoResponse getMemberTrustInfo(Long memberId) {
-        MemberTrust memberTrust = memberTrustRepository.findByMemberId(memberId)
+    public MemberTrustInfoResponse getMemberTrustInfo(String email) {
+        MemberTrust memberTrust = memberTrustRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(MEMBER_NOT_FOUND));
 
         int lateTrades = memberTrust.getCurrentLateTrades();

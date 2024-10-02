@@ -205,6 +205,7 @@ public class RestClientUtil {
         String time = today.toString().split("T")[1].substring(0, 8).replace(":", "");
 
         String institutionTransactionUniqueNo = date + time + generateNumericUUID().substring(0, 6);
+        log.info("header 거래고유번호 -> {}", institutionTransactionUniqueNo);
 
         return HeaderRequest.builder()
                 .apiName(apiName)

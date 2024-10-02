@@ -17,7 +17,7 @@ export function useChatWebSocket(
   const [stompClient, setStompClient] = useState<Client | null>(null);
 
   useEffect(() => {
-    const socket = new SockJS('http://localhost:8080/ws');
+    const socket = new SockJS('https://localhost:8080/ws');
     const client = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {

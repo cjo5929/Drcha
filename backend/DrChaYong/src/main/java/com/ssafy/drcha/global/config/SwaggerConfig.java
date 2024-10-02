@@ -111,4 +111,13 @@ public class SwaggerConfig {
                 .pathsToMatch("/api/v1/iou/**")
                 .build();
     }
+
+    // ! 무통장 계좌 관련 API 모음
+    @Bean
+    public GroupedOpenApi virtualAccountApi() {
+        return GroupedOpenApi.builder()
+                 .group("virtual-account")
+                 .pathsToMatch("/api/v1/virtual-account/**")
+                 .build();
+    }
 }

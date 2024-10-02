@@ -1,12 +1,16 @@
 package com.ssafy.drcha.iou.service;
 
+import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
+import com.ssafy.drcha.virtualaccount.service.VirtualAccountService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import net.bytebuddy.implementation.bind.MethodDelegationBinder.MethodInvoker.Virtual;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.ssafy.drcha.chat.entity.ChatRoom;
@@ -39,6 +43,7 @@ public class IouService {
 	private final WebClient webClient;
 	private final ChatMongoService chatMongoService;
 	private final MemberRepository memberRepository;
+	private final VirtualAccountService virtualAccountService;
 
 	@Transactional
 	public void createAiIou(Long chatRoomId, String email) {
@@ -114,11 +119,18 @@ public class IouService {
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CHAT_ROOM_NOT_FOUND));
 	}
 
-	private void createAndSaveIou(ChatRoom chatRoom, IouCreateRequestDto requestDTO) {
+	@Transactional
+	public void createAndSaveIou(ChatRoom chatRoom, IouCreateRequestDto requestDTO) {
 		Member creditor = findMemberByRole(chatRoom, MemberRole.CREDITOR);
 		Member debtor = findMemberByRole(chatRoom, MemberRole.DEBTOR);
 		Iou iou = requestDTO.toEntity(creditor, debtor, chatRoom);
-		iouRepository.save(iou);
+		Iou savedIou = iouRepository.save(iou);
+
+		// ! 가상계좌 생성 및 연결
+		if (ObjectUtils.isEmpty(savedIou.getVirtualAccount())) {
+			VirtualAccount virtualAccount = virtualAccountService.createVirtualAccount(savedIou.getIouId());
+			savedIou.linkVirtualAccount(virtualAccount);
+		}
 	}
 
 	private Member findMemberByRole(ChatRoom chatRoom, MemberRole role) {

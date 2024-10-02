@@ -1,7 +1,20 @@
 package com.ssafy.drcha.chat.controller;
 
+import com.ssafy.drcha.chat.dto.ChatMessageParam;
+import com.ssafy.drcha.chat.dto.ChatMessageResponseDto;
+import com.ssafy.drcha.chat.dto.ChatRoomLinkResponseDto;
+import com.ssafy.drcha.chat.dto.ChatRoomListResponseDto;
+import com.ssafy.drcha.chat.enums.MemberRole;
+import com.ssafy.drcha.chat.service.ChatRoomService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,22 +25,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.ssafy.drcha.chat.dto.ChatMessageParam;
-import com.ssafy.drcha.chat.dto.ChatMessageResponseDto;
-import com.ssafy.drcha.chat.dto.ChatRoomLinkResponseDto;
-import com.ssafy.drcha.chat.dto.ChatRoomListResponseDto;
-import com.ssafy.drcha.chat.enums.MemberRole;
-import com.ssafy.drcha.chat.service.ChatRoomService;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("ws/api/v1/chat")

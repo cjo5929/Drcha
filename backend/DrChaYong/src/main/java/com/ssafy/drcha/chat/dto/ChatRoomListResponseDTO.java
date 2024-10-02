@@ -30,8 +30,8 @@ public final class ChatRoomListResponseDTO {
 		int unreadCount) {
 		return new ChatRoomListResponseDTO(
 			chatRoom.getChatRoomId(),
-			opponent.getUsername(),
-			opponent.getAvatarUrl(),
+			opponent != null ? opponent.getUsername() : "Unknown",
+			opponent != null ? opponent.getAvatarUrl() : null,
 			contractStatus,
 			chatRoom.getLastMessage(),
 			iouAmount,

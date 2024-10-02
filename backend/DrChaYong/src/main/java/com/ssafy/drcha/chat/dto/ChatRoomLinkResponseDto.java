@@ -7,12 +7,12 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ChatRoomLinkResponseDTO {
+public class ChatRoomLinkResponseDto {
 	private Long chatRoomId;
 	private String invitationLink;
 
-	public static ChatRoomLinkResponseDTO from(ChatRoom chatRoom) {
-		return new ChatRoomLinkResponseDTO(
+	public static ChatRoomLinkResponseDto from(ChatRoom chatRoom) {
+		return new ChatRoomLinkResponseDto(
 			chatRoom.getChatRoomId(),
 			chatRoom.getInvitationLink()
 		);

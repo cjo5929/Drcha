@@ -12,7 +12,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public final class IouCreateRequestDTO {
+public final class IouCreateRequestDto {
 	private Long iouAmount;
 	private Double interestRate;
 	private String contractEndDate;

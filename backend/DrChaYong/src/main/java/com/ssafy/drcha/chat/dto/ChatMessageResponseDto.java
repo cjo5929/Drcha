@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public final class ChatMessageResponseDTO {
+public final class ChatMessageResponseDto {
 	private String id;
 	private String chatRoomId;
 	private String content;
@@ -20,8 +20,8 @@ public final class ChatMessageResponseDTO {
 	private String avatarUrl;
 
 
-	public static ChatMessageResponseDTO from(ChatMessage chatMessage) {
-		return new ChatMessageResponseDTO(
+	public static ChatMessageResponseDto from(ChatMessage chatMessage) {
+		return new ChatMessageResponseDto(
 			chatMessage.getId(),
 			chatMessage.getChatRoomId(),
 			chatMessage.getContent(),

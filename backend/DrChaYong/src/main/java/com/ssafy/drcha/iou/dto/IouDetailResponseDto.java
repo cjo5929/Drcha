@@ -11,7 +11,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public final class IouDetailResponseDTO {
+public final class IouDetailResponseDto {
 
 	private Long iouId;
 	private String creditorName;
@@ -29,8 +29,8 @@ public final class IouDetailResponseDTO {
 	private Long daysUntilDue;
 
 
-	public static IouDetailResponseDTO from(Iou iou, Member member, Long daysUntilDue) {
-		return new IouDetailResponseDTO(
+	public static IouDetailResponseDto from(Iou iou, Member member, Long daysUntilDue) {
+		return new IouDetailResponseDto(
 			iou.getIouId(),
 			iou.getCreditor().getUsername(),
 			iou.getDebtor().getUsername(),

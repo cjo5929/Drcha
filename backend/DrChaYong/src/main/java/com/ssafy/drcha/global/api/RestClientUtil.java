@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 @Slf4j
 @Component
@@ -199,11 +201,16 @@ public class RestClientUtil {
 
     // API 호출용 HeaderRequest 생성
     public HeaderRequest createHeader(String apiName, String userKey) {
-        LocalDateTime today = LocalDateTime.now();
+        // 한국 시간으로 현재 시간 가져오기
+        ZonedDateTime koreaTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+
+        // ZonedDateTime을 LocalDateTime으로 변환
+        LocalDateTime today = koreaTime.toLocalDateTime();
 
         String date = today.toString().split("T")[0].replace("-", "");
         String time = today.toString().split("T")[1].substring(0, 8).replace(":", "");
-
+        log.info("header date -> {}", date);
+        log.info("header time -> {}", time);
         String institutionTransactionUniqueNo = date + time + generateNumericUUID().substring(0, 6);
         log.info("header 거래고유번호 -> {}", institutionTransactionUniqueNo);
 

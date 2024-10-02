@@ -23,7 +23,7 @@ export function Chat() {
   const navigate = useNavigate();
   const [message, setMessage] = useState('');
 
-  const { messages, sendMessage } = useChatWebSocket('10', '6');
+  const { messages, sendMessage } = useChatWebSocket('10', '2');
 
   const handleOpenModal = (type: 'create' | 'correction' | 'check') => {
     setModalType(type);

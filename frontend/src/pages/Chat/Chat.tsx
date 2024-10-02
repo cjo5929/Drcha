@@ -72,7 +72,7 @@ export function Chat() {
         </button>
       </div>
       {/* 채팅 내용 */}
-      <ChatContent messages={messages} currentUserId="6" />
+      <ChatContent messages={messages} currentUserId="2" />
       {/* 채팅 입력창 */}
       <div className={styles.chatinput}>
         <textarea

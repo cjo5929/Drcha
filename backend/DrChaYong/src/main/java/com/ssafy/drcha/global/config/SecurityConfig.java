@@ -53,20 +53,20 @@ public class SecurityConfig {
                                         "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**",
                                         "/api/swagger-ui/index.html", "/api/swagger",
                                         "/api/swagger-ui.html", "/api/swagger-ui/**", "/api/api-docs", "/api/api-docs/**",
-                                        "/ws/**", "/sub/**", "/pub/**")
+                                    "/ws/**", "/sub/**", "/pub/**")
                                 .permitAll()
                                 .requestMatchers("/api/v1/**").hasAuthority(Role.MEMBER.name())
                                 .anyRequest().authenticated()
 //                        .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .authorizationEndpoint(authorizationEndpoint ->
-                                // authorizationEndpoint.baseUri("/api/oauth2/authorization"))
-                                authorizationEndpoint.baseUri("/oauth2/authorization"))
-                        .redirectionEndpoint(redirectionEndpoint ->
-                                // redirectionEndpoint.baseUri("/api/login/oauth2/code/*"))
-                                redirectionEndpoint.baseUri("/login/oauth2/code/*"))
-                        .successHandler(oAuth2LoginSuccessHandler)
+                                .authorizationEndpoint(authorizationEndpoint ->
+                                        authorizationEndpoint.baseUri("/api/oauth2/authorization"))
+                               // authorizationEndpoint.baseUri("/oauth2/authorization"))
+                                .redirectionEndpoint(redirectionEndpoint ->
+                                        redirectionEndpoint.baseUri("/api/login/oauth2/code/*"))
+                               // redirectionEndpoint.baseUri("/login/oauth2/code/*"))
+                                .successHandler(oAuth2LoginSuccessHandler)
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

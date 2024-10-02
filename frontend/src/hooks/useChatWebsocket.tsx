@@ -17,7 +17,7 @@ export function useChatWebSocket(
   const [stompClient, setStompClient] = useState<Client | null>(null);
 
   useEffect(() => {
-    const socket = new SockJS('http://localhost:8080/ws');
+    const socket = new SockJS('https://j11a205.p.ssafy.io/ws');
     const client = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {

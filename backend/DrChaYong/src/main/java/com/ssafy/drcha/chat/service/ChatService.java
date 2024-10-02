@@ -38,6 +38,7 @@ public class ChatService {
 
 	@Transactional
 	public void sendChatMessage(ChatMessageRequestDTO message) {
+		log.info(message.toString());
 		ChatMessage chatMessageEntity = message.toEntity();
 		ChatMessageResponseDTO responseDTO = ChatMessageResponseDTO.from(chatMongoService.saveChatMessage(chatMessageEntity));
 
@@ -62,12 +63,14 @@ public class ChatService {
 
 	@Transactional
 	public void updateChatRoomLastMessage(String chatRoomId, String messageId, String message, LocalDateTime messageTime) {
+		log.info(chatRoomId + "@@@@@@");
 		ChatRoom chatRoom = getChatRoomById(chatRoomId);
 		chatRoom.updateLastMessage(messageId, message, messageTime);
 	}
 
 	@Transactional
 	public void incrementUnreadCount(String chatRoomId, String senderId) {
+		log.info("asdasd" + chatRoomId, senderId);
 		ChatRoomMember recipientMember = chatRoomMemberRepository.findByChatRoom_ChatRoomIdAndMember_IdNot(
 				Long.parseLong(chatRoomId), Long.parseLong(senderId))
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.MEMBER_NOT_FOUND));

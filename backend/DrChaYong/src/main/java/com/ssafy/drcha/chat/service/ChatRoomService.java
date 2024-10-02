@@ -1,5 +1,7 @@
 package com.ssafy.drcha.chat.service;
 
+import com.ssafy.drcha.trust.dto.MemberTrustInfoResponse;
+import com.ssafy.drcha.trust.service.MemberTrustService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -49,6 +51,7 @@ public class ChatRoomService {
 	private final IouRepository iouRepository;
 	private final ChatMongoService chatMongoService;
 	private final MemberService memberService;
+	private final MemberTrustService memberTrustService;
 
 	@Transactional
 	public ChatRoomLinkResponseDTO createChatRoom(String email) {
@@ -191,12 +194,15 @@ public class ChatRoomService {
 		Double iouAmount = getIouAmount(iou);
 		Long daysUntilDue = getDaysUntilDue(iou);
 
+		MemberTrustInfoResponse memberTrustInfoResponse = memberTrustService.getMemberTrustInfo(chatRoomMember.getMember().getEmail());
+
 		return ChatRoomListResponseDTO.from(
 			chatRoom,
 			opponent,
 			contractStatus,
 			iouAmount,
 			daysUntilDue,
+			memberTrustInfoResponse,
 			chatRoomMember.getUnreadCount()
 		);
 	}
@@ -206,7 +212,7 @@ public class ChatRoomService {
 			.map(ChatRoomMember::getMember)
 			.filter(member -> !member.equals(currentMember))
 			.findFirst()
-			.orElseThrow(() -> new DataNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+			.orElse(null);
 	}
 
 	private String getContractStatus(Iou iou) {

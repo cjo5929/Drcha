@@ -7,11 +7,11 @@ import SockJS from 'sockjs-client';
 import { ChatMessage } from '@/types/ChatMessage';
 
 export function useChatWebSocket(
-  roomId: string,
-  senderId: string,
+  thisroomId: string,
+  thissenderId: string,
 ): {
   messages: ChatMessage[];
-  sendMessage: (content: string) => void;
+  sendMessage: (contents: string) => void;
 } {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [stompClient, setStompClient] = useState<Client | null>(null);
@@ -24,7 +24,7 @@ export function useChatWebSocket(
         console.log('Connected to WebSocket');
         setStompClient(client);
 
-        client.subscribe(`/topic/chat.${roomId}`, (message: Message) => {
+        client.subscribe(`/topic/chat.${thisroomId}`, (message: Message) => {
           const newMessage = JSON.parse(message.body) as ChatMessage;
           setMessages((prevMessages) => [...prevMessages, newMessage]);
         });
@@ -38,15 +38,15 @@ export function useChatWebSocket(
         client.deactivate();
       }
     };
-  }, [roomId]);
+  }, [thisroomId]);
 
   const sendMessage = useCallback(
-    (content: string) => {
+    (contents: string) => {
       if (stompClient && stompClient.active) {
         const chatMessage: ChatMessage = {
-          chatRoomId: roomId,
-          senderId,
-          content,
+          chatRoomId: thisroomId,
+          senderId: thissenderId,
+          content: contents,
           messageType: 'TALK',
         };
         stompClient.publish({
@@ -57,7 +57,7 @@ export function useChatWebSocket(
         console.error('STOMP client is not connected');
       }
     },
-    [stompClient, roomId, senderId],
+    [stompClient, thisroomId, thissenderId],
   );
 
   return { messages, sendMessage };

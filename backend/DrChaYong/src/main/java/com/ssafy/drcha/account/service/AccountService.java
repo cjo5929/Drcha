@@ -53,8 +53,11 @@ public class AccountService {
     @Transactional
     public void saveNewBankAccount(String email) {
         Member member = getMemberByEmail(email);
-        CreateDemandDepositAccountResponse response = restClientUtil.createDemandDepositAccount(member.getUserKey());
-        accountRepository.save(Account.createAccount(member, response.getRec().getBankCode(), response.getRec().getAccountNo()));
+        Optional<Account> byMember = accountRepository.findByMember(member);
+        if (!byMember.isPresent()) {
+            CreateDemandDepositAccountResponse response = restClientUtil.createDemandDepositAccount(member.getUserKey());
+            accountRepository.save(Account.createAccount(member, response.getRec().getBankCode(), response.getRec().getAccountNo()));
+        }
     }
 
     @Transactional

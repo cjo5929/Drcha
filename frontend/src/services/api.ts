@@ -9,7 +9,7 @@ const headers = {
 };
 
 export const API = axios.create({
-  baseURL: `http://localhost:8080/${apiVersion}`,
+  baseURL: `http://j11a205.p.ssafy.io/${apiVersion}`,
   headers,
   withCredentials: true,
 });

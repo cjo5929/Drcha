@@ -21,7 +21,6 @@ export function useChatWebSocket(
     const client = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {
-        console.log('Connected to WebSocket');
         setStompClient(client);
 
         client.subscribe(`/topic/chat.${thisroomId}`, (message: Message) => {
@@ -53,8 +52,6 @@ export function useChatWebSocket(
           destination: '/pub/chat.message',
           body: JSON.stringify(chatMessage),
         });
-      } else {
-        console.error('STOMP client is not connected');
       }
     },
     [stompClient, thisroomId, thissenderId],

@@ -28,7 +28,7 @@ export function ChatContent({
     <div className={styles.chatcontainer}>
       {messages.map((message: ChatMessage) => {
         switch (message.messageType) {
-          case 'SYSTEM':
+          case 'SYSTEM' || 'ENTER':
             return <Doctor content={message.content} />;
           case 'TALK':
             if (message.senderId === currentUserId) {

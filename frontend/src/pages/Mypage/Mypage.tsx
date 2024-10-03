@@ -1,10 +1,25 @@
+import { useEffect } from 'react';
+
 import { Navbar } from '@/components/Navbar/Navbar';
 import styles from '@/pages/Mypage/Mypage.module.scss';
+import { API } from '@/services/api';
 
 import { MyDealList } from './MyDealList';
 import { Myinfo } from './Myinfo';
 
 export function Mypage() {
+  useEffect(() => {
+    const fetchMemberInfo = async () => {
+      try {
+        const response = await API.get('/member/info');
+        console.log('Member Info:', response.data);
+      } catch (error) {
+        console.error('Error fetching member info:', error);
+      }
+    };
+
+    fetchMemberInfo();
+  }, []);
   return (
     <div className={styles.container}>
       <Myinfo />

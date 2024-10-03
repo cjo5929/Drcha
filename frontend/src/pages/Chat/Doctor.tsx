@@ -14,10 +14,6 @@ export function Doctor({ content }: { content: string }) {
           <div className={styles.doctorbubblearrow} />
           {content}
         </div>
-        <div className={styles.doctorbubble}>
-          <div className={styles.doctorbubblearrow} />
-          dfdafa
-        </div>
       </div>
     </div>
   );

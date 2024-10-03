@@ -10,7 +10,7 @@ public class WebClientConfig {
 	@Bean
 	public WebClient webClient() {
 		return WebClient.builder()
-			.baseUrl("http://localhost:5000") // 로컬에서 실행 중인 Flask AI 서버의 URL
+			.baseUrl("http://0.0.0.0:8000") // 로컬에서 실행 중인 Flask AI 서버의 URL
 			.build();
 	}
 }

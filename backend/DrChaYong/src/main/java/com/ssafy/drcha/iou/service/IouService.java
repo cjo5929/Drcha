@@ -1,13 +1,12 @@
 package com.ssafy.drcha.iou.service;
 
-import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
-import com.ssafy.drcha.virtualaccount.service.VirtualAccountService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import net.bytebuddy.implementation.bind.MethodDelegationBinder.MethodInvoker.Virtual;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -23,7 +22,6 @@ import com.ssafy.drcha.global.error.type.DataNotFoundException;
 import com.ssafy.drcha.global.error.type.UserNotFoundException;
 import com.ssafy.drcha.iou.dto.IouCreateRequestDto;
 import com.ssafy.drcha.iou.dto.IouDetailResponseDto;
-import com.ssafy.drcha.iou.dto.IouMessageRequestDto;
 import com.ssafy.drcha.iou.dto.IouPdfResponseDto;
 import com.ssafy.drcha.iou.dto.IouResponseDto;
 import com.ssafy.drcha.iou.dto.IouTransactionResponseDto;
@@ -31,6 +29,8 @@ import com.ssafy.drcha.iou.entity.Iou;
 import com.ssafy.drcha.iou.repository.IouRepository;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.repository.MemberRepository;
+import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
+import com.ssafy.drcha.virtualaccount.service.VirtualAccountService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -142,14 +142,12 @@ public class IouService {
 	}
 
 	private IouCreateRequestDto getIouDetailsFromAI(Long chatRoomId, String messages) {
-		IouMessageRequestDto requestDto = IouMessageRequestDto.builder()
-			.chatRoomId(chatRoomId)
-			.messages(messages)
-			.build();
+		Map<String, String> requestBody = new HashMap<>();
+		requestBody.put("conversation", messages);
 
 		return webClient.post()
 			.uri("/extract")
-			.bodyValue(requestDto)
+			.bodyValue(requestBody)
 			.retrieve()
 			.bodyToMono(IouCreateRequestDto.class)
 			.block(); // 동기적으로 결과를 받기 위해 block() 호출

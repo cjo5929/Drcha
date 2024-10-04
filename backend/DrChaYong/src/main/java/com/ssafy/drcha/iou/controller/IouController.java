@@ -49,9 +49,8 @@ public class IouController {
 				schema = @Schema(implementation = ErrorResponse.class)))
 	})
 	@PostMapping("/{chatRoomId}")
-	public ResponseEntity<Void> createIou(@PathVariable Long chatRoomId, @AuthenticationPrincipal UserDetails userDetails) {
-		iouService.createAiIou(chatRoomId, userDetails.getUsername());
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+	public ResponseEntity<IouPdfResponseDto> createIou(@PathVariable Long chatRoomId, @AuthenticationPrincipal UserDetails userDetails) {
+		return ResponseEntity.ok(iouService.createAiIou(chatRoomId, userDetails.getUsername()));
 	}
 
 
@@ -70,7 +69,7 @@ public class IouController {
 			content = @Content(mediaType = "application/json",
 				schema = @Schema(implementation = ErrorResponse.class)))
 	})
-	@PostMapping("/{chatRoomId}/iou")
+	@PostMapping("/{chatRoomId}/manual")
 	public ResponseEntity<Void> createManualIou(@PathVariable Long chatRoomId,
 		@RequestBody IouCreateRequestDto requestDto,
 		@AuthenticationPrincipal UserDetails userDetails) {

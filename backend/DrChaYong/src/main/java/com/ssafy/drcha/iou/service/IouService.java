@@ -46,11 +46,11 @@ public class IouService {
 	private final VirtualAccountService virtualAccountService;
 
 	@Transactional
-	public void createAiIou(Long chatRoomId, String email) {
+	public IouPdfResponseDto createAiIou(Long chatRoomId, String email) {
 		ChatRoom chatRoom = getChatRoomById(chatRoomId);
 		String messages = chatMongoService.getConversationByChatRoomId(chatRoomId);
 		IouCreateRequestDto requestDTO = getIouDetailsFromAI(chatRoomId, messages);
-		createAndSaveIou(chatRoom, requestDTO);
+		return IouPdfResponseDto.from(createAndSaveIou(chatRoom, requestDTO));
 	}
 
 	@Transactional
@@ -120,7 +120,7 @@ public class IouService {
 	}
 
 	@Transactional
-	public void createAndSaveIou(ChatRoom chatRoom, IouCreateRequestDto requestDTO) {
+	public Iou createAndSaveIou(ChatRoom chatRoom, IouCreateRequestDto requestDTO) {
 		Member creditor = findMemberByRole(chatRoom, MemberRole.CREDITOR);
 		Member debtor = findMemberByRole(chatRoom, MemberRole.DEBTOR);
 		Iou iou = requestDTO.toEntity(creditor, debtor, chatRoom);
@@ -131,6 +131,8 @@ public class IouService {
 			VirtualAccount virtualAccount = virtualAccountService.createVirtualAccount(savedIou.getIouId());
 			savedIou.linkVirtualAccount(virtualAccount);
 		}
+
+		return savedIou;
 	}
 
 	private Member findMemberByRole(ChatRoom chatRoom, MemberRole role) {

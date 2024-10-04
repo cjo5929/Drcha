@@ -14,7 +14,6 @@ public final class ChatMessageRequestDto {
 	private String content;
 	private String senderId;
 	private ChatMessageType messageType;
-	private String avatarUrl;
 
 	public ChatMessage toEntity() {
 		return ChatMessage.builder()
@@ -22,7 +21,6 @@ public final class ChatMessageRequestDto {
 			.senderId(senderId)
 			.content(content)
 			.messageType(messageType)
-			.avatarUrl(avatarUrl)
 			.build();
 	}
 

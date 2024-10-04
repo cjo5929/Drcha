@@ -25,16 +25,14 @@ public class ChatMessage {
 	private String content;
 	private LocalDateTime createdAt;
 	private ChatMessageType messageType;
-	private String avatarUrl;
 
 	@Builder
-	public ChatMessage(String chatRoomId, String senderId, String content, ChatMessageType messageType, String avatarUrl) {
+	public ChatMessage(String chatRoomId, String senderId, String content, ChatMessageType messageType) {
 		this.chatRoomId = chatRoomId;
 		this.senderId = senderId;
 		this.content = content;
 		this.createdAt = LocalDateTime.now();
 		this.messageType = messageType;
-		this.avatarUrl = avatarUrl;
 	}
 
 }

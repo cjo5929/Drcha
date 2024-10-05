@@ -4,7 +4,7 @@ import com.ssafy.drcha.account.entity.Account;
 import com.ssafy.drcha.global.basetime.BaseTimeEntity;
 import com.ssafy.drcha.member.enums.Role;
 import com.ssafy.drcha.trust.entity.MemberTrust;
-import com.ssafy.drcha.transaction.entity.VirtualAccount;
+import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,8 +15,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -60,7 +60,7 @@ public class Member extends BaseTimeEntity {
     @Column(name = "user_key")
     private String userKey;
 
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private MemberTrust memberTrust;
 
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -74,13 +74,18 @@ public class Member extends BaseTimeEntity {
 
     //==생성 메서드==//
     public static Member createMember(String username, String email, String avatarUrl, Role role, String userKey) {
-        return Member.builder()
+        Member member = Member.builder()
                 .username(username)
                 .email(email)
                 .avatarUrl(avatarUrl)
                 .role(role)
                 .userKey(userKey)
+                .isVerified(false)
                 .build();
+
+        // MemberTrust 초기화 및 연관관계 설정
+        member.initMemberTrust(member);
+        return member;
     }
 
     //==비즈니스 로직==//
@@ -90,6 +95,13 @@ public class Member extends BaseTimeEntity {
 
     public void changeUserKey(String userKey) {
         this.userKey = userKey;
+    }
+
+    // MemberTrust 설정 메서드
+    public void initMemberTrust(Member member) {
+        MemberTrust memberTrust = MemberTrust.initializeMemberTrust(member);
+        this.memberTrust = memberTrust;
+        memberTrust.initMember(member);
     }
 
     public void savePhoneNumber(String phoneNumber) {

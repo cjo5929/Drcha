@@ -66,4 +66,10 @@ public class VirtualAccount extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private VirtualAccountStatus status;  // 가상계좌의 상태 (활성, 완료, 해지 등)
 
+
+    // ======== 차용증과의 연관관계 메서드 ======== //
+    // 연관관계 설정을 위한 메서드
+    public void linkIou(Iou iou) {
+        this.iou = iou;
+    }
 }

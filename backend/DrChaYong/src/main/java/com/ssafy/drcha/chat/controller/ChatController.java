@@ -1,7 +1,20 @@
 package com.ssafy.drcha.chat.controller;
 
+import com.ssafy.drcha.chat.dto.ChatMessageParam;
+import com.ssafy.drcha.chat.dto.ChatMessageResponseDto;
+import com.ssafy.drcha.chat.dto.ChatRoomLinkResponseDto;
+import com.ssafy.drcha.chat.dto.ChatRoomListResponseDto;
+import com.ssafy.drcha.chat.enums.MemberRole;
+import com.ssafy.drcha.chat.service.ChatRoomService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,22 +25,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.ssafy.drcha.chat.dto.ChatMessageParam;
-import com.ssafy.drcha.chat.dto.ChatMessageResponseDTO;
-import com.ssafy.drcha.chat.dto.ChatRoomLinkResponseDTO;
-import com.ssafy.drcha.chat.dto.ChatRoomListResponseDTO;
-import com.ssafy.drcha.chat.enums.MemberRole;
-import com.ssafy.drcha.chat.service.ChatRoomService;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("ws/api/v1/chat")
@@ -48,7 +45,7 @@ public class ChatController {
 			)),
 	})
 	@PostMapping
-	public ResponseEntity<ChatRoomLinkResponseDTO> createChatRoom(@AuthenticationPrincipal UserDetails userDetails) {
+	public ResponseEntity<ChatRoomLinkResponseDto> createChatRoom(@AuthenticationPrincipal UserDetails userDetails) {
 		return ResponseEntity.ok(chatRoomService.createChatRoom(userDetails.getUsername()));
 	}
 
@@ -56,13 +53,13 @@ public class ChatController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "채팅방 목록 조회 성공",
 			content = @Content(mediaType = "application/json",
-				schema = @Schema(implementation = ChatRoomListResponseDTO.class))),
+				schema = @Schema(implementation = ChatRoomListResponseDto.class))),
 		@ApiResponse(responseCode = "401", description = "사용자 인증 필요",
 			content = @Content(mediaType = "application/json",
 				schema = @Schema(implementation = ErrorResponse.class)))
 	})
 	@GetMapping("/lent")
-	public ResponseEntity<List<ChatRoomListResponseDTO>> getLentChatRoomList(@AuthenticationPrincipal UserDetails userDetails) {
+	public ResponseEntity<List<ChatRoomListResponseDto>> getLentChatRoomList(@AuthenticationPrincipal UserDetails userDetails) {
 		return ResponseEntity.ok(chatRoomService.getChatRoomListByRole(userDetails.getUsername(), MemberRole.CREDITOR));
 	}
 
@@ -70,13 +67,13 @@ public class ChatController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "채팅방 목록 조회 성공",
 			content = @Content(mediaType = "application/json",
-				schema = @Schema(implementation = ChatRoomListResponseDTO.class))),
+				schema = @Schema(implementation = ChatRoomListResponseDto.class))),
 		@ApiResponse(responseCode = "401", description = "사용자 인증 필요",
 			content = @Content(mediaType = "application/json",
 				schema = @Schema(implementation = ErrorResponse.class)))
 	})
 	@GetMapping("/borrowed")
-	public ResponseEntity<List<ChatRoomListResponseDTO>> getBorrowedChatRoomList(@AuthenticationPrincipal UserDetails userDetails) {
+	public ResponseEntity<List<ChatRoomListResponseDto>> getBorrowedChatRoomList(@AuthenticationPrincipal UserDetails userDetails) {
 		return ResponseEntity.ok(chatRoomService.getChatRoomListByRole(userDetails.getUsername(), MemberRole.DEBTOR));
 	}
 
@@ -84,7 +81,7 @@ public class ChatController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "채팅방 입장 및 메시지 조회 성공",
 			content = @Content(mediaType = "application/json",
-				schema = @Schema(implementation = ChatMessageResponseDTO.class))),
+				schema = @Schema(implementation = ChatMessageResponseDto.class))),
 		@ApiResponse(responseCode = "401", description = "사용자 인증 필요",
 			content = @Content(mediaType = "application/json",
 				schema = @Schema(implementation = ErrorResponse.class))),
@@ -93,7 +90,7 @@ public class ChatController {
 				schema = @Schema(implementation = ErrorResponse.class)))
 	})
 	@GetMapping("/{chatRoomId}/enter")
-	public ResponseEntity<List<ChatMessageResponseDTO>> enterChatRoom(
+	public ResponseEntity<List<ChatMessageResponseDto>> enterChatRoom(
 		@Parameter(description = "채팅방 아이디", required = true)
 		@PathVariable Long chatRoomId,
 		@Parameter(description = "인증된 사용자 정보", hidden = true)
@@ -106,7 +103,7 @@ public class ChatController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "채팅방 입장 및 메시지 조회 성공",
 			content = @Content(mediaType = "application/json",
-				schema = @Schema(implementation = ChatMessageResponseDTO.class))),
+				schema = @Schema(implementation = ChatMessageResponseDto.class))),
 		@ApiResponse(responseCode = "302", description = "회원가입 또는 본인인증 필요로 인한 리다이렉트",
 			content = @Content(mediaType = "application/json",
 				schema = @Schema(implementation = ErrorResponse.class))),
@@ -121,7 +118,7 @@ public class ChatController {
 				schema = @Schema(implementation = ErrorResponse.class)))
 	})
 	@GetMapping("/{invitationLink}/link/enter")
-	public ResponseEntity<List<ChatMessageResponseDTO>> enterChatRoomViaInvitationLink(
+	public ResponseEntity<List<ChatMessageResponseDto>> enterChatRoomViaInvitationLink(
 		@Parameter(description = "채팅방 링크", required = true)
 		@PathVariable String invitationLink,
 		@Parameter(description = "인증된 사용자 정보", hidden = true)
@@ -133,13 +130,13 @@ public class ChatController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "추가 메시지 조회 성공",
 			content = @Content(mediaType = "application/json",
-				array = @ArraySchema(schema = @Schema(implementation = ChatMessageResponseDTO.class)))),
+				array = @ArraySchema(schema = @Schema(implementation = ChatMessageResponseDto.class)))),
 		@ApiResponse(responseCode = "401", description = "사용자 인증 필요",
 			content = @Content(mediaType = "application/json",
 				schema = @Schema(implementation = ErrorResponse.class)))
 	})
 	@GetMapping("/{chatRoomId}/messages")
-	public ResponseEntity<List<ChatMessageResponseDTO>> loadMoreMessages(
+	public ResponseEntity<List<ChatMessageResponseDto>> loadMoreMessages(
 		@Parameter(description = "채팅방 ID", required = true)
 		@PathVariable Long chatRoomId,
 		@Parameter(description = "인증된 사용자 정보", hidden = true)

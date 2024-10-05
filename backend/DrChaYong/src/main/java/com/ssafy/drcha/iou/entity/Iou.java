@@ -1,8 +1,5 @@
 package com.ssafy.drcha.iou.entity;
 
-import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
-import java.time.LocalDateTime;
-
 import com.ssafy.drcha.chat.entity.ChatRoom;
 import com.ssafy.drcha.global.basetime.BaseTimeEntity;
 import com.ssafy.drcha.iou.enums.ContractStatus;
@@ -11,6 +8,7 @@ import com.ssafy.drcha.member.entity.Member;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -77,9 +75,9 @@ public class Iou extends BaseTimeEntity {
 
 	@Builder
 	private Iou(Member creditor, Member debtor, Long iouAmount,
-		LocalDateTime contractStartDate, LocalDateTime contractEndDate,
-		Double interestRate, ContractStatus contractStatus,
-		ChatRoom chatRoom, Integer notificationSchedule) {
+				LocalDateTime contractStartDate, LocalDateTime contractEndDate,
+				Double interestRate, ContractStatus contractStatus,
+				ChatRoom chatRoom, Integer notificationSchedule) {
 		this.creditor = creditor;
 		this.debtor = debtor;
 		this.iouAmount = iouAmount;
@@ -121,6 +119,14 @@ public class Iou extends BaseTimeEntity {
 		if (this.borrowerAgreement && this.lenderAgreement && this.agreementDate == null) {
 			this.agreementDate = LocalDateTime.now();
 			this.contractStatus = ContractStatus.ACTIVE;
+		}
+	}
+
+	// ======== 가상계좌와의 연관관계 메서드 ======= //
+	public void linkVirtualAccount(VirtualAccount virtualAccount) {
+		this.virtualAccount = virtualAccount;
+		if (virtualAccount != null && virtualAccount.getIou() != this) {
+			virtualAccount.linkIou(this);
 		}
 	}
 }

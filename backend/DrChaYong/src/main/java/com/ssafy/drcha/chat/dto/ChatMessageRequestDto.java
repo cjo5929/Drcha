@@ -8,13 +8,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public final class ChatMessageRequestDTO {
+public final class ChatMessageRequestDto {
 
 	private String chatRoomId;
 	private String content;
 	private String senderId;
 	private ChatMessageType messageType;
-	private String avatarUrl;
 
 	public ChatMessage toEntity() {
 		return ChatMessage.builder()
@@ -22,7 +21,6 @@ public final class ChatMessageRequestDTO {
 			.senderId(senderId)
 			.content(content)
 			.messageType(messageType)
-			.avatarUrl(avatarUrl)
 			.build();
 	}
 

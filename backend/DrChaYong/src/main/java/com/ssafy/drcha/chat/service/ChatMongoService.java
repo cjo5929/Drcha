@@ -34,7 +34,8 @@ public class ChatMongoService {
   	 대화 내용 AI서버로
  	*/
 	public String getConversationByChatRoomId(Long chatRoomId) {
-		List<ChatMessage> messages = chatMessageRepository.findByChatRoomId(String.valueOf(chatRoomId));
+		List<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderByCreatedAt(
+			String.valueOf(chatRoomId), PageRequest.of(0, 30));
 		return messages.stream()
 			.map(ChatMessage::getContent)
 			.collect(Collectors.joining("\n"));
@@ -49,8 +50,4 @@ public class ChatMongoService {
 		return chatMessageRepository.findByRoomIdWithPaging(chatRoomId, page, size);
 	}
 
-
-	public List<ChatMessage> getRecentChatMessages(String chatRoomId, int limit) {
-		return chatMessageRepository.findByChatRoomIdOrderByCreatedAtDesc(chatRoomId, PageRequest.of(0, limit));
-	}
 }

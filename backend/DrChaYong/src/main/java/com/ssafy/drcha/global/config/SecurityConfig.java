@@ -1,3 +1,4 @@
+
 package com.ssafy.drcha.global.config;
 
 import java.util.Arrays;
@@ -47,7 +48,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/", "/login","/api/v1/member/logout", "/error", "/oauth2/**",
+                                .requestMatchers("/login","/api/v1/member/logout", "/error", "/oauth2/**",
                                         "/h2-console", "/swagger-ui/index.html", "/swagger",
                                         "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**",
                                         "/api/swagger-ui/index.html", "/api/swagger",
@@ -98,3 +99,4 @@ public class SecurityConfig {
         return source;
     }
 }
+

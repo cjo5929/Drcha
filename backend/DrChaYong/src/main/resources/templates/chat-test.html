@@ -19,6 +19,11 @@
 <h1>채팅 컨트롤러 테스트</h1>
 
 <div>
+    <h2>사용자 ID 설정</h2>
+    <input type="text" id="userId" placeholder="사용자 ID를 입력하세요">
+</div>
+
+<div>
     <h2>채팅방 생성</h2>
     <button onclick="createChatRoom()">채팅방 생성</button>
 </div>
@@ -164,20 +169,23 @@
 
     function displayMessages(messages) {
         const chatMessages = document.getElementById('chatMessages');
+        // 최신 메시지가 아래로 가도록 그대로 추가
         chatMessages.innerHTML = messages.map(msg => `
-                <p class="${msg.sender === 'me' ? 'my-message' : 'other-message'}">
-                    <strong>${msg.sender}:</strong> ${msg.content}
+                <p class="${msg.senderId === getCurrentUserId() ? 'my-message' : 'other-message'}">
+                    <strong>${msg.senderId}:</strong> ${msg.content}
                 </p>
             `).join('');
+        // 스크롤을 맨 아래로 이동
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
     function displayMessage(message) {
         const chatMessages = document.getElementById('chatMessages');
         const messageElement = document.createElement('p');
-        messageElement.className = message.sender === 'me' ? 'my-message' : 'other-message';
-        messageElement.innerHTML = `<strong>${message.sender}:</strong> ${message.content}`;
+        messageElement.className = message.senderId === getCurrentUserId() ? 'my-message' : 'other-message';
+        messageElement.innerHTML = `<strong>${message.senderId}:</strong> ${message.content}`;
         chatMessages.appendChild(messageElement);
+        // 새 메시지 추가 후 스크롤을 맨 아래로 이동
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
@@ -190,15 +198,28 @@
         const content = messageInput.value;
         if (!content.trim()) return;
 
+        const userId = getCurrentUserId();
+        if (!userId) {
+            alert('사용자 ID를 입력해주세요.');
+            return;
+        }
+
         if (stompClient) {
-            stompClient.send("/pub/chat.message", {}, JSON.stringify({
+            const messageToSend = {
                 chatRoomId: currentChatRoomId,
+                senderId: userId, // 사용자 ID 추가
                 content: content
-            }));
+            };
+            stompClient.send("/pub/chat.message", {}, JSON.stringify(messageToSend));
+            // 메시지를 화면에 직접 표시하는 부분을 제거하여 중복 방지
             messageInput.value = '';
         } else {
             console.error('WebSocket 연결이 설정되지 않았습니다.');
         }
+    }
+
+    function getCurrentUserId() {
+        return document.getElementById('userId').value.trim();
     }
 
     // 페이지 로드 시 WebSocket 연결

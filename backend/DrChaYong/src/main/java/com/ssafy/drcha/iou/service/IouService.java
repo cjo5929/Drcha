@@ -2,11 +2,14 @@ package com.ssafy.drcha.iou.service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.ssafy.drcha.chat.entity.ChatRoom;
@@ -17,15 +20,17 @@ import com.ssafy.drcha.chat.service.ChatMongoService;
 import com.ssafy.drcha.global.error.ErrorCode;
 import com.ssafy.drcha.global.error.type.DataNotFoundException;
 import com.ssafy.drcha.global.error.type.UserNotFoundException;
-import com.ssafy.drcha.iou.dto.IouCreateRequestDTO;
-import com.ssafy.drcha.iou.dto.IouDetailResponseDTO;
-import com.ssafy.drcha.iou.dto.IouMessageRequestDTO;
+import com.ssafy.drcha.iou.dto.IouCreateRequestDto;
+import com.ssafy.drcha.iou.dto.IouDetailResponseDto;
+import com.ssafy.drcha.iou.dto.IouPdfResponseDto;
 import com.ssafy.drcha.iou.dto.IouResponseDto;
 import com.ssafy.drcha.iou.dto.IouTransactionResponseDto;
 import com.ssafy.drcha.iou.entity.Iou;
 import com.ssafy.drcha.iou.repository.IouRepository;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.repository.MemberRepository;
+import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
+import com.ssafy.drcha.virtualaccount.service.VirtualAccountService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,17 +43,18 @@ public class IouService {
 	private final WebClient webClient;
 	private final ChatMongoService chatMongoService;
 	private final MemberRepository memberRepository;
+	private final VirtualAccountService virtualAccountService;
 
 	@Transactional
-	public void createAiIou(Long chatRoomId, String email) {
+	public IouPdfResponseDto createAiIou(Long chatRoomId, String email) {
 		ChatRoom chatRoom = getChatRoomById(chatRoomId);
 		String messages = chatMongoService.getConversationByChatRoomId(chatRoomId);
-		IouCreateRequestDTO requestDTO = getIouDetailsFromAI(chatRoomId, messages);
-		createAndSaveIou(chatRoom, requestDTO);
+		IouCreateRequestDto requestDTO = getIouDetailsFromAI(chatRoomId, messages);
+		return IouPdfResponseDto.from(createAndSaveIou(chatRoom, requestDTO));
 	}
 
 	@Transactional
-	public void createManualIou(Long chatRoomId, IouCreateRequestDTO requestDTO, String email) {
+	public void createManualIou(Long chatRoomId, IouCreateRequestDto requestDTO, String email) {
 		ChatRoom chatRoom = getChatRoomById(chatRoomId);
 		createAndSaveIou(chatRoom, requestDTO);
 	}
@@ -81,7 +87,7 @@ public class IouService {
 		throw new DataNotFoundException(ErrorCode.IOU_NOT_FOUND);
 	}
 
-	public IouDetailResponseDTO getIouDetail(Long iouId, MemberRole role) {
+	public IouDetailResponseDto getIouDetail(Long iouId, MemberRole role) {
 		Iou iou = iouRepository.findById(iouId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.IOU_NOT_FOUND));
 
@@ -89,14 +95,20 @@ public class IouService {
 
 
 		if(role == MemberRole.CREDITOR) {
-			return IouDetailResponseDTO.from(iou, iou.getDebtor(), daysUntilDue);
+			return IouDetailResponseDto.from(iou, iou.getDebtor(), daysUntilDue);
 		}
 
 		if(role == MemberRole.DEBTOR) {
-			return IouDetailResponseDTO.from(iou, iou.getCreditor(), daysUntilDue);
+			return IouDetailResponseDto.from(iou, iou.getCreditor(), daysUntilDue);
 		}
 
 		throw  new UserNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
+	}
+
+	@Transactional(readOnly = true)
+	public IouPdfResponseDto getIouPdfData(Long iouId) {
+		return IouPdfResponseDto.from(iouRepository.findById(iouId)
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.IOU_NOT_FOUND)));
 	}
 
 	/*
@@ -107,11 +119,20 @@ public class IouService {
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CHAT_ROOM_NOT_FOUND));
 	}
 
-	private void createAndSaveIou(ChatRoom chatRoom, IouCreateRequestDTO requestDTO) {
+	@Transactional
+	public Iou createAndSaveIou(ChatRoom chatRoom, IouCreateRequestDto requestDTO) {
 		Member creditor = findMemberByRole(chatRoom, MemberRole.CREDITOR);
 		Member debtor = findMemberByRole(chatRoom, MemberRole.DEBTOR);
 		Iou iou = requestDTO.toEntity(creditor, debtor, chatRoom);
-		iouRepository.save(iou);
+		Iou savedIou = iouRepository.save(iou);
+
+		// ! 가상계좌 생성 및 연결
+		if (ObjectUtils.isEmpty(savedIou.getVirtualAccount())) {
+			VirtualAccount virtualAccount = virtualAccountService.createVirtualAccount(savedIou.getIouId());
+			savedIou.linkVirtualAccount(virtualAccount);
+		}
+
+		return savedIou;
 	}
 
 	private Member findMemberByRole(ChatRoom chatRoom, MemberRole role) {
@@ -122,17 +143,15 @@ public class IouService {
 			.orElseThrow(() -> new UserNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 	}
 
-	private IouCreateRequestDTO getIouDetailsFromAI(Long chatRoomId, String messages) {
-		IouMessageRequestDTO requestDto = IouMessageRequestDTO.builder()
-			.chatRoomId(chatRoomId)
-			.messages(messages)
-			.build();
+	private IouCreateRequestDto getIouDetailsFromAI(Long chatRoomId, String messages) {
+		Map<String, String> requestBody = new HashMap<>();
+		requestBody.put("conversation", messages);
 
 		return webClient.post()
 			.uri("/extract")
-			.bodyValue(requestDto)
+			.bodyValue(requestBody)
 			.retrieve()
-			.bodyToMono(IouCreateRequestDTO.class)
+			.bodyToMono(IouCreateRequestDto.class)
 			.block(); // 동기적으로 결과를 받기 위해 block() 호출
 	}
 }

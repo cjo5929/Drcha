@@ -11,7 +11,5 @@ import com.ssafy.drcha.chat.entity.ChatMessage;
 
 @Repository
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String>, ChatMessageRepositoryCustom  {
-	List<ChatMessage> findByChatRoomId(String chatRoomId);
-
-	List<ChatMessage> findByChatRoomIdOrderByCreatedAtDesc(String chatRoomId, PageRequest of);
+	List<ChatMessage> findByChatRoomIdOrderByCreatedAt(String chatRoomId, PageRequest of);
 }

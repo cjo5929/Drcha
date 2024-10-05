@@ -5,6 +5,7 @@ import com.ssafy.drcha.global.basetime.BaseTimeEntity;
 import com.ssafy.drcha.iou.enums.ContractStatus;
 import com.ssafy.drcha.member.entity.Member;
 
+import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 
 import { Input } from '@/components/Input/Input';
+import { Navbar } from '@/components/Navbar/Navbar';
 import { FILTER, STATUS } from '@/constants/Chatting';
 import { ChatRoom } from '@/types/Chat';
 
 import { ChattingList } from './ChattingList';
 import styles from './Main.module.scss';
-import { Navbar } from '@/components/Navbar/Navbar';
 
 export function Main() {
   const [filter, setFilter] = useState(FILTER.CREDIT);

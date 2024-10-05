@@ -23,10 +23,6 @@ export const useRouter = () =>
       children: [
         { index: true, element: <Main /> },
         {
-          path: 'login',
-          element: <Login />,
-        },
-        {
           path: 'mypage',
           element: <Mypage />,
         },
@@ -67,5 +63,9 @@ export const useRouter = () =>
           ],
         },
       ],
+    },
+    {
+      path: 'login',
+      element: <Login />,
     },
   ]);

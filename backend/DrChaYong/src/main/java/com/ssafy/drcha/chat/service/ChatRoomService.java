@@ -1,7 +1,5 @@
 package com.ssafy.drcha.chat.service;
 
-import com.ssafy.drcha.trust.dto.MemberTrustInfoResponse;
-import com.ssafy.drcha.trust.service.MemberTrustService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -36,6 +34,8 @@ import com.ssafy.drcha.iou.repository.IouRepository;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.repository.MemberRepository;
 import com.ssafy.drcha.member.service.MemberService;
+import com.ssafy.drcha.trust.dto.MemberTrustInfoResponse;
+import com.ssafy.drcha.trust.service.MemberTrustService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

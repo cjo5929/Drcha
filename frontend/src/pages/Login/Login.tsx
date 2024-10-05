@@ -1,14 +1,14 @@
 import KakaoSVG from '@/assets/icons/kakao.svg?react';
 import LogoSVG from '@/assets/icons/logo.svg?react';
 import STAMP_IMAGE from '@/assets/images/stamp.png';
+import { baseURL } from '@/services/api';
 
 import styles from './Login.module.scss';
 
 export function Login() {
   // TODO : login
   const handleLogin = () => {
-    window.location.href =
-      'https://j11a205.p.ssafy.io/api/oauth2/authorization/kakao';
+    window.location.href = `${baseURL}/api/oauth2/authorization/kakao`;
   };
 
   return (

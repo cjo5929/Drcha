@@ -21,6 +21,7 @@ import com.ssafy.drcha.global.error.ErrorCode;
 import com.ssafy.drcha.global.error.type.DataNotFoundException;
 import com.ssafy.drcha.global.error.type.UserNotFoundException;
 import com.ssafy.drcha.iou.dto.IouCreateRequestDto;
+import com.ssafy.drcha.iou.dto.IouCreateResponseDto;
 import com.ssafy.drcha.iou.dto.IouDetailResponseDto;
 import com.ssafy.drcha.iou.dto.IouPdfResponseDto;
 import com.ssafy.drcha.iou.dto.IouResponseDto;
@@ -33,9 +34,11 @@ import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
 import com.ssafy.drcha.virtualaccount.service.VirtualAccountService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class IouService {
 
 	private final IouRepository iouRepository;
@@ -46,13 +49,15 @@ public class IouService {
 	private final VirtualAccountService virtualAccountService;
 
 	@Transactional
-	public IouPdfResponseDto createAiIou(Long chatRoomId, String email) {
+	public IouCreateResponseDto createAiIou(Long chatRoomId, String email) {
 		ChatRoom chatRoom = getChatRoomById(chatRoomId);
 		String messages = chatMongoService.getConversationByChatRoomId(chatRoomId);
-		IouCreateRequestDto requestDTO = getIouDetailsFromAI(chatRoomId, messages);
-		return IouPdfResponseDto.from(createAndSaveIou(chatRoom, requestDTO));
-	}
 
+		IouCreateRequestDto requestDTO = getIouDetailsFromAI(chatRoomId, messages);
+
+		// Iou 저장 없이 바로 IouPdfResponseDto를 생성하여 반환하도록 변경
+		return IouCreateResponseDto.from(requestDTO);
+	}
 	@Transactional
 	public void createManualIou(Long chatRoomId, IouCreateRequestDto requestDTO, String email) {
 		ChatRoom chatRoom = getChatRoomById(chatRoomId);
@@ -120,7 +125,7 @@ public class IouService {
 	}
 
 	@Transactional
-	public Iou createAndSaveIou(ChatRoom chatRoom, IouCreateRequestDto requestDTO) {
+	public void createAndSaveIou(ChatRoom chatRoom, IouCreateRequestDto requestDTO) {
 		Member creditor = findMemberByRole(chatRoom, MemberRole.CREDITOR);
 		Member debtor = findMemberByRole(chatRoom, MemberRole.DEBTOR);
 		Iou iou = requestDTO.toEntity(creditor, debtor, chatRoom);
@@ -132,7 +137,6 @@ public class IouService {
 			savedIou.linkVirtualAccount(virtualAccount);
 		}
 
-		return savedIou;
 	}
 
 	private Member findMemberByRole(ChatRoom chatRoom, MemberRole role) {

@@ -1,8 +1,11 @@
 package com.ssafy.drcha.member.dto;
 
-import lombok.*;
-
 import java.math.BigDecimal;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
@@ -13,7 +16,7 @@ public class MyPageResponse {
     private String email;
     private String avatarUrl;
     private boolean isVerified;
-
+    private Long memberId;
     private String accountNo;
     private BigDecimal balance;
 }

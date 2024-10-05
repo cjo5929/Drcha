@@ -29,7 +29,10 @@ export function Chat() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { messages, sendMessage } = useChatWebSocket(chatRoomId ?? '', '2');
+  const { messages, sendMessage } = useChatWebSocket(
+    chatRoomId ?? '',
+    myData!.username ?? '',
+  );
 
   const handleOpenModal = (type: 'create' | 'correction' | 'check') => {
     setModalType(type);

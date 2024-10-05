@@ -27,18 +27,19 @@ export function ChatContent({
   return (
     <div className={styles.chatcontainer}>
       {messages.map((message: ChatMessage) => {
-        switch (message.messageType) {
-          case 'SYSTEM' || 'ENTER':
-            return <Doctor content={message.content} />;
-          case 'TALK':
-            if (message.senderId === currentUserId) {
-              return <MyChat content={message.content} />;
-            }
-            return <PartnerChat content={message.content} />;
-
-          default:
-            return null;
+        if (
+          message.messageType === 'SYSTEM' ||
+          message.messageType === 'ENTER'
+        ) {
+          return <Doctor content={message.content} />;
         }
+        if (message.messageType === 'TALK') {
+          if (message.senderId === currentUserId) {
+            return <MyChat content={message.content} />;
+          }
+          return <PartnerChat content={message.content} />;
+        }
+        return null;
       })}
       <div ref={messagesEndRef} />
     </div>

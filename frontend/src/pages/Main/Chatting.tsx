@@ -29,6 +29,8 @@ export function Chatting({ chat }: ChattingProps) {
       setStatus(`상환일까지 D-${daysUntilDue}일`);
     } else if (contractStatus === STATUS.OVERDUE) {
       setStatus(`${-1 * daysUntilDue}일 연체중`);
+    } else if (contractStatus === STATUS.DRAFTING) {
+      setStatus('거래 중');
     } else {
       setStatus('상환 완료');
     }
@@ -45,12 +47,12 @@ export function Chatting({ chat }: ChattingProps) {
         />
         <div className={styles.chattingContent}>
           <div className={styles.name}>{name}</div>
-          <div className={styles.chat}>{lastMessage}</div>
+          <div className={styles.chat}>{lastMessage || ''}</div>
         </div>
       </div>
       <div className={styles.chatStatus}>
         <div>{status}</div>
-        <div>{`${iouAmount}원`}</div>
+        <div>{iouAmount ? `${iouAmount}원` : ''}</div>
       </div>
     </NavLink>
   );

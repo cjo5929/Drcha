@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Input } from '@/components/Input/Input';
 import { Navbar } from '@/components/Navbar/Navbar';
 import { FILTER, STATUS } from '@/constants/chatting';
+import { chat } from '@/services/chat';
 import { ChatRoom } from '@/types/Chat';
 
 import { ChattingList } from './ChattingList';
@@ -16,113 +17,38 @@ export function Main() {
   const [showActive, setShowActive] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
   const [showOverdue, setShowOverdue] = useState(true);
+  const [chatList, setChatList] = useState<ChatRoom[]>([]);
 
-  // TODO : 채팅 정보 불러오기
-  const chatList: ChatRoom[] = [
-    {
-      chatRoomId: 1,
-      name: '강민서',
-      avatarUrl: '',
-      contractStatus: 'ACTIVE',
-      lastMessage: '지금 바쁨',
-      iouAmount: 300000,
-      daysUntilDue: 20,
-      unreadCount: 300,
-    },
-    {
-      chatRoomId: 2,
-      name: '강민서',
-      avatarUrl: '',
-      contractStatus: 'ACTIVE',
-      lastMessage: '지금 바쁨',
-      iouAmount: 300000,
-      daysUntilDue: 20,
-      unreadCount: 300,
-    },
-    {
-      chatRoomId: 3,
-      name: '강민서',
-      avatarUrl: '',
-      contractStatus: 'ACTIVE',
-      lastMessage: '지금 바쁨',
-      iouAmount: 300000,
-      daysUntilDue: 20,
-      unreadCount: 300,
-    },
-    {
-      chatRoomId: 4,
-      name: '강민서',
-      avatarUrl: '',
-      contractStatus: 'OVERDUE',
-      lastMessage: '지금 바쁨',
-      iouAmount: 300000,
-      daysUntilDue: -20,
-      unreadCount: 3,
-    },
-    {
-      chatRoomId: 5,
-      name: '강민서',
-      avatarUrl: '',
-      contractStatus: 'OVERDUE',
-      lastMessage: '지금 바쁨',
-      iouAmount: 300000,
-      daysUntilDue: -20,
-      unreadCount: 3,
-    },
-    {
-      chatRoomId: 6,
-      name: '강민서',
-      avatarUrl: '',
-      contractStatus: 'OVERDUE',
-      lastMessage: '지금 바쁨',
-      iouAmount: 300000,
-      daysUntilDue: -20,
-      unreadCount: 3,
-    },
-    {
-      chatRoomId: 7,
-      name: '강민서',
-      avatarUrl: '',
-      contractStatus: 'COMPLETED',
-      lastMessage: '지금 바쁨',
-      iouAmount: 300000,
-      daysUntilDue: 20,
-      unreadCount: 3,
-    },
-    {
-      chatRoomId: 8,
-      name: '강민서',
-      avatarUrl: '',
-      contractStatus: 'COMPLETED',
-      lastMessage: '지금 바쁨',
-      iouAmount: 300000,
-      daysUntilDue: 20,
-      unreadCount: 3,
-    },
-    {
-      chatRoomId: 9,
-      name: '강민서',
-      avatarUrl: '',
-      contractStatus: 'COMPLETED',
-      lastMessage: '지금 바쁨',
-      iouAmount: 300000,
-      daysUntilDue: 20,
-      unreadCount: 3,
-    },
-  ];
+  const getChattingLists = useCallback(async () => {
+    if (filter === FILTER.CREDIT) {
+      const newChattingList = await chat.getBorrowedChattings();
+      setChatList(newChattingList);
+      return;
+    }
+    const newChattingList = await chat.getLentChattings();
+    setChatList(newChattingList);
+  }, [filter]);
+
+  useEffect(() => {
+    getChattingLists();
+  }, [getChattingLists]);
 
   useEffect(() => {
     setActiveChat(
-      chatList.filter((chat) => chat.contractStatus === STATUS.ACTIVE),
+      chatList.filter(
+        (chatting) =>
+          chatting.contractStatus === STATUS.ACTIVE || STATUS.DRAFTING,
+      ),
     );
     setCompletedChat(
-      chatList.filter((chat) => chat.contractStatus === STATUS.COMPLETED),
+      chatList.filter(
+        (chatting) => chatting.contractStatus === STATUS.COMPLETED,
+      ),
     );
     setOverdueChat(
-      chatList.filter((chat) => chat.contractStatus === STATUS.OVERDUE),
+      chatList.filter((chatting) => chatting.contractStatus === STATUS.OVERDUE),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [chatList]);
 
   const handleCreditClick = () => {
     setFilter(FILTER.CREDIT);

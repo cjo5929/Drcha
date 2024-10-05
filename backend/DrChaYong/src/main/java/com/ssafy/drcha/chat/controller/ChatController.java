@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -120,7 +121,7 @@ public class ChatController {
 			content = @Content(mediaType = "application/json",
 				schema = @Schema(implementation = ErrorResponse.class)))
 	})
-	@GetMapping("/{invitationLink}/link/enter")
+	@PatchMapping("/{invitationLink}")
 	public ResponseEntity<List<ChatMessageResponseDto>> enterChatRoomViaInvitationLink(
 		@Parameter(description = "채팅방 링크", required = true)
 		@PathVariable String invitationLink,

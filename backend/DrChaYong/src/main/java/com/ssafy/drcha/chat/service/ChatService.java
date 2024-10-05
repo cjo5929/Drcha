@@ -13,11 +13,12 @@ import com.ssafy.drcha.chat.dto.ChatMessageResponseDto;
 import com.ssafy.drcha.chat.entity.ChatMessage;
 import com.ssafy.drcha.chat.entity.ChatRoom;
 import com.ssafy.drcha.chat.entity.ChatRoomMember;
-import com.ssafy.drcha.chat.factory.ChatMessageFactory;
+import com.ssafy.drcha.chat.enums.ChatMessageType;
 import com.ssafy.drcha.chat.repository.ChatRoomMemberRepository;
 import com.ssafy.drcha.chat.repository.ChatRoomRepository;
 import com.ssafy.drcha.global.error.ErrorCode;
 import com.ssafy.drcha.global.error.type.DataNotFoundException;
+import com.ssafy.drcha.iou.dto.IouCreateResponseDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,18 +49,26 @@ public class ChatService {
 		publishMessage(responseDTO);
 	}
 
+
 	@Transactional
-	public void sendIouImageMessage(Long chatRoomId, byte[] imageData) {
-		ChatMessage chatMessage = ChatMessageFactory.createSystemImageMessage(
-			String.valueOf(chatRoomId),
-			imageData,
-			"안녕하세요, 박사님입니다. 작성된 차용증을 확인해 주세요."
-		);
+	public void sendIouDetailsMessage(Long chatRoomId, IouCreateResponseDto iouCreateResponseDto) {
+		// 차용증 관련 상세 정보를 포함한 ChatMessage 생성
+		ChatMessage chatMessage = ChatMessage.builder()
+			.chatRoomId(String.valueOf(chatRoomId))
+			.content("차용증이 생성되었습니다. 상세 내용을 확인하세요.")
+			.messageType(ChatMessageType.IOU)
+			.iouInfo(iouCreateResponseDto)
+			.build();
+
 
 		ChatMessageResponseDto responseDTO = ChatMessageResponseDto.from(chatMongoService.saveChatMessage(chatMessage));
+
 		updateChatRoomLastMessage(responseDTO.getChatRoomId(), responseDTO.getId(), responseDTO.getContent(), responseDTO.getCreatedAt());
+
 		publishMessage(responseDTO);
 	}
+
+
 
 	@Transactional
 	public void updateChatRoomLastMessage(String chatRoomId, String messageId, String message, LocalDateTime messageTime) {

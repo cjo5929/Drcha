@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.ssafy.drcha.chat.entity.ChatMessage;
 import com.ssafy.drcha.chat.enums.ChatMessageType;
+import com.ssafy.drcha.iou.dto.IouCreateResponseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +18,7 @@ public final class ChatMessageResponseDto {
 	private String senderId;
 	private ChatMessageType messageType;
 	private LocalDateTime createdAt;
-
+	private IouCreateResponseDto iouInfo;
 
 	public static ChatMessageResponseDto from(ChatMessage chatMessage) {
 		return new ChatMessageResponseDto(
@@ -26,7 +27,8 @@ public final class ChatMessageResponseDto {
 			chatMessage.getContent(),
 			chatMessage.getSenderId(),
 			chatMessage.getMessageType(),
-			chatMessage.getCreatedAt()
+			chatMessage.getCreatedAt(),
+			chatMessage.getIouInfo()
 		);
 	}
 

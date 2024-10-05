@@ -18,6 +18,7 @@ import com.ssafy.drcha.chat.entity.ChatRoomMember;
 import com.ssafy.drcha.chat.enums.MemberRole;
 import com.ssafy.drcha.chat.repository.ChatRoomRepository;
 import com.ssafy.drcha.chat.service.ChatMongoService;
+import com.ssafy.drcha.chat.service.ChatService;
 import com.ssafy.drcha.global.error.ErrorCode;
 import com.ssafy.drcha.global.error.type.DataNotFoundException;
 import com.ssafy.drcha.global.error.type.UserNotFoundException;
@@ -48,9 +49,10 @@ public class IouService {
 	private final ChatMongoService chatMongoService;
 	private final MemberRepository memberRepository;
 	private final VirtualAccountService virtualAccountService;
+	private final ChatService chatService;
 
 	@Transactional
-	public IouCreateResponseDto createAiIou(Long chatRoomId, String email) {
+	public void createAiIou(Long chatRoomId, String email) {
 		ChatRoom chatRoom = getChatRoomById(chatRoomId);
 		String messages = chatMongoService.getConversationByChatRoomId(chatRoomId);
 
@@ -70,7 +72,7 @@ public class IouService {
 		// Iou 저장 후 응답 생성 (변경된 부분)
 		Iou savedIou = createAndSaveIou(chatRoom, requestDTO);
 
-		return new IouCreateResponseDto(
+		IouCreateResponseDto responseDto = new IouCreateResponseDto(
 			savedIou.getIouId().toString(),
 			creditorName,
 			debtorName,
@@ -80,8 +82,11 @@ public class IouService {
 			String.valueOf(savedIou.getInterestRate()),
 			savedIou.getBorrowerAgreement(),
 			savedIou.getLenderAgreement(),
-			"0"
+			calculateTotalAmount(savedIou.getIouAmount(), savedIou.getInterestRate(), 12)
 		);
+
+		chatService.sendIouDetailsMessage(chatRoomId, responseDto);
+
 	}
 
 
@@ -143,6 +148,26 @@ public class IouService {
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.IOU_NOT_FOUND)));
 	}
 
+
+	@Transactional
+	public void agreeToIou(Long iouId, String email) {
+		Iou iou = iouRepository.findById(iouId)
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.IOU_NOT_FOUND));
+
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new UserNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+		if (iou.getCreditor().equals(member)) {
+			iou.lenderAgree();
+		} else if (iou.getDebtor().equals(member)) {
+			iou.borrowerAgree();
+		} else {
+			throw new DataNotFoundException(ErrorCode.IOU_NOT_FOUND);
+		}
+
+		iouRepository.save(iou);
+	}
+
 	/*
 	  호출용 메서드
 	 */
@@ -185,5 +210,28 @@ public class IouService {
 			.retrieve()
 			.bodyToMono(IouCreateRequestDto.class)
 			.block(); // 동기적으로 결과를 받기 위해 block() 호출
+	}
+
+	/**
+	 * 원리금을 계산하는 메서드 (단리 방식)
+	 *
+	 * @param iouAmount 원금 (문자열로 입력받아 변환)
+	 * @param interestRate 이자율 (문자열로 입력받아 변환)
+	 * @param months 기간 (개월 단위, 예: 1개월)
+	 * @return 원금과 이자를 합한 금액 (문자열로 반환)
+	 */
+	private static String calculateTotalAmount(Long iouAmount, Double interestRate, int months) {
+		if (iouAmount == null || interestRate == null || months <= 0) {
+			return null;
+		}
+		try {
+			long principal = iouAmount;
+			double rate = interestRate / 100;
+			double period = months / 12.0;
+			double interest = principal * rate * period;
+			return String.valueOf(Math.round(principal + interest));
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 }

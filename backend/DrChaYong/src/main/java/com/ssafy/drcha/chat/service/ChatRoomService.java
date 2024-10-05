@@ -103,14 +103,10 @@ public class ChatRoomService {
 		ChatRoom chatRoom = findChatRoomByInvitationLink(invitationLink);
 		Member debtor = findMemberByEmail(userDetails.getUsername());
 
-		validateChatRoomForDebtorEntry(chatRoom);
-
 		ChatRoomMember chatRoomMember = addDebtorToChatRoom(chatRoom, debtor);
 
 		ChatMessageParam param = new ChatMessageParam(0, 20);
 		Page<ChatMessage> messages = chatMongoService.getChatScrollMessages(chatRoom.getChatRoomId().toString(), param);
-		// ChatMessage enterMessage = createAndSaveEnterMessage(chatRoom, debtor);
-		// messages.getContent().add(enterMessage);
 
 		updateLastReadMessage(chatRoomMember, messages.getContent());
 
@@ -167,11 +163,6 @@ public class ChatRoomService {
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CHAT_ROOM_NOT_FOUND));
 	}
 
-	private void validateChatRoomForDebtorEntry(ChatRoom chatRoom) {
-		if (chatRoom.getChatRoomMembers().size() >= 2) {
-			throw new BusinessException(ErrorCode.CHAT_ROOM_FULL);
-		}
-	}
 
 	private ChatRoomMember addDebtorToChatRoom(ChatRoom chatRoom, Member debtor) {
 		return ChatRoomMember.createMember(debtor, chatRoom, MemberRole.DEBTOR);

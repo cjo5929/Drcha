@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { STATUS } from '@/constants/Chatting';
-import { ChatRoom } from '@/types/Chat';
 import AVATAR_IMAGE from '@/assets/images/avatar.png';
+import { STATUS } from '@/constants/chatting';
+import { ChatRoom } from '@/types/Chat';
 
 import styles from './Main.module.scss';
 
@@ -39,7 +39,7 @@ export function Chatting({ chat }: ChattingProps) {
       <div className={styles.unreadCount}>{unreadCount}</div>
       <div className={styles.chattingBody}>
         <img
-          src={avatarUrl ? avatarUrl : AVATAR_IMAGE}
+          src={avatarUrl || AVATAR_IMAGE}
           alt={name}
           className={styles.avatarImage}
         />

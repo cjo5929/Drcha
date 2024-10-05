@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 
 import { Input } from '@/components/Input/Input';
-import { FILTER, STATUS } from '@/constants/Chatting';
+import { Navbar } from '@/components/Navbar/Navbar';
+import { FILTER, STATUS } from '@/constants/chatting';
 import { ChatRoom } from '@/types/Chat';
 
 import { ChattingList } from './ChattingList';
 import styles from './Main.module.scss';
-import { Navbar } from '@/components/Navbar/Navbar';
 
 export function Main() {
   const [filter, setFilter] = useState(FILTER.CREDIT);
@@ -30,7 +30,7 @@ export function Main() {
       unreadCount: 300,
     },
     {
-      chatRoomId: 1,
+      chatRoomId: 2,
       name: '강민서',
       avatarUrl: '',
       contractStatus: 'ACTIVE',
@@ -40,7 +40,7 @@ export function Main() {
       unreadCount: 300,
     },
     {
-      chatRoomId: 1,
+      chatRoomId: 3,
       name: '강민서',
       avatarUrl: '',
       contractStatus: 'ACTIVE',
@@ -50,7 +50,7 @@ export function Main() {
       unreadCount: 300,
     },
     {
-      chatRoomId: 1,
+      chatRoomId: 4,
       name: '강민서',
       avatarUrl: '',
       contractStatus: 'OVERDUE',
@@ -60,7 +60,7 @@ export function Main() {
       unreadCount: 3,
     },
     {
-      chatRoomId: 1,
+      chatRoomId: 5,
       name: '강민서',
       avatarUrl: '',
       contractStatus: 'OVERDUE',
@@ -70,7 +70,7 @@ export function Main() {
       unreadCount: 3,
     },
     {
-      chatRoomId: 1,
+      chatRoomId: 6,
       name: '강민서',
       avatarUrl: '',
       contractStatus: 'OVERDUE',
@@ -80,7 +80,7 @@ export function Main() {
       unreadCount: 3,
     },
     {
-      chatRoomId: 1,
+      chatRoomId: 7,
       name: '강민서',
       avatarUrl: '',
       contractStatus: 'COMPLETED',
@@ -90,7 +90,7 @@ export function Main() {
       unreadCount: 3,
     },
     {
-      chatRoomId: 1,
+      chatRoomId: 8,
       name: '강민서',
       avatarUrl: '',
       contractStatus: 'COMPLETED',
@@ -100,7 +100,7 @@ export function Main() {
       unreadCount: 3,
     },
     {
-      chatRoomId: 1,
+      chatRoomId: 9,
       name: '강민서',
       avatarUrl: '',
       contractStatus: 'COMPLETED',

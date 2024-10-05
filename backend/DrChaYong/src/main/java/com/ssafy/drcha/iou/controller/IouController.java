@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.drcha.chat.enums.MemberRole;
 import com.ssafy.drcha.global.error.response.ErrorResponse;
 import com.ssafy.drcha.iou.dto.IouCreateRequestDto;
-import com.ssafy.drcha.iou.dto.IouCreateResponseDto;
 import com.ssafy.drcha.iou.dto.IouDetailResponseDto;
 import com.ssafy.drcha.iou.dto.IouPdfResponseDto;
 import com.ssafy.drcha.iou.dto.IouResponseDto;
@@ -50,8 +50,9 @@ public class IouController {
 				schema = @Schema(implementation = ErrorResponse.class)))
 	})
 	@PostMapping("/{chatRoomId}")
-	public ResponseEntity<IouCreateResponseDto> createIou(@PathVariable Long chatRoomId, @AuthenticationPrincipal UserDetails userDetails) {
-		return ResponseEntity.ok(iouService.createAiIou(chatRoomId, userDetails.getUsername()));
+	public ResponseEntity<Void> createIou(@PathVariable Long chatRoomId, @AuthenticationPrincipal UserDetails userDetails) {
+		iouService.createAiIou(chatRoomId, userDetails.getUsername());
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 
@@ -182,5 +183,29 @@ public class IouController {
 		@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long iouId
 	){
 		return ResponseEntity.ok(iouService.getIouPdfData(iouId));
+	}
+
+
+	@Operation(summary = "IOU 동의하기", description = "사용자가 해당 차용증에 동의합니다.")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "동의 성공",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = Void.class))),
+		@ApiResponse(responseCode = "400", description = "잘못된 요청",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ErrorResponse.class))),
+		@ApiResponse(responseCode = "404", description = "차용증을 찾을 수 없음",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ErrorResponse.class))),
+		@ApiResponse(responseCode = "401", description = "사용자 인증 필요",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ErrorResponse.class)))
+	})
+	@PatchMapping("/agree/{iouId}")
+	public ResponseEntity<Void> agreeToIou(
+		@PathVariable Long iouId,
+		@AuthenticationPrincipal String email) {
+		iouService.agreeToIou(iouId, email);
+		return ResponseEntity.ok().build();
 	}
 }

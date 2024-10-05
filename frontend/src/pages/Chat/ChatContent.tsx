@@ -12,7 +12,7 @@ export function ChatContent({
   currentUserId,
 }: {
   messages: ChatMessage[];
-  currentUserId: string;
+  currentUserId: number;
 }) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 

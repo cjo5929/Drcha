@@ -8,7 +8,7 @@ import { ChatMessage } from '@/types/ChatMessage';
 
 export function useChatWebSocket(
   thisroomId: string,
-  thissenderId: string,
+  thissenderId: number,
 ): {
   messages: ChatMessage[];
   sendMessage: (contents: string) => void;

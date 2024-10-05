@@ -5,4 +5,8 @@ export const URL = {
     import.meta.env.MODE === 'development'
       ? import.meta.env.VITE_API_URL_LOCAL
       : import.meta.env.VITE_API_URL_LOGIN,
+  INVITE:
+    import.meta.env.MODE === 'development'
+      ? import.meta.env.VITE_API_URL_FRONT
+      : import.meta.env.VITE_API_URL,
 };

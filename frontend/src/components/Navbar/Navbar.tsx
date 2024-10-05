@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import ChaticonSVG from '@/assets/icons/chaticon.svg?react';
 import MypageiconSVG from '@/assets/icons/mypageicon.svg?react';
 import StarticonSVG from '@/assets/icons/starticon.svg?react';
+import { URL } from '@/constants/url';
 import { API } from '@/services/api';
 import { Invitation } from '@/types/Invitation';
 
@@ -10,23 +11,21 @@ import styles from './Navbar.module.scss';
 
 const { Kakao } = window;
 
-Kakao.init('9ae699b3eb808fa55f9f4594c66f3be4');
+Kakao.init(`${import.meta.env.VITE_API_KAKAO_ID}`);
 const kakaoShare = async () => {
   try {
     const response = await API.post<Invitation>('/chat');
     // const chatroomID = response.data.chatRoomId;
     const invitationlink = response.data.invitationLink;
 
-    console.log('Chatroom ID:', invitationlink);
-
     Kakao.Share.sendCustom({
       templateId: 112872,
       templateArgs: {
-        DYNAMIC_LINK: `http://localhost:5173/api/v1/chat/${invitationlink}/link/enter`,
+        DYNAMIC_LINK: `${URL.INVITE}/api/v1/chat/${invitationlink}/link/enter`,
       },
     });
   } catch (error) {
-    console.error('Error fetching chatroom ID:', error);
+    console.error(error);
   }
 };
 

@@ -1,6 +1,5 @@
 package com.ssafy.drcha.iou.dto;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -44,9 +43,8 @@ public final class IouCreateRequestDto {
 		LocalDateTime finalContractEndDate;
 		try {
 			if (contractEndDate != null && !contractEndDate.trim().isEmpty()) {
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일", Locale.KOREAN);
-				LocalDate date = LocalDate.parse(contractEndDate, formatter);
-				finalContractEndDate = date.atStartOfDay();
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.KOREAN);
+				finalContractEndDate = LocalDateTime.parse(contractEndDate, formatter);
 			} else {
 				finalContractEndDate = LocalDateTime.now();
 			}

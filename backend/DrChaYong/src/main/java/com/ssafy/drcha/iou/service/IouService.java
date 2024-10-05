@@ -1,6 +1,7 @@
 package com.ssafy.drcha.iou.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
@@ -55,9 +56,35 @@ public class IouService {
 
 		IouCreateRequestDto requestDTO = getIouDetailsFromAI(chatRoomId, messages);
 
-		// Iou 저장 없이 바로 IouPdfResponseDto를 생성하여 반환하도록 변경
-		return IouCreateResponseDto.from(requestDTO);
+		String creditorName = null;
+		String debtorName = null;
+
+		for (ChatRoomMember member : chatRoom.getChatRoomMembers()) {
+			if (member.getMemberRole() == MemberRole.CREDITOR) {
+				creditorName = member.getMember().getUsername();
+			} else if (member.getMemberRole() == MemberRole.DEBTOR) {
+				debtorName = member.getMember().getUsername();
+			}
+		}
+
+		// Iou 저장 후 응답 생성 (변경된 부분)
+		Iou savedIou = createAndSaveIou(chatRoom, requestDTO);
+
+		return new IouCreateResponseDto(
+			savedIou.getIouId().toString(),
+			creditorName,
+			debtorName,
+			savedIou.getIouAmount().toString(),
+			savedIou.getContractStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), // contractStartDate
+			savedIou.getContractEndDate().toString(),
+			String.valueOf(savedIou.getInterestRate()),
+			savedIou.getBorrowerAgreement(),
+			savedIou.getLenderAgreement(),
+			"0"
+		);
 	}
+
+
 	@Transactional
 	public void createManualIou(Long chatRoomId, IouCreateRequestDto requestDTO, String email) {
 		ChatRoom chatRoom = getChatRoomById(chatRoomId);
@@ -125,7 +152,7 @@ public class IouService {
 	}
 
 	@Transactional
-	public void createAndSaveIou(ChatRoom chatRoom, IouCreateRequestDto requestDTO) {
+	public Iou createAndSaveIou(ChatRoom chatRoom, IouCreateRequestDto requestDTO) {
 		Member creditor = findMemberByRole(chatRoom, MemberRole.CREDITOR);
 		Member debtor = findMemberByRole(chatRoom, MemberRole.DEBTOR);
 		Iou iou = requestDTO.toEntity(creditor, debtor, chatRoom);
@@ -137,6 +164,7 @@ public class IouService {
 			savedIou.linkVirtualAccount(virtualAccount);
 		}
 
+		return savedIou;
 	}
 
 	private Member findMemberByRole(ChatRoom chatRoom, MemberRole role) {

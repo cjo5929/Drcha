@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.drcha.chat.enums.MemberRole;
 import com.ssafy.drcha.global.error.response.ErrorResponse;
 import com.ssafy.drcha.iou.dto.IouCreateRequestDto;
+import com.ssafy.drcha.iou.dto.IouCreateResponseDto;
 import com.ssafy.drcha.iou.dto.IouDetailResponseDto;
 import com.ssafy.drcha.iou.dto.IouPdfResponseDto;
 import com.ssafy.drcha.iou.dto.IouResponseDto;
@@ -49,7 +50,7 @@ public class IouController {
 				schema = @Schema(implementation = ErrorResponse.class)))
 	})
 	@PostMapping("/{chatRoomId}")
-	public ResponseEntity<IouPdfResponseDto> createIou(@PathVariable Long chatRoomId, @AuthenticationPrincipal UserDetails userDetails) {
+	public ResponseEntity<IouCreateResponseDto> createIou(@PathVariable Long chatRoomId, @AuthenticationPrincipal UserDetails userDetails) {
 		return ResponseEntity.ok(iouService.createAiIou(chatRoomId, userDetails.getUsername()));
 	}
 

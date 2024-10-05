@@ -31,7 +31,7 @@ export function Chat() {
 
   const { messages, sendMessage } = useChatWebSocket(
     chatRoomId ?? '',
-    myData!.username ?? '',
+    myData!.memberId ?? '',
   );
 
   const handleOpenModal = (type: 'create' | 'correction' | 'check') => {
@@ -113,7 +113,7 @@ export function Chat() {
         </button>
       </div>
       {/* 채팅 내용 */}
-      <ChatContent messages={messages} currentUserId="2" />
+      <ChatContent messages={messages} currentUserId={myData!.memberId} />
       {/* 채팅 입력창 */}
       <div className={styles.chatinput}>
         <textarea

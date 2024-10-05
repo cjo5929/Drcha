@@ -1,6 +1,6 @@
 export type ChatMessage = {
   chatRoomId: string;
-  senderId: string;
+  senderId: number;
   content: string;
   messageType: 'SYSTEM' | 'ENTER' | 'TALK' | 'QUIT';
 };

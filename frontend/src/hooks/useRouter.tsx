@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 
+import { IOU } from '@/components/IOU/IOU';
 import { Layout } from '@/components/Layout/Layout';
 import { Account } from '@/pages/Auth/Account';
 import { AccountSend } from '@/pages/Auth/AccountSend';
@@ -38,6 +39,7 @@ export const useRouter = () =>
           element: <Histories />,
         },
         { path: 'chat/:chatRoomId', element: <Chat /> },
+        { path: 'iou/:iouID', element: <IOU /> },
         {
           path: 'auth',
           element: <Auth />,

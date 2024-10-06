@@ -17,7 +17,11 @@ export function Myinfo({ myInfos }: { myInfos: MyInfo }) {
         </div>
       </div>
       <div className={styles.accountinfo}>
-        {myInfos.verified ? <NonCertificated /> : <Certificated />}
+        {myInfos.verified ? (
+          <Certificated myInfos={myInfos} />
+        ) : (
+          <NonCertificated />
+        )}
       </div>
       <div className={styles.accountbtn}>
         <button>계좌이용내역</button>

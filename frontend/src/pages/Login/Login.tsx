@@ -11,9 +11,11 @@ export function Login() {
   const { state } = useLocation();
   // TODO : login
   const handleLogin = () => {
-    if (state.chatRoomId) {
-      window.location.href = `${URL.LOGIN}/oauth2/authorization/kakao?chatRoomId=${state.chatRoomId}`;
-      return;
+    if (state) {
+      if (state.chatRoomId) {
+        window.location.href = `${URL.LOGIN}/oauth2/authorization/kakao?chatRoomId=${state.chatRoomId}`;
+        return;
+      }
     }
     window.location.href = `${URL.LOGIN}/oauth2/authorization/kakao`;
   };

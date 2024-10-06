@@ -1,5 +1,7 @@
 package com.ssafy.drcha.transaction.service;
 
+import com.ssafy.drcha.account.entity.Account;
+import com.ssafy.drcha.account.repository.AccountRepository;
 import com.ssafy.drcha.global.api.RestClientUtil;
 import com.ssafy.drcha.global.api.dto.CreateDemandDepositAccountResponse;
 import com.ssafy.drcha.global.api.dto.DepositResponse;
@@ -38,6 +40,7 @@ public class TransactionService {
     private final VirtualAccountRepository virtualAccountRepository;
     private final IouRepository iouRepository;
     private final MemberRepository memberRepository;
+    private final AccountRepository accountRepository;
 
     /**
      * TODO : 무통장 계좌(가상계좌) 생성
@@ -199,6 +202,71 @@ public class TransactionService {
         log.info("------------ 계좌 이체 처리 완료: {} ------------", response);
         return response;
     }
+
+    /**
+     * TODO : 앞단에서 사용할 채무자 -> 가상계좌 계좌이체
+     *
+     * @param iouId 차용증 ID
+     */
+
+    /**
+     * TODO : 입금모니터링에서 사용할 가상계좌 -> 채권자 계좌이체
+     *
+     * @param virtualAccount 출금할 가상계좌
+     * @param amount 이체 금액
+     * @return TransferResponse
+     */
+    public TransferResponse transferToCreditor(VirtualAccount virtualAccount, BigDecimal amount) {
+        log.info("가상계좌에서 채권자 계좌로 이체 시작: 가상계좌 {}, 금액 {}", virtualAccount.getAccountNumber(), amount);
+
+        Member creditor = virtualAccount.getCreditor();
+        Account creditorAccount = creditor.getAccount();
+
+        if (creditorAccount == null) {
+            throw new RuntimeException("채권자의 계좌 정보가 없습니다.");
+        }
+
+        String creditorAccountNumber = creditorAccount.getAccountNumber();
+
+        // ! 이체 가능 여부 확인
+        if (virtualAccount.getBalance().compareTo(amount) < 0) {
+            throw new InsufficientBalanceException(ErrorCode.INSUFFICIENT_BALANCE);
+        }
+
+        // ! 이체 요청 생성
+        TransferRequestDto transferRequestDto = TransferRequestDto.builder()
+                                                                  .withdrawalAccountNo(virtualAccount.getAccountNumber())
+                                                                  .depositAccountNo(creditorAccountNumber)
+                                                                  .transactionBalance(amount.longValue())
+                                                                  .depositTransactionSummary("채무 상환")
+                                                                  .withdrawalTransactionSummary("채무 상환")
+                                                                  .build();
+
+        // ! 채권자의 userKey를 사용하여 이체 실행
+        TransferResponse response = restClientUtil.transfer(
+                creditor.getUserKey(),
+                transferRequestDto.getWithdrawalAccountNo(),
+                transferRequestDto.getDepositAccountNo(),
+                transferRequestDto.getTransactionBalance(),
+                transferRequestDto.getDepositTransactionSummary(),
+                transferRequestDto.getWithdrawalTransactionSummary()
+        );
+
+        // ! 가상계좌 잔액 업데이트
+        BigDecimal newVirtualAccountBalance = virtualAccount.getBalance().subtract(amount);
+        virtualAccount.setBalance(newVirtualAccountBalance);
+        virtualAccount.setRemainingAmount(virtualAccount.getRemainingAmount().subtract(amount));
+        virtualAccountRepository.save(virtualAccount);
+
+        // ! 채권자 실제 계좌 잔액 업데이트
+        BigDecimal newCreditorAccountBalance = creditorAccount.getBalance().add(amount);
+        creditorAccount.changeBalance(newCreditorAccountBalance);
+        accountRepository.save(creditorAccount);
+
+        log.info("가상계좌에서 채권자 계좌로 이체 완료: {}", response);
+        return response;
+    }
+
 
     private Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)

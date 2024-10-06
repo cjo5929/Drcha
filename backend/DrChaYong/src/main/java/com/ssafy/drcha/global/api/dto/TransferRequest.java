@@ -9,9 +9,10 @@ import lombok.Data;
 @Builder
 public class TransferRequest {
     @JsonProperty("Header")
-    private HeaderRequest headerRequest;    // 공통
-    private String withdrawalAccountNo;     // 출금계좌번호
-    private String depositAccountNo;        // 입금계좌번호
-    private Long transactionBalance;        // 거래금액
-    private String transactionSummary;      // 거래요약내용
+    private HeaderRequest headerRequest;
+    private String depositAccountNo;            // 입금 계좌번호
+    private String withdrawalAccountNo;         // 출금 계좌번호
+    private Long transactionBalance;            // 거래 금액
+    private String depositTransactionSummary;   // 거래 요약 내용 (입금계좌기준)
+    private String withdrawalTransactionSummary;// 출금 요약 내용 (출금계좌기준)
 }

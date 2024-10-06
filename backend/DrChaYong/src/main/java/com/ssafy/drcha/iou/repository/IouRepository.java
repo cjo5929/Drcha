@@ -1,5 +1,6 @@
 package com.ssafy.drcha.iou.repository;
 
+import com.ssafy.drcha.iou.enums.ContractStatus;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,5 +24,5 @@ public interface IouRepository extends JpaRepository<Iou, Long> {
 
 	List<Iou> findByDebtor(Member debtor);
 
-
+	List<Iou> findAllByContractStatus(ContractStatus contractStatus);
 }

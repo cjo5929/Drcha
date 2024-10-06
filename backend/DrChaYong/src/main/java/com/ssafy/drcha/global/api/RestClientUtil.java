@@ -134,7 +134,7 @@ public class RestClientUtil {
         return executePost(prefix + apiName, request, WithdrawResponse.class).getBody();
     }
 
-    // ! 2.4.9 계좌 입금 API
+    // ! 2.4.9 계좌 입금
     public DepositResponse deposit(String userKey,         // 사용자 키
                                    String accountNo,       // 계좌번호
                                    Long transactionBalance, // 입금금액
@@ -157,17 +157,19 @@ public class RestClientUtil {
                                      String withdrawalAccountNo,   // 출금계좌번호
                                      String depositAccountNo,      // 입금계좌번호
                                      Long transactionBalance,      // 거래금액
-                                     String transactionSummary) {  // 거래요약내용
-        String prefix = "edu/transfer/";
+                                     String depositTransactionSummary,    // 입금계좌 거래요약내용
+                                     String withdrawalTransactionSummary) {  // 출금계좌 거래요약내용
+        String prefix = "edu/demandDeposit/";
         String apiName = "updateDemandDepositAccountTransfer";
 
         TransferRequest request = TransferRequest.builder()
-                     .headerRequest(createHeader(apiName, userKey))
-                     .withdrawalAccountNo(withdrawalAccountNo)
-                     .depositAccountNo(depositAccountNo)
-                     .transactionBalance(transactionBalance)
-                     .transactionSummary(transactionSummary)
-                     .build();
+                                                 .headerRequest(createHeader(apiName, userKey))
+                                                 .withdrawalAccountNo(withdrawalAccountNo)
+                                                 .depositAccountNo(depositAccountNo)
+                                                 .transactionBalance(transactionBalance)
+                                                 .depositTransactionSummary(depositTransactionSummary)
+                                                 .withdrawalTransactionSummary(withdrawalTransactionSummary)
+                                                 .build();
 
         return executePost(prefix + apiName, request, TransferResponse.class).getBody();
     }

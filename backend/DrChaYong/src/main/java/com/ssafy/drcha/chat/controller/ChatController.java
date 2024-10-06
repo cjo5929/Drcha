@@ -1,11 +1,27 @@
 package com.ssafy.drcha.chat.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.ErrorResponse;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.ssafy.drcha.chat.dto.ChatMessageParam;
 import com.ssafy.drcha.chat.dto.ChatMessageResponseDto;
+import com.ssafy.drcha.chat.dto.ChatRoomEntryResponseDto;
 import com.ssafy.drcha.chat.dto.ChatRoomLinkResponseDto;
 import com.ssafy.drcha.chat.dto.ChatRoomListResponseDto;
 import com.ssafy.drcha.chat.enums.MemberRole;
 import com.ssafy.drcha.chat.service.ChatRoomService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -13,21 +29,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.ErrorResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("ws/api/v1/chat")
+@RequestMapping("/api/v1/chat")
 @RequiredArgsConstructor
 public class ChatController {
 
@@ -90,7 +95,7 @@ public class ChatController {
 				schema = @Schema(implementation = ErrorResponse.class)))
 	})
 	@GetMapping("/{chatRoomId}/enter")
-	public ResponseEntity<List<ChatMessageResponseDto>> enterChatRoom(
+	public ResponseEntity<ChatRoomEntryResponseDto> enterChatRoom(
 		@Parameter(description = "채팅방 아이디", required = true)
 		@PathVariable Long chatRoomId,
 		@Parameter(description = "인증된 사용자 정보", hidden = true)
@@ -117,8 +122,8 @@ public class ChatController {
 			content = @Content(mediaType = "application/json",
 				schema = @Schema(implementation = ErrorResponse.class)))
 	})
-	@GetMapping("/{invitationLink}/link/enter")
-	public ResponseEntity<List<ChatMessageResponseDto>> enterChatRoomViaInvitationLink(
+	@PatchMapping("/{invitationLink}")
+	public ResponseEntity<ChatRoomEntryResponseDto> enterChatRoomViaInvitationLink(
 		@Parameter(description = "채팅방 링크", required = true)
 		@PathVariable String invitationLink,
 		@Parameter(description = "인증된 사용자 정보", hidden = true)

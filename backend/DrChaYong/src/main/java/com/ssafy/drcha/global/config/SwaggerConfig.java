@@ -82,7 +82,7 @@ public class SwaggerConfig {
     public GroupedOpenApi chatApi() {
         return GroupedOpenApi.builder()
                 .group("chat")
-                .pathsToMatch("/ws/api/v1/chat/**")
+                .pathsToMatch("/api/v1/chat/**")
                 .build();
     }
 

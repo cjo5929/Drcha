@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.ssafy.drcha.chat.enums.ChatMessageType;
+import com.ssafy.drcha.iou.dto.IouCreateResponseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,14 +26,17 @@ public class ChatMessage {
 	private String content;
 	private LocalDateTime createdAt;
 	private ChatMessageType messageType;
+	private IouCreateResponseDto iouInfo;
+
 
 	@Builder
-	public ChatMessage(String chatRoomId, String senderId, String content, ChatMessageType messageType) {
+	public ChatMessage(String chatRoomId, String senderId, String content, ChatMessageType messageType,  IouCreateResponseDto iouInfo) {
 		this.chatRoomId = chatRoomId;
 		this.senderId = senderId;
 		this.content = content;
 		this.createdAt = LocalDateTime.now();
 		this.messageType = messageType;
+		this.iouInfo = iouInfo;
 	}
 
 }

@@ -34,6 +34,9 @@ public class SecurityConfig {
     @Value("${app.url.front}")
     private String frontUrl;
 
+    @Value("${ai.llm.service-url}")
+    private String llmServiceUrl;
+
     /**
      * Spring Security 의 보안 필터 체인을 정의
      * CORS 설정, CSRF 비활성화, 요청 인증 설정, 세션 관리 정책, OAuth2 로그인 설정 등을 포함
@@ -85,7 +88,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(frontUrl));
+        configuration.setAllowedOrigins(List.of(frontUrl, llmServiceUrl));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

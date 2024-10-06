@@ -1,7 +1,5 @@
 package com.ssafy.drcha.chat.service;
 
-import com.ssafy.drcha.trust.dto.MemberTrustInfoResponse;
-import com.ssafy.drcha.trust.service.MemberTrustService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -14,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.drcha.chat.dto.ChatMessageParam;
 import com.ssafy.drcha.chat.dto.ChatMessageResponseDto;
+import com.ssafy.drcha.chat.dto.ChatRoomEntryResponseDto;
 import com.ssafy.drcha.chat.dto.ChatRoomEntryStatus;
 import com.ssafy.drcha.chat.dto.ChatRoomLinkResponseDto;
 import com.ssafy.drcha.chat.dto.ChatRoomListResponseDto;
@@ -36,6 +35,8 @@ import com.ssafy.drcha.iou.repository.IouRepository;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.repository.MemberRepository;
 import com.ssafy.drcha.member.service.MemberService;
+import com.ssafy.drcha.trust.dto.MemberTrustInfoResponse;
+import com.ssafy.drcha.trust.service.MemberTrustService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,20 +77,21 @@ public class ChatRoomService {
 	}
 
 	@Transactional
-	public List<ChatMessageResponseDto> enterChatRoom(Long chatRoomId, String email) {
+	public ChatRoomEntryResponseDto enterChatRoom(Long chatRoomId, String email) {
 		ChatRoom chatRoom = findChatRoomById(chatRoomId);
 		Member member = findMemberByEmail(email);
 		ChatRoomMember chatRoomMember = findChatRoomMember(chatRoom, member);
-		ChatMessageParam param = new ChatMessageParam(0, 20);
-		Page<ChatMessage> messages = chatMongoService.getChatScrollMessages(chatRoomId.toString(), param);
-		updateLastReadMessage(chatRoomMember, messages.getContent());
-		return messages.stream()
-			.map(ChatMessageResponseDto::from)
-			.collect(Collectors.toList());
+
+		Member opponent = findOpponentMember(chatRoom, member);
+
+		// Update the last read message for the entering member
+		updateLastReadMessage(chatRoomMember, chatMongoService.getLastMessages(chatRoomId.toString(), 1));
+
+		return ChatRoomEntryResponseDto.from(chatRoom, chatRoomMember, opponent);
 	}
 
 	@Transactional
-	public List<ChatMessageResponseDto> enterChatRoomViaLink(String invitationLink, UserDetails userDetails) {
+	public ChatRoomEntryResponseDto enterChatRoomViaLink(String invitationLink, UserDetails userDetails) {
 		ChatRoomEntryStatus entryStatus = processEntryRequest(invitationLink, userDetails.getUsername());
 
 		if (entryStatus.isNeedsRegistration()) {
@@ -103,20 +105,12 @@ public class ChatRoomService {
 		ChatRoom chatRoom = findChatRoomByInvitationLink(invitationLink);
 		Member debtor = findMemberByEmail(userDetails.getUsername());
 
-		validateChatRoomForDebtorEntry(chatRoom);
-
 		ChatRoomMember chatRoomMember = addDebtorToChatRoom(chatRoom, debtor);
+		Member opponent = findOpponentMember(chatRoom, debtor);
 
-		ChatMessageParam param = new ChatMessageParam(0, 20);
-		Page<ChatMessage> messages = chatMongoService.getChatScrollMessages(chatRoom.getChatRoomId().toString(), param);
-		// ChatMessage enterMessage = createAndSaveEnterMessage(chatRoom, debtor);
-		// messages.getContent().add(enterMessage);
+		updateLastReadMessage(chatRoomMember, chatMongoService.getLastMessages(chatRoom.getChatRoomId().toString(), 1));
 
-		updateLastReadMessage(chatRoomMember, messages.getContent());
-
-		return messages.stream()
-			.map(ChatMessageResponseDto::from)
-			.collect(Collectors.toList());
+		return ChatRoomEntryResponseDto.from(chatRoom, chatRoomMember, opponent);
 	}
 
 	public ChatRoomEntryStatus processEntryRequest(String invitationLink, String email) {
@@ -167,11 +161,6 @@ public class ChatRoomService {
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CHAT_ROOM_NOT_FOUND));
 	}
 
-	private void validateChatRoomForDebtorEntry(ChatRoom chatRoom) {
-		if (chatRoom.getChatRoomMembers().size() >= 2) {
-			throw new BusinessException(ErrorCode.CHAT_ROOM_FULL);
-		}
-	}
 
 	private ChatRoomMember addDebtorToChatRoom(ChatRoom chatRoom, Member debtor) {
 		return ChatRoomMember.createMember(debtor, chatRoom, MemberRole.DEBTOR);

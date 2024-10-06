@@ -1,6 +1,9 @@
 package com.ssafy.drcha.member.service;
 
-import static com.ssafy.drcha.member.entity.Member.createMember;
+import static com.ssafy.drcha.member.entity.Member.*;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.drcha.account.entity.Account;
 import com.ssafy.drcha.account.repository.AccountRepository;
@@ -15,11 +18,10 @@ import com.ssafy.drcha.member.dto.PhoneNumberRequest;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.enums.Role;
 import com.ssafy.drcha.member.repository.MemberRepository;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -91,6 +93,7 @@ public class MemberService {
                 .isVerified(member.isVerified())
                 .accountNo(account.getAccountNumber())
                 .balance(account.getBalance())
+                .memberId(member.getId())
                 .build();
     }
 }

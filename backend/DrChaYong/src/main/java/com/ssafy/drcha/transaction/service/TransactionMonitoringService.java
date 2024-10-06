@@ -6,9 +6,10 @@ import com.ssafy.drcha.iou.entity.Iou;
 import com.ssafy.drcha.iou.enums.ContractStatus;
 import com.ssafy.drcha.iou.service.IouService;
 import com.ssafy.drcha.transaction.entity.TransactionHistory;
-import com.ssafy.drcha.transaction.entity.TransactionType;
 import com.ssafy.drcha.transaction.entity.VirtualAccount;
+import com.ssafy.drcha.transaction.event.NewDepositEvent;
 import com.ssafy.drcha.transaction.repository.TransactionHistoryRepository;
+import com.ssafy.drcha.transaction.entity.TransactionType;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,8 +42,10 @@ public class TransactionMonitoringService {
      * ! Quartz에 의해 주기적으로 실행됨
      */
     public void checkNewDeposits() {
+        log.info("============== 모니터링 시작 =================");
         iouService.findAllActiveIous()
                   .forEach(this::processIouDeposits);
+        log.info("============== 모니터링 종료 =================");
     }
 
     /**
@@ -51,12 +54,15 @@ public class TransactionMonitoringService {
      * @param iou 차용증
      */
     private void processIouDeposits(Iou iou) {
+        log.info("------ 차용증 ID: {} 처리 시작 ------", iou.getIouId());
         VirtualAccount virtualAccount = iou.getVirtualAccount(); // ! 차용증에 연관된 가상계좌 get
         List<TransactionHistoryListResponse.REC.Transaction> newTransactions = getNewTransactions(virtualAccount);
+        log.info("새로운 거래 내역 수: {}", newTransactions.size());
 
         newTransactions.stream()
                        .filter(this::isNewDeposit)
                        .forEach(transaction -> processNewDeposit(iou, transaction));
+        log.info("------ 차용증 ID: {} 처리 완료 ------", iou.getIouId());
     }
 
     /**
@@ -66,11 +72,14 @@ public class TransactionMonitoringService {
      * @return 새로운 거래 내역 리스트
      */
     private List<TransactionHistoryListResponse.REC.Transaction> getNewTransactions(VirtualAccount virtualAccount) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String today = LocalDate.now().format(formatter);
+
         TransactionHistoryListResponse response = restClientUtil.inquireTransactionHistoryList(
                 virtualAccount.getCreditor().getUserKey(),
                 virtualAccount.getAccountNumber(),
-                LocalDate.now().toString(), // ! 오늘 날짜의 거래만 조회 -> 어차피 주기 줄일 예정
-                LocalDate.now().toString(),
+                today, // ! 오늘 날짜의 거래만 조회 -> 어차피 주기 줄일 예정
+                today,
                 "M", // ! 입금만 조회
                 "DESC"
         );
@@ -102,14 +111,22 @@ public class TransactionMonitoringService {
      */
     private void processNewDeposit(Iou iou, TransactionHistoryListResponse.REC.Transaction transaction) {
         BigDecimal depositAmount = BigDecimal.valueOf(transaction.getTransactionBalance());
+        log.info("==== 새로운 입금 처리 시작 ====");
+        log.info("차용증 ID: {}, 입금액: {}", iou.getIouId(), depositAmount);
 
         // ! step1. 차용증 잔액 갱신
+        log.info("Step 1: 차용증 잔액 갱신");
         iouService.updateIouAfterDeposit(iou, depositAmount);
 
         // ! step2. 거래 내역 저장
+        log.info("Step 2: 거래 내역 저장");
         saveTransactionHistory(iou, transaction);
 
-        log.info("새로운 채무자 입금 처리 금액 : {}, 해당하는 차용증 ID: {}", depositAmount, iou.getIouId());
+        // ! step3. 새 입금 이벤트 발행
+        log.info("Step 3: 새 입금 이벤트 발행");
+        publishNewDepositEvent(iou, depositAmount);
+
+        log.info("==== 새로운 입금 처리 완료 ====");
     }
 
     /**
@@ -144,6 +161,9 @@ public class TransactionMonitoringService {
         iou.addTransactionHistory(history);
         iouService.save(iou);  // Iou 상태 변경 사항을 저장
 
+        log.info("거래 내역 저장 완료 - 거래 고유번호: {}, 금액: {}, 거래 후 잔액: {}",
+                 transaction.getTransactionUniqueNo(), depositAmount, balanceAfterTransaction);
+
         // Iou가 완료 상태가 되었는지 로그로 기록
         if (iou.getContractStatus() == ContractStatus.COMPLETED) {
             log.info("차용증 ID: {}가 완료 상태로 변경되었습니다.", iou.getIouId());
@@ -160,7 +180,12 @@ public class TransactionMonitoringService {
     /**
      * TODO : 채권자 계좌로 이체 이벤트 발행 -> EventListener 구성
      */
-    private void publishTransferToCreditorEvent(Iou iou, BigDecimal amount) {
-
+    private void publishNewDepositEvent(Iou iou, BigDecimal amount) {
+        NewDepositEvent event = NewDepositEvent.builder()
+                                               .iou(iou)
+                                               .amount(amount)
+                                               .build();
+        eventPublisher.publishEvent(event);
+        log.info("새 입금 이벤트 발행 - 차용증 ID: {}, 금액: {}", iou.getIouId(), amount);
     }
 }

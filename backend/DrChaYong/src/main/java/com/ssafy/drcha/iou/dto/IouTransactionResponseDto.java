@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.ssafy.drcha.iou.entity.Iou;
 import com.ssafy.drcha.iou.enums.ContractStatus;
+import com.ssafy.drcha.member.entity.Member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,10 +20,13 @@ public final class IouTransactionResponseDto {
 	private Boolean agreementStatus;
 	private ContractStatus contractStatus;
 
-	public static IouTransactionResponseDto from(Iou iou) {
+	// 상대방의 이름을 결정하기 위해 수정된 from 메서드
+	public static IouTransactionResponseDto from(Iou iou, Member member) {
+		String opponentName = iou.getCreditor().equals(member) ? iou.getDebtor().getUsername() : iou.getCreditor().getUsername();
+
 		return new IouTransactionResponseDto(
 			iou.getIouId(),
-			iou.getDebtor().getUsername(),
+			opponentName,
 			iou.getIouAmount(),
 			iou.getContractStartDate(),
 			iou.isBothAgreed(),

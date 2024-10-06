@@ -9,7 +9,7 @@ import { CorrectionIouModal } from '@/components/Modal/CorrectionIouModal';
 import { CreateIouModal } from '@/components/Modal/CreateIouModal';
 import { useChatWebSocket } from '@/hooks/useChatWebsocket';
 import { API } from '@/services/api';
-import { MyInfo } from '@/types/MyInfo';
+import { MyInfo } from '@/types/Member';
 
 import styles from './Chat.module.scss';
 import { ChatContent } from './ChatContent';

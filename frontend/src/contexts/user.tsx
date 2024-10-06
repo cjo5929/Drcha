@@ -1,7 +1,7 @@
 import { createContext, useCallback, useEffect, useState } from 'react';
 
 import { member } from '@/services/member';
-import { MyInfo } from '@/types/MyInfo';
+import { MyInfo } from '@/types/Member';
 
 interface UserProps {
   isLogin: boolean;

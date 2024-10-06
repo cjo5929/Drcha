@@ -116,18 +116,19 @@ public class IouService {
 
 		if (role == MemberRole.CREDITOR) {
 			return iouRepository.findByCreditor(member).stream()
-				.map(IouTransactionResponseDto::from)
+				.map(iou -> IouTransactionResponseDto.from(iou, member)) // 상대방을 결정하기 위해 member 전달
 				.collect(Collectors.toList());
 		}
 
 		if (role == MemberRole.DEBTOR) {
 			return iouRepository.findByDebtor(member).stream()
-				.map(IouTransactionResponseDto::from)
+				.map(iou -> IouTransactionResponseDto.from(iou, member)) // 상대방을 결정하기 위해 member 전달
 				.collect(Collectors.toList());
 		}
 
 		throw new DataNotFoundException(ErrorCode.IOU_NOT_FOUND);
 	}
+
 
 	public IouDetailResponseDto getIouDetail(Long iouId, MemberRole role) {
 		Iou iou = iouRepository.findById(iouId)
@@ -210,7 +211,7 @@ public class IouService {
 		requestBody.put("conversation", messages);
 
 		IouCreateAiRequestDto aiResponse = webClient.post()
-			.uri("/ai/extract")
+			.uri("/extract")
 			.bodyValue(requestBody)
 			.retrieve()
 			.bodyToMono(IouCreateAiRequestDto.class)

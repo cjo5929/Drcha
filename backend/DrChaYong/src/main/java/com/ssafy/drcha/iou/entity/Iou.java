@@ -1,11 +1,18 @@
 package com.ssafy.drcha.iou.entity;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.ssafy.drcha.chat.entity.ChatRoom;
 import com.ssafy.drcha.global.basetime.BaseTimeEntity;
+import com.ssafy.drcha.iou.dto.FinancialCalculator;
 import com.ssafy.drcha.iou.enums.ContractStatus;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.transaction.entity.TransactionHistory;
 import com.ssafy.drcha.transaction.entity.VirtualAccount;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,13 +27,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -107,7 +109,7 @@ public class Iou extends BaseTimeEntity {
 		this.creditor = creditor;
 		this.debtor = debtor;
 		this.iouAmount = iouAmount;
-		this.balance = BigDecimal.valueOf(iouAmount); // ! balance 초기화 추가
+		this.balance = BigDecimal.valueOf(FinancialCalculator.calculateTotalAmount(iouAmount, interestRate, 12)); // ! balance 초기화 추가
 		this.contractStartDate = contractStartDate;
 		this.contractEndDate = contractEndDate;
 		this.interestRate = interestRate;
@@ -170,4 +172,6 @@ public class Iou extends BaseTimeEntity {
 			this.contractStatus = ContractStatus.COMPLETED;
 		}
 	}
+
+
 }

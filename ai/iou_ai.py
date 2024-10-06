@@ -40,7 +40,7 @@ def generate_response(model: Llama, prompt: str):
         logging.error(f"Error generating response: {e}")
         return None
 
-@app.post('/extract')
+@app.post('/ai/extract')
 async def extract_loan_info(input_data: ConversationInput):
     extract_prompt = f'''다음 대화에서 대출 정보를 추출하세요:
 대화:

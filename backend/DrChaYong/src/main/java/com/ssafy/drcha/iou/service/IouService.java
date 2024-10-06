@@ -58,13 +58,10 @@ public class IouService {
 	public void createAiIou(Long chatRoomId, String email) {
 		ChatRoom chatRoom = getChatRoomById(chatRoomId);
 
-		log.info("@@@@@@@@@@@@ 통과");
 		String messages = chatMongoService.getConversationByChatRoomId(chatRoomId);
 
-		log.info("$$$$$$$$$$$$ 통과");
 		IouCreateRequestDto requestDTO = getIouDetailsFromAI(chatRoomId, messages);
 
-		log.info("########## 통과");
 
 		String creditorName = null;
 		String debtorName = null;

@@ -14,6 +14,9 @@ export function AccountSend() {
   const { userInfo } = useUserState();
 
   useEffect(() => {
+    if (!userInfo) {
+      return;
+    }
     if (userInfo.verified) {
       navigate('/', { replace: true });
     }
@@ -32,7 +35,9 @@ export function AccountSend() {
       <div>
         <img src={COIN_GIF} alt="coin" className={styles.coin} />
         <div>
-          <span className={styles.blue}>{userInfo.username}</span>
+          <span className={styles.blue}>
+            {userInfo ? userInfo.username : ''}
+          </span>
           <span>님 계좌가 맞는지</span>
           <div>확인하기 위해</div>
           <div>

@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.drcha.chat.dto.ChatMessageParam;
@@ -66,5 +68,10 @@ public class ChatMongoService {
 		PageRequest pageRequest = PageRequest.of(0, limit);
 		return chatMessageRepository.findByChatRoomIdOrderByCreatedAtDesc(chatRoomId, pageRequest).getContent();
 	}
+
+	public List<ChatMessage> getAllMessages(String chatRoomId) {
+		return chatMessageRepository.findByChatRoomIdOrderByCreatedAt(chatRoomId);
+	}
+
 
 }

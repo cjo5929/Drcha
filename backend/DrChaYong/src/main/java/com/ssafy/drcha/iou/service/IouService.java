@@ -210,7 +210,7 @@ public class IouService {
 		requestBody.put("conversation", messages);
 
 		IouCreateAiRequestDto aiResponse = webClient.post()
-			.uri("/extract")
+			.uri("/ai/extract")
 			.bodyValue(requestBody)
 			.retrieve()
 			.bodyToMono(IouCreateAiRequestDto.class)

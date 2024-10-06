@@ -5,13 +5,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ssafy.drcha.chat.dto.ChatMessageParam;
-import com.ssafy.drcha.chat.dto.ChatMessageResponseDto;
 import com.ssafy.drcha.chat.dto.ChatRoomEntryResponseDto;
 import com.ssafy.drcha.chat.dto.ChatRoomEntryStatus;
 import com.ssafy.drcha.chat.dto.ChatRoomLinkResponseDto;
@@ -131,16 +128,6 @@ public class ChatRoomService {
 			.build();
 	}
 
-	@Transactional(readOnly = true)
-	public List<ChatMessageResponseDto> loadMoreMessages(Long chatRoomId, String email, ChatMessageParam param) {
-		Member member = findMemberByEmail(email);
-
-		Page<ChatMessage> messages = chatMongoService.getChatScrollMessages(chatRoomId.toString(), param);
-
-		return messages.stream()
-			.map(ChatMessageResponseDto::from)
-			.collect(Collectors.toList());
-	}
 
 	/*
 	  호출용 메서드
@@ -177,6 +164,10 @@ public class ChatRoomService {
 		ChatRoom chatRoom = chatRoomMember.getChatRoom();
 		Member currentMember = chatRoomMember.getMember();
 		Member opponent = findOpponentMember(chatRoom, currentMember);
+		boolean isMember = true;
+		if(opponent == null) {
+			isMember = false;
+		}
 		Iou iou = iouRepository.findLatestByChatRoomId(chatRoom).orElse(null);
 
 		String contractStatus = getContractStatus(iou);
@@ -189,6 +180,7 @@ public class ChatRoomService {
 			chatRoom,
 			opponent,
 			contractStatus,
+			isMember,
 			iouAmount,
 			daysUntilDue,
 			memberTrustInfoResponse,

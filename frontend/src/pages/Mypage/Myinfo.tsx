@@ -1,5 +1,5 @@
 import styles from '@/pages/Mypage/Mypage.module.scss';
-import { MyInfo } from '@/types/MyInfo';
+import { MyInfo } from '@/types/Member';
 
 import { Certificated } from './Certificated';
 import { NonCertificated } from './NonCertificated';

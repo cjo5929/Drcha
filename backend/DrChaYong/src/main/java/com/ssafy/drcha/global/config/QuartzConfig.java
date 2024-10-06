@@ -37,7 +37,7 @@ public class QuartzConfig {
         return TriggerBuilder.newTrigger()
                              .forJob(virtualAccountMonitoringJobDetail())    // ! 위에서 정의한 JobDetail 연결해주기
                              .withIdentity("virtualAccountMonitoringTrigger")
-                             .withSchedule(CronScheduleBuilder.cronSchedule("0 */5 * ? * *")) // 5분마다 실행
+                             .withSchedule(CronScheduleBuilder.cronSchedule("0 */1 * ? * *")) // 1분마다 실행
                              .build();
     }
 }

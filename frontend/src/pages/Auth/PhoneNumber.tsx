@@ -1,24 +1,33 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { useUserState } from '@/hooks/useUserState';
+import { member } from '@/services/member';
+import { PhoneNumber, Info } from '@/types/Member';
 
 import styles from './Auth.module.scss';
 
-const user = { userName: '김박사', accountNo: 1234567890, isVerified: false };
-
-export function PhoneNumber() {
+export function PhoneNumberPage() {
   const navigate = useNavigate();
-  // TODO : 사용자 정보 불러오기
-  const { isVerified } = user;
+  const { userInfo } = useUserState() as { userInfo: Info };
+  const [phoneNumber, setPhoneNumber] = useState<PhoneNumber>({
+    phoneNumber: '',
+  });
 
   useEffect(() => {
-    if (isVerified) {
+    if (userInfo.verified) {
       navigate('/', { replace: true });
     }
-  }, [navigate, isVerified]);
+  }, [navigate, userInfo]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    await member.registPhoneNumber(phoneNumber);
     navigate('/auth/complete');
+  };
+
+  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhoneNumber({ phoneNumber: e.target.value });
   };
 
   return (
@@ -28,7 +37,14 @@ export function PhoneNumber() {
         <span>를 입력해주세요</span>
       </div>
       <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="전화번호" className={styles.input} />
+        <input
+          type="tel"
+          placeholder="전화번호"
+          className={styles.input}
+          value={phoneNumber.phoneNumber}
+          onChange={handlePhoneNumberChange}
+        />
+        <button type="submit">확인</button>
       </form>
     </div>
   );

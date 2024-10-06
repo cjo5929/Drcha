@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.drcha.chat.dto.ChatMessageParam;
 import com.ssafy.drcha.chat.dto.ChatMessageResponseDto;
+import com.ssafy.drcha.chat.dto.ChatRoomEntryResponseDto;
 import com.ssafy.drcha.chat.dto.ChatRoomLinkResponseDto;
 import com.ssafy.drcha.chat.dto.ChatRoomListResponseDto;
 import com.ssafy.drcha.chat.enums.MemberRole;
@@ -94,7 +95,7 @@ public class ChatController {
 				schema = @Schema(implementation = ErrorResponse.class)))
 	})
 	@GetMapping("/{chatRoomId}/enter")
-	public ResponseEntity<List<ChatMessageResponseDto>> enterChatRoom(
+	public ResponseEntity<ChatRoomEntryResponseDto> enterChatRoom(
 		@Parameter(description = "채팅방 아이디", required = true)
 		@PathVariable Long chatRoomId,
 		@Parameter(description = "인증된 사용자 정보", hidden = true)
@@ -122,7 +123,7 @@ public class ChatController {
 				schema = @Schema(implementation = ErrorResponse.class)))
 	})
 	@PatchMapping("/{invitationLink}")
-	public ResponseEntity<List<ChatMessageResponseDto>> enterChatRoomViaInvitationLink(
+	public ResponseEntity<ChatRoomEntryResponseDto> enterChatRoomViaInvitationLink(
 		@Parameter(description = "채팅방 링크", required = true)
 		@PathVariable String invitationLink,
 		@Parameter(description = "인증된 사용자 정보", hidden = true)

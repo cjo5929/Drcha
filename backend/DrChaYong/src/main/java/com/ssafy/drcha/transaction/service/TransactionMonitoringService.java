@@ -57,7 +57,7 @@ public class TransactionMonitoringService {
         log.info("------ 차용증 ID: {} 처리 시작 ------", iou.getIouId());
         VirtualAccount virtualAccount = iou.getVirtualAccount(); // ! 차용증에 연관된 가상계좌 get
         List<TransactionHistoryListResponse.REC.Transaction> newTransactions = getNewTransactions(virtualAccount);
-        log.info("새로운 거래 내역 수: {}", newTransactions.size());
+        log.info("오늘 하루동안 거래 내역 수: {}", newTransactions.size());
 
         newTransactions.stream()
                        .filter(this::isNewDeposit)
@@ -74,6 +74,7 @@ public class TransactionMonitoringService {
     private List<TransactionHistoryListResponse.REC.Transaction> getNewTransactions(VirtualAccount virtualAccount) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String today = LocalDate.now().format(formatter);
+        log.info("today : {}", today);
 
         TransactionHistoryListResponse response = restClientUtil.inquireTransactionHistoryList(
                 virtualAccount.getCreditor().getUserKey(),

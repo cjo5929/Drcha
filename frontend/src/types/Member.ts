@@ -9,5 +9,5 @@ export type Info = {
 };
 
 export type PhoneNumber = {
-  pheonNumber: string;
+  phoneNumber: string;
 };

@@ -1,31 +1,30 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import styles from './Auth.module.scss';
+import { useUserState } from '@/hooks/useUserState';
 
-const user = { userName: '김박사', accountNo: 1234567890, isVerified: false };
+import styles from './Auth.module.scss';
 
 export function Account() {
   const navigate = useNavigate();
-  // TODO : 사용자 정보 불러오기
-  const { userName, accountNo, isVerified } = user;
+  const { userInfo } = useUserState();
 
   useEffect(() => {
-    if (isVerified) {
+    if (userInfo.verified) {
       navigate('/', { replace: true });
     }
-  }, [navigate, isVerified]);
+  }, [navigate, userInfo]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    navigate('/auth/account-send', { state: { userName, accountNo } });
+    navigate('/auth/account-send');
   };
 
   return (
     <div className={styles.content}>
       <div>
         <span>거래를 도와드릴게요, </span>
-        <span className={styles.blue}>{userName}</span>
+        <span className={styles.blue}>{userInfo.username}</span>
         <span>님</span>
       </div>
       <div>
@@ -39,7 +38,7 @@ export function Account() {
         <input
           type="text"
           placeholder="계좌번호"
-          defaultValue={accountNo}
+          defaultValue={userInfo.accountNo}
           className={styles.input}
         />
       </form>

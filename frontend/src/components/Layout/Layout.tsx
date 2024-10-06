@@ -13,7 +13,9 @@ export function Layout() {
   useEffect(() => {
     if (!isLogin) {
       if (chatRoomId) {
-        navigate(`/login/${chatRoomId}`);
+        navigate('/login', {
+          state: { chatRoomId },
+        });
         return;
       }
       navigate('/login');

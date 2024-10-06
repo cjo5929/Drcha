@@ -4,7 +4,8 @@ import com.ssafy.drcha.chat.entity.ChatRoom;
 import com.ssafy.drcha.global.basetime.BaseTimeEntity;
 import com.ssafy.drcha.iou.enums.ContractStatus;
 import com.ssafy.drcha.member.entity.Member;
-import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
+import com.ssafy.drcha.transaction.entity.TransactionHistory;
+import com.ssafy.drcha.transaction.entity.VirtualAccount;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,11 +17,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,6 +55,10 @@ public class Iou extends BaseTimeEntity {
 	@Column(name = "iou_amount", nullable = false)
 	@Positive
 	private Long iouAmount;
+
+	@Column(name = "iou_balance", nullable = false)
+	@PositiveOrZero
+	private BigDecimal balance; // ! 남은 차용증 잔액
 
 	@Column(name = "contract_start_date", nullable = false)
 	private LocalDateTime contractStartDate;
@@ -85,6 +94,10 @@ public class Iou extends BaseTimeEntity {
 	@OneToOne(mappedBy = "iou", cascade = CascadeType.ALL, orphanRemoval = true)
 	private VirtualAccount virtualAccount;
 
+	@OneToMany(mappedBy = "iou", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<TransactionHistory> transactionHistories = new ArrayList<>();
+
+
 	@Builder
 	private Iou(Member creditor, Member debtor, Long iouAmount,
 				LocalDateTime contractStartDate, LocalDateTime contractEndDate,
@@ -93,6 +106,7 @@ public class Iou extends BaseTimeEntity {
 		this.creditor = creditor;
 		this.debtor = debtor;
 		this.iouAmount = iouAmount;
+		this.balance = BigDecimal.valueOf(iouAmount); // ! balance 초기화 추가
 		this.contractStartDate = contractStartDate;
 		this.contractEndDate = contractEndDate;
 		this.interestRate = interestRate;
@@ -139,6 +153,20 @@ public class Iou extends BaseTimeEntity {
 		this.virtualAccount = virtualAccount;
 		if (virtualAccount != null && virtualAccount.getIou() != this) {
 			virtualAccount.linkIou(this);
+		}
+	}
+
+	// ======== 거래 내역과의 연관관계 메서드 ======= //
+	public void addTransactionHistory(TransactionHistory transactionHistory) {
+		this.transactionHistories.add(transactionHistory);
+		transactionHistory.setIou(this);
+	}
+
+
+	public void updateBalance(BigDecimal depositAmount) {
+		this.balance = this.balance.subtract(depositAmount);
+		if (this.balance.compareTo(BigDecimal.ZERO) <= 0) {
+			this.contractStatus = ContractStatus.COMPLETED;
 		}
 	}
 }

@@ -46,7 +46,7 @@ async def generate_response_gpt3_5(prompt: str) -> str:
         return None
 
 
-@app.post('/extract')
+@app.post('/ai/ai/extract')
 async def extract_loan_info(input_data: ConversationInput):
     logging.debug(f"Received input data: {input_data}")
 

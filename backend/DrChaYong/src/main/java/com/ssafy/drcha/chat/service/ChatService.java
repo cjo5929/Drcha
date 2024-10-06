@@ -59,10 +59,13 @@ public class ChatService {
 			.chatRoomId(String.valueOf(chatRoomId))
 			.content("차용증이 생성되었습니다. 상세 내용을 확인하세요.")
 			.messageType(ChatMessageType.IOU)
+			.senderId("0")
 			.iouInfo(iouCreateResponseDto)
 			.build();
 
-
+		log.info(chatMessage.getChatRoomId());
+		log.info(chatMessage.getContent());
+		log.info(chatMessage.getSenderId());
 		ChatMessageResponseDto responseDTO = ChatMessageResponseDto.from(chatMongoService.saveChatMessage(chatMessage));
 
 		updateChatRoomLastMessage(responseDTO.getChatRoomId(), responseDTO.getId(), responseDTO.getContent(), responseDTO.getCreatedAt());

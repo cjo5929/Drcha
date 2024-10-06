@@ -1,5 +1,7 @@
 package com.ssafy.drcha.iou.service;
 
+import com.ssafy.drcha.iou.enums.ContractStatus;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
@@ -29,8 +31,8 @@ import com.ssafy.drcha.iou.entity.Iou;
 import com.ssafy.drcha.iou.repository.IouRepository;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.repository.MemberRepository;
-import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
-import com.ssafy.drcha.virtualaccount.service.VirtualAccountService;
+import com.ssafy.drcha.transaction.entity.VirtualAccount;
+import com.ssafy.drcha.transaction.service.TransactionService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -43,7 +45,7 @@ public class IouService {
 	private final WebClient webClient;
 	private final ChatMongoService chatMongoService;
 	private final MemberRepository memberRepository;
-	private final VirtualAccountService virtualAccountService;
+	private final TransactionService transactionService;
 
 	@Transactional
 	public IouPdfResponseDto createAiIou(Long chatRoomId, String email) {
@@ -128,7 +130,7 @@ public class IouService {
 
 		// ! 가상계좌 생성 및 연결
 		if (ObjectUtils.isEmpty(savedIou.getVirtualAccount())) {
-			VirtualAccount virtualAccount = virtualAccountService.createVirtualAccount(savedIou.getIouId());
+			VirtualAccount virtualAccount = transactionService.createVirtualAccount(savedIou.getIouId());
 			savedIou.linkVirtualAccount(virtualAccount);
 		}
 
@@ -153,5 +155,19 @@ public class IouService {
 			.retrieve()
 			.bodyToMono(IouCreateRequestDto.class)
 			.block(); // 동기적으로 결과를 받기 위해 block() 호출
+	}
+
+	// ========  입금 모니터링 관련 ====== //
+	public List<Iou> findAllActiveIous() {
+		return iouRepository.findAllByContractStatus(ContractStatus.ACTIVE);
+	}
+
+	public void updateIouAfterDeposit(Iou iou, BigDecimal depositAmount) {
+		iou.updateBalance(depositAmount);
+		save(iou);
+	}
+
+	public void save(Iou iou) {
+		iouRepository.save(iou);
 	}
 }

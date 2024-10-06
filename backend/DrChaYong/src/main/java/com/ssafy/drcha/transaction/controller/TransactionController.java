@@ -4,6 +4,7 @@ import com.ssafy.drcha.global.api.dto.DepositResponse;
 import com.ssafy.drcha.global.api.dto.TransferResponse;
 import com.ssafy.drcha.global.api.dto.WithdrawResponse;
 import com.ssafy.drcha.transaction.dto.DepositRequestDto;
+import com.ssafy.drcha.transaction.dto.TransactionHistoryResponseDto;
 import com.ssafy.drcha.transaction.dto.TransferRequestDto;
 import com.ssafy.drcha.transaction.dto.VirtualAccountResponse;
 import com.ssafy.drcha.transaction.dto.WithdrawRequestDto;
@@ -16,12 +17,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.math.BigDecimal;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -122,6 +125,19 @@ public class TransactionController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
+
+    @Operation(summary = "차용증 입금 거래 내역 조회", description = "특정 차용증의 모든 입금 거래 내역을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "조회 성공",
+                 content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = TransactionHistoryResponseDto.class)))
+    @GetMapping("/history/deposit/{iouId}")
+    public ResponseEntity<List<TransactionHistoryResponseDto>> getDepositTransactionHistory(
+            @PathVariable("iouId") Long iouId) {
+        log.info("차용증 입금 거래 내역 조회 요청 - 차용증 ID: {}", iouId);
+        List<TransactionHistoryResponseDto> history = transactionService.getDepositTransactionHistory(iouId);
+        return ResponseEntity.ok(history);
+    }
 
 
 }

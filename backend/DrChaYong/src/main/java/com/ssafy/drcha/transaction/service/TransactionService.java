@@ -18,16 +18,24 @@ import com.ssafy.drcha.iou.repository.IouRepository;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.repository.MemberRepository;
 import com.ssafy.drcha.transaction.dto.DepositRequestDto;
+import com.ssafy.drcha.transaction.dto.TransactionHistoryResponseDto;
 import com.ssafy.drcha.transaction.dto.TransferRequestDto;
 import com.ssafy.drcha.transaction.dto.WithdrawRequestDto;
+import com.ssafy.drcha.transaction.entity.TransactionHistory;
+import com.ssafy.drcha.transaction.entity.TransactionType;
 import com.ssafy.drcha.transaction.entity.VirtualAccount;
 import com.ssafy.drcha.transaction.entity.VirtualAccountStatus;
+import com.ssafy.drcha.transaction.repository.TransactionHistoryRepository;
 import com.ssafy.drcha.transaction.repository.VirtualAccountRepository;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +50,7 @@ public class TransactionService {
     private final IouRepository iouRepository;
     private final MemberRepository memberRepository;
     private final AccountRepository accountRepository;
+    private final TransactionHistoryRepository transactionHistoryRepository;
 
     /**
      * TODO : 무통장 계좌(가상계좌) 생성
@@ -361,6 +370,27 @@ public class TransactionService {
         return response;
     }
 
+    /**
+     * TODO : 차용증에 대한 입금 거래내역 리스트 반환
+     * @param iouId 차용증 ID
+     * @return 입금 거래내역 리스트
+     */
+    public List<TransactionHistoryResponseDto> getDepositTransactionHistory(Long iouId) {
+        log.info("차용증 입금 거래 내역 조회 - 차용증 ID: {}", iouId);
+
+        if (!iouRepository.existsById(iouId)) {
+            throw new IouNotFoundException(ErrorCode.IOU_NOT_FOUND);
+        }
+
+        List<TransactionHistory> transactionHistories = transactionHistoryRepository
+                .findDepositTransactionsByIouId(iouId, TransactionType.DEPOSIT);
+
+        log.info("조회된 입금 거래 내역 수: {}", transactionHistories.size());
+
+        return transactionHistories.stream()
+                                   .map(TransactionHistoryResponseDto::from)
+                                   .collect(Collectors.toList());
+    }
 
     private Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)

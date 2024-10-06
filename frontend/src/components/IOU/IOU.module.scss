@@ -67,3 +67,11 @@
 .bold {
   font-weight: bold;
 }
+
+.noContent {
+  @include Pretendard;
+  padding: 4rem 0;
+  font-size: 3rem;
+  font-weight: bold;
+  text-align: center;
+}

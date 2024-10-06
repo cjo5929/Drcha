@@ -9,4 +9,6 @@ export type IouData = {
   borrowerAgreement: boolean;
   lenderAgreement: boolean;
   totalAmount: number;
+  creditorPhoneNumber: string;
+  debtorPhoneNumber: string;
 };

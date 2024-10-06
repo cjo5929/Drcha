@@ -34,8 +34,10 @@ public class ChatMongoService {
   	 대화 내용 AI서버로
  	*/
 	public String getConversationByChatRoomId(Long chatRoomId) {
-		List<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderByCreatedAt(
+		Page<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderByCreatedAt(
 			String.valueOf(chatRoomId), PageRequest.of(0, 30));
+
+		log.info(messages.toString());
 		return messages.stream()
 			.map(ChatMessage::getContent)
 			.collect(Collectors.joining("\n"));

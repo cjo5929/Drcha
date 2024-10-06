@@ -1,7 +1,7 @@
-package com.ssafy.drcha.virtualaccount.dto;
+package com.ssafy.drcha.transaction.dto;
 
-import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
-import com.ssafy.drcha.virtualaccount.entity.VirtualAccountStatus;
+import com.ssafy.drcha.transaction.entity.VirtualAccount;
+import com.ssafy.drcha.transaction.entity.VirtualAccountStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import lombok.Builder;

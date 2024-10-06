@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.ssafy.drcha.chat.enums.ChatMessageType;
 import com.ssafy.drcha.iou.dto.IouCreateResponseDto;
@@ -24,6 +25,7 @@ public class ChatMessage {
 	private String chatRoomId;
 	private String senderId;
 	private String content;
+	@Field("createdAt")
 	private LocalDateTime createdAt;
 	private ChatMessageType messageType;
 	private IouCreateResponseDto iouInfo;

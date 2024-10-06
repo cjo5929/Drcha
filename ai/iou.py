@@ -5,11 +5,20 @@ import openai
 import logging
 import asyncio
 from datetime import datetime
-from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
+
+
 
 app = FastAPI()
-load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# CORS 설정 추가
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+openai.api_key = os.getenv("OPENAI_API_KEY")  # 환경 변수에서 OpenAI API 키 가져오기
 
 
 class ConversationInput(BaseModel):

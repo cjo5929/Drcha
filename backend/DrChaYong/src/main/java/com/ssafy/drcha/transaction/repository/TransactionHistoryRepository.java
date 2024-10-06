@@ -12,7 +12,7 @@ public interface TransactionHistoryRepository extends JpaRepository<TransactionH
 
     @Query("SELECT th FROM TransactionHistory th " +
             "WHERE th.iou.iouId = :iouId AND th.transactionType = :transactionType " +
-            "ORDER BY th.transactionDate DESC")
+            "ORDER BY th.transactionDate ASC ")
     List<TransactionHistory> findDepositTransactionsByIouId(@Param("iouId") Long iouId,
                                                             @Param("transactionType") TransactionType transactionType);
 }

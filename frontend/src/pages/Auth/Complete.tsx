@@ -3,21 +3,22 @@ import { useNavigate } from 'react-router-dom';
 
 import CompleteSVG from '@/assets/icons/complete.svg?react';
 import { Button } from '@/components/Button/Button';
+import { useUserState } from '@/hooks/useUserState';
 
 import styles from './Auth.module.scss';
 
-const user = { userName: '김박사', accountNo: 1234567890, isVerified: false };
-
 export function Complete() {
   const navigate = useNavigate();
-  // TODO : 사용자 정보 불러오기
-  const { isVerified } = user;
+  const { userInfo } = useUserState();
 
   useEffect(() => {
-    if (isVerified) {
+    if (!userInfo) {
+      return;
+    }
+    if (userInfo.verified) {
       navigate('/', { replace: true });
     }
-  }, [navigate, isVerified]);
+  }, [navigate, userInfo]);
 
   const handleClick = () => {
     navigate('/');

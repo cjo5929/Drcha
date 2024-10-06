@@ -50,4 +50,12 @@ public class ChatMongoService {
 		return chatMessageRepository.findByRoomIdWithPaging(chatRoomId, page, size);
 	}
 
+	/*
+	  최근 메시지 조회
+	 */
+	public List<ChatMessage> getLastMessages(String chatRoomId, int limit) {
+		PageRequest pageRequest = PageRequest.of(0, limit);
+		return chatMessageRepository.findByChatRoomIdOrderByCreatedAtDesc(chatRoomId, pageRequest).getContent();
+	}
+
 }

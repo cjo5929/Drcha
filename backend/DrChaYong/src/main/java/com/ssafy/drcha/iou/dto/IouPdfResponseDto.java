@@ -20,6 +20,8 @@ public final class IouPdfResponseDto {
 	private Boolean borrowerAgreement;
 	private Boolean lenderAgreement;
 	private Long totalAmount;
+	private String creditorPhoneNumber;
+	private String debtorPhoneNumber;
 
 	public static IouPdfResponseDto from(Iou iou) {
 		return new IouPdfResponseDto(
@@ -32,7 +34,9 @@ public final class IouPdfResponseDto {
 			iou.getInterestRate(),
 			iou.getBorrowerAgreement(),
 			iou.getLenderAgreement(),
-			calculateTotalAmount(iou.getIouAmount(), iou.getInterestRate(), 12)
+			calculateTotalAmount(iou.getIouAmount(), iou.getInterestRate(), 12),
+			iou.getCreditor().getPhoneNumber(),
+			iou.getDebtor().getPhoneNumber()
 		);
 	}
 

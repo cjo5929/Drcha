@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.drcha.chat.dto.ChatMessageParam;
@@ -34,13 +36,20 @@ public class ChatMongoService {
   	 대화 내용 AI서버로
  	*/
 	public String getConversationByChatRoomId(Long chatRoomId) {
-		List<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderByCreatedAt(
-			String.valueOf(chatRoomId), PageRequest.of(0, 30));
+		Pageable pageable = PageRequest.of(0, 30, Sort.by("createdAt").ascending());
+		Page<ChatMessage> messagesPage = chatMessageRepository.findByChatRoomIdOrderByCreatedAt(String.valueOf(chatRoomId), pageable);
+
+		log.info("Retrieved messages size: {}", messagesPage);
+
+
+		List<ChatMessage> messages = messagesPage.getContent();
+
+		log.info(messages.toString());
+
 		return messages.stream()
 			.map(ChatMessage::getContent)
 			.collect(Collectors.joining("\n"));
 	}
-
 	/*
 	 무한 스크롤
 	 */

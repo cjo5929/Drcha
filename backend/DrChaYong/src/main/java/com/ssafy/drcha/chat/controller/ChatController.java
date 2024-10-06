@@ -86,7 +86,7 @@ public class ChatController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "채팅방 입장 및 메시지 조회 성공",
 			content = @Content(mediaType = "application/json",
-				schema = @Schema(implementation = ChatMessageResponseDto.class))),
+				schema = @Schema(implementation = ChatRoomEntryResponseDto.class))),
 		@ApiResponse(responseCode = "401", description = "사용자 인증 필요",
 			content = @Content(mediaType = "application/json",
 				schema = @Schema(implementation = ErrorResponse.class))),
@@ -108,7 +108,7 @@ public class ChatController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "채팅방 입장 및 메시지 조회 성공",
 			content = @Content(mediaType = "application/json",
-				schema = @Schema(implementation = ChatMessageResponseDto.class))),
+				schema = @Schema(implementation = ChatRoomEntryResponseDto.class))),
 		@ApiResponse(responseCode = "302", description = "회원가입 또는 본인인증 필요로 인한 리다이렉트",
 			content = @Content(mediaType = "application/json",
 				schema = @Schema(implementation = ErrorResponse.class))),

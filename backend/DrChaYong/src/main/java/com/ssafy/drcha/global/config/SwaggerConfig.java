@@ -12,6 +12,7 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
 public class SwaggerConfig {
@@ -44,6 +45,8 @@ public class SwaggerConfig {
         // 전역 보안 요구사항 정의
         SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearerAuth");
 
+        Server server = new Server();
+        server.setUrl("https://j11a205.p.ssafy.io/");
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
                 .security(Arrays.asList(securityRequirement))

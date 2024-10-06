@@ -6,7 +6,8 @@ import logging
 import asyncio
 from datetime import datetime
 from fastapi.middleware.cors import CORSMiddleware
-
+from dotenv import load_dotenv
+load_dotenv()
 
 
 app = FastAPI()
@@ -45,7 +46,7 @@ async def generate_response_gpt3_5(prompt: str) -> str:
         return None
 
 
-@app.post('/ai/extract')
+@app.post('/ai/ai/extract')
 async def extract_loan_info(input_data: ConversationInput):
     logging.debug(f"Received input data: {input_data}")
 

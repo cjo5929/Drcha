@@ -1,6 +1,8 @@
 package com.ssafy.drcha.chat.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -57,10 +59,13 @@ public class ChatService {
 			.chatRoomId(String.valueOf(chatRoomId))
 			.content("차용증이 생성되었습니다. 상세 내용을 확인하세요.")
 			.messageType(ChatMessageType.IOU)
+			.senderId("0")
 			.iouInfo(iouCreateResponseDto)
 			.build();
 
-
+		log.info(chatMessage.getChatRoomId());
+		log.info(chatMessage.getContent());
+		log.info(chatMessage.getSenderId());
 		ChatMessageResponseDto responseDTO = ChatMessageResponseDto.from(chatMongoService.saveChatMessage(chatMessage));
 
 		updateChatRoomLastMessage(responseDTO.getChatRoomId(), responseDTO.getId(), responseDTO.getContent(), responseDTO.getCreatedAt());
@@ -71,22 +76,32 @@ public class ChatService {
 
 
 	@Transactional
-	public void updateChatRoomLastMessage(String chatRoomId, String messageId, String message, LocalDateTime messageTime) {
+	public void updateChatRoomLastMessage(Long chatRoomId, String messageId, String message, LocalDateTime messageTime) {
 		ChatRoom chatRoom = getChatRoomById(chatRoomId);
 		chatRoom.updateLastMessage(messageId, message, messageTime);
 	}
 
 	@Transactional
-	public void incrementUnreadCount(String chatRoomId, String senderId) {
+	public void incrementUnreadCount(Long chatRoomId, Long senderId) {
 		ChatRoomMember recipientMember = chatRoomMemberRepository.findByChatRoom_ChatRoomIdAndMember_IdNot(
-				Long.parseLong(chatRoomId), Long.parseLong(senderId))
+				chatRoomId, senderId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
 		recipientMember.incrementUnreadCount();
 	}
 
-	private ChatRoom getChatRoomById(String chatRoomId) {
-		return chatRoomRepository.findById(Long.parseLong(chatRoomId))
+	// 전체 메시지 로드하고 사용자에게 전송하는 메서드 추가
+	@Transactional(readOnly = true)
+	public void loadAllMessagesAndSend(String chatRoomId) {
+		List<ChatMessageResponseDto> messages = chatMongoService.getAllMessages(chatRoomId).stream()
+			.map(ChatMessageResponseDto::from)
+			.collect(Collectors.toList());
+
+		messagingTemplate.convertAndSend("/topic/chat." + chatRoomId, messages);
+	}
+
+	private ChatRoom getChatRoomById(Long chatRoomId) {
+		return chatRoomRepository.findById(chatRoomId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CHAT_ROOM_NOT_FOUND));
 	}
 
@@ -99,5 +114,7 @@ public class ChatService {
 	public void receiveMessage(ChatMessageResponseDto message) {
 		messagingTemplate.convertAndSend("/topic/chat." + message.getChatRoomId(), message);
 	}
+
+
 
 }

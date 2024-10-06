@@ -21,6 +21,8 @@ import com.ssafy.drcha.chat.repository.ChatRoomRepository;
 import com.ssafy.drcha.global.error.ErrorCode;
 import com.ssafy.drcha.global.error.type.DataNotFoundException;
 import com.ssafy.drcha.iou.dto.IouCreateResponseDto;
+import com.ssafy.drcha.member.entity.Member;
+import com.ssafy.drcha.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,7 @@ public class ChatService {
 	private final SimpMessageSendingOperations messagingTemplate;
 	private final ChatRoomRepository chatRoomRepository;
 	private final ChatRoomMemberRepository chatRoomMemberRepository;
+	private final MemberRepository memberRepository;
 
 	private static final String CHAT_EXCHANGE_NAME = "chat.exchange";
 	private static final String ROUTING_KEY = "chat.message.";
@@ -63,9 +66,6 @@ public class ChatService {
 			.iouInfo(iouCreateResponseDto)
 			.build();
 
-		log.info(chatMessage.getChatRoomId());
-		log.info(chatMessage.getContent());
-		log.info(chatMessage.getSenderId());
 		ChatMessageResponseDto responseDTO = ChatMessageResponseDto.from(chatMongoService.saveChatMessage(chatMessage));
 
 		updateChatRoomLastMessage(responseDTO.getChatRoomId(), responseDTO.getId(), responseDTO.getContent(), responseDTO.getCreatedAt());
@@ -90,15 +90,38 @@ public class ChatService {
 		recipientMember.incrementUnreadCount();
 	}
 
-	// 전체 메시지 로드하고 사용자에게 전송하는 메서드 추가
 	@Transactional(readOnly = true)
-	public void loadAllMessagesAndSend(String chatRoomId) {
-		List<ChatMessageResponseDto> messages = chatMongoService.getAllMessages(chatRoomId).stream()
+	public void loadAllMessagesAndSend(Long chatRoomId, String email) {
+		// 모든 메시지 로드
+		List<ChatMessageResponseDto> messages = chatMongoService.getAllMessages(String.valueOf(chatRoomId)).stream()
 			.map(ChatMessageResponseDto::from)
 			.collect(Collectors.toList());
 
+		// 메시지 전송
 		messagingTemplate.convertAndSend("/topic/chat." + chatRoomId, messages);
+
+		// 읽음 처리 로직 추가
+		markMessagesAsRead(chatRoomId, email, messages);
 	}
+
+	@Transactional
+	public void markMessagesAsRead(Long chatRoomId, String email, List<ChatMessageResponseDto> messages) {
+		ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CHAT_ROOM_NOT_FOUND));
+
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+		ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member)
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+		// 마지막 메시지를 기준으로 읽음 처리
+		if (!messages.isEmpty()) {
+			ChatMessageResponseDto lastMessage = messages.get(messages.size() - 1);
+			chatRoomMember.updateLastRead(lastMessage.getId(), LocalDateTime.now());
+		}
+	}
+
 
 	private ChatRoom getChatRoomById(Long chatRoomId) {
 		return chatRoomRepository.findById(chatRoomId)
@@ -114,6 +137,7 @@ public class ChatService {
 	public void receiveMessage(ChatMessageResponseDto message) {
 		messagingTemplate.convertAndSend("/topic/chat." + message.getChatRoomId(), message);
 	}
+
 
 
 

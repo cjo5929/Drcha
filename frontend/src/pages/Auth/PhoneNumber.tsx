@@ -44,7 +44,6 @@ export function PhoneNumberPage() {
           value={phoneNumber.phoneNumber}
           onChange={handlePhoneNumberChange}
         />
-        <button type="submit">확인</button>
       </form>
     </div>
   );

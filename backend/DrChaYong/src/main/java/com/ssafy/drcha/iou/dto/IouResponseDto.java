@@ -26,22 +26,9 @@ public final class IouResponseDto {
 			iou.getContractStartDate(),
 			iou.getContractEndDate(),
 			iou.getInterestRate(),
-			calculateTotalAmount(iou.getIouAmount(), iou.getInterestRate())
+			FinancialCalculator.calculateTotalAmount(iou.getIouAmount(), iou.getInterestRate(), 12)
 		);
 	}
 
-	/**
-	 * 원리금을 계산하는 메서드
-	 *
-	 * @param iouAmount 원금
-	 * @param interestRate 이자율 (예: 0.05는 5% 이자율을 의미)
-	 * @return 원금과 이자를 합한 금액
-	 */
-	private static Long calculateTotalAmount(Long iouAmount, Double interestRate) {
-		if (iouAmount == null || interestRate == null) {
-			return null;
-		}
-		double interest = iouAmount * interestRate;
-		return Math.round(iouAmount + interest);  // 원리금 합산 후 반올림하여 반환
-	}
+
 }

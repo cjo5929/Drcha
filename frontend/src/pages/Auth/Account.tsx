@@ -10,6 +10,9 @@ export function Account() {
   const { userInfo } = useUserState();
 
   useEffect(() => {
+    if (!userInfo) {
+      return;
+    }
     if (userInfo.verified) {
       navigate('/', { replace: true });
     }
@@ -24,7 +27,7 @@ export function Account() {
     <div className={styles.content}>
       <div>
         <span>거래를 도와드릴게요, </span>
-        <span className={styles.blue}>{userInfo.username}</span>
+        <span className={styles.blue}>{userInfo ? userInfo.username : ''}</span>
         <span>님</span>
       </div>
       <div>
@@ -38,7 +41,7 @@ export function Account() {
         <input
           type="text"
           placeholder="계좌번호"
-          defaultValue={userInfo.accountNo}
+          defaultValue={userInfo ? userInfo.accountNo : ''}
           className={styles.input}
         />
       </form>

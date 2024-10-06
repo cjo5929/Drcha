@@ -15,6 +15,9 @@ export function Number() {
   );
 
   useEffect(() => {
+    if (!userInfo) {
+      return;
+    }
     if (userInfo.verified) {
       navigate('/', { replace: true });
     }

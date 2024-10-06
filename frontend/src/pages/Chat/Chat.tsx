@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/indent */
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import HamburgerSVG from '@/assets/icons/hamburger.svg?react';
@@ -8,8 +8,8 @@ import { CheckIouModal } from '@/components/Modal/CheckIouModal';
 import { CorrectionIouModal } from '@/components/Modal/CorrectionIouModal';
 import { CreateIouModal } from '@/components/Modal/CreateIouModal';
 import { useChatWebSocket } from '@/hooks/useChatWebsocket';
-import { API } from '@/services/api';
-import { MyInfo } from '@/types/Member';
+import { useUserState } from '@/hooks/useUserState';
+import { chat } from '@/services/chat';
 
 import styles from './Chat.module.scss';
 import { ChatContent } from './ChatContent';
@@ -25,14 +25,11 @@ export function Chat() {
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [message, setMessage] = useState('');
-  const [myData, setMyData] = useState<MyInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const { messages, sendMessage } = useChatWebSocket(
-    chatRoomId ?? '',
-    myData!.memberId ?? '',
-  );
+  const { userInfo } = useUserState();
+  const { messages, sendMessage } = useChatWebSocket(chatRoomId!);
+  const [opponentName, setOpponentName] = useState('');
+  const [isError, setIsError] = useState(false);
 
   const handleOpenModal = (type: 'create' | 'correction' | 'check') => {
     setModalType(type);
@@ -42,13 +39,17 @@ export function Chat() {
     setModalType(null);
   };
 
-  const handleSend = () => {
-    const trimmedMessage = message.trim().replace(/\n/g, ' ');
+  const handleSend = useCallback(() => {
+    if (!userInfo) {
+      return;
+    }
+    const trimmedMessage = message.trim();
     if (trimmedMessage) {
-      sendMessage(trimmedMessage);
+      sendMessage(trimmedMessage, userInfo.memberId);
       setMessage('');
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sendMessage, userInfo]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -57,22 +58,28 @@ export function Chat() {
     }
   };
 
-  useEffect(() => {
-    const fetchMemberInfo = async () => {
+  const getChatRoomInfo = useCallback(async () => {
+    if (chatRoomId) {
       try {
+        const data = await chat.getChatRoomData(chatRoomId);
+        setOpponentName(data.opponentName);
         setIsLoading(true);
-        const response = await API.get<MyInfo>('/member/info');
-
-        setMyData(response.data);
-      } catch (e) {
-        setError('Failed to fetch member info');
+      } catch {
+        setIsError(true);
       } finally {
         setIsLoading(false);
       }
-    };
+    }
+  }, [chatRoomId]);
 
-    fetchMemberInfo();
-  }, []);
+  useEffect(() => {
+    if (!userInfo) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+      getChatRoomInfo();
+    }
+  }, [userInfo, getChatRoomInfo]);
 
   useEffect(() => {
     // 햄버거 메뉴판 바깥 클릭 방지
@@ -88,12 +95,13 @@ export function Chat() {
   }, [menuRef]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className={styles.noChatting}>채팅 정보 로딩 중..</div>;
   }
 
-  if (error) {
-    return <div>Error: {error}</div>;
+  if (isError) {
+    return <div className={styles.noChatting}>채팅방을 찾을 수 없습니다.</div>;
   }
+
   return (
     <div className={styles.container}>
       {/* Header */}
@@ -104,7 +112,7 @@ export function Chat() {
             navigate(-1);
           }}
         />
-        <div className={styles.userinfo}>조현수</div>
+        <div className={styles.userinfo}>{opponentName}</div>
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className={styles.hamburgerButton}
@@ -113,13 +121,13 @@ export function Chat() {
         </button>
       </div>
       {/* 채팅 내용 */}
-      <ChatContent messages={messages} currentUserId={myData!.memberId} />
+      <ChatContent messages={messages} currentUserId={userInfo!.memberId} />
       {/* 채팅 입력창 */}
       <div className={styles.chatinput}>
         <textarea
           className={styles.inputField}
           placeholder="메세지를 입력하세요."
-          value={message}
+          // value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           rows={1}

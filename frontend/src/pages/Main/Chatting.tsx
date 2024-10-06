@@ -26,7 +26,7 @@ export function Chatting({ chat }: ChattingProps) {
 
   useEffect(() => {
     if (contractStatus === STATUS.ACTIVE) {
-      setStatus(`상환일까지 D-${daysUntilDue}일`);
+      setStatus(`D-${daysUntilDue}일`);
     } else if (contractStatus === STATUS.OVERDUE) {
       setStatus(`${-1 * daysUntilDue}일 연체중`);
     } else if (contractStatus === STATUS.DRAFTING) {
@@ -38,7 +38,9 @@ export function Chatting({ chat }: ChattingProps) {
 
   return (
     <NavLink to={`chat/${chatRoomId}`} className={styles.chatting}>
-      <div className={styles.unreadCount}>{unreadCount}</div>
+      {unreadCount > 0 && (
+        <div className={styles.unreadCount}>{unreadCount}</div>
+      )}
       <div className={styles.chattingBody}>
         <img
           src={avatarUrl || AVATAR_IMAGE}
@@ -51,8 +53,13 @@ export function Chatting({ chat }: ChattingProps) {
         </div>
       </div>
       <div className={styles.chatStatus}>
-        <div>{status}</div>
-        <div>{iouAmount ? `${iouAmount}원` : ''}</div>
+        <div className={styles.statusDetail}>
+          {contractStatus === STATUS.ACTIVE && (
+            <span className={styles.statusDday}>상환일까지 </span>
+          )}
+          {status}
+        </div>
+        <div>{iouAmount ? `${iouAmount.toLocaleString('ko-KR')}원` : ''}</div>
       </div>
     </NavLink>
   );

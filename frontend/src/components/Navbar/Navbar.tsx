@@ -16,16 +16,17 @@ Kakao.init(`${import.meta.env.VITE_API_KAKAO_ID}`);
 const kakaoShare = async () => {
   try {
     const response = await API.post<Invitation>('/chat');
-    // const chatroomID = response.data.chatRoomId;
-    const invitationlink = response.data.invitationLink;
+    const chatroomID = response.data.chatRoomId;
+    // const invitationlink = response.data.invitationLink;
 
     Kakao.Share.sendCustom({
       templateId: 112872,
       templateArgs: {
-        DYNAMIC_LINK: `${URL.INVITE}/api/v1/chat/${invitationlink}/link/enter`,
+        DYNAMIC_LINK: `${URL.INVITE}/chat/${chatroomID}`,
       },
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(error);
   }
 };

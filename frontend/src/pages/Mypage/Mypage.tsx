@@ -1,25 +1,28 @@
 import { useEffect, useState } from 'react';
 
 import { Navbar } from '@/components/Navbar/Navbar';
+import { useUserState } from '@/hooks/useUserState';
 import styles from '@/pages/Mypage/Mypage.module.scss';
-import { API } from '@/services/api';
-import { MyInfo } from '@/types/Member';
+import { Info } from '@/types/Member';
 
 import { MyDealList } from './MyDealList';
 import { Myinfo } from './Myinfo';
 
 export function Mypage() {
-  const [myData, setMyData] = useState<MyInfo | null>(null);
+  const [myData, setMyData] = useState<Info | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { userInfo } = useUserState();
 
   useEffect(() => {
     const fetchMemberInfo = async () => {
       try {
         setIsLoading(true);
-        const response = await API.get<MyInfo>('/member/info');
-
-        setMyData(response.data);
+        if (userInfo) {
+          setMyData(userInfo);
+        } else {
+          setMyData(null);
+        }
       } catch (e) {
         setError('Failed to fetch member info');
       } finally {
@@ -28,7 +31,7 @@ export function Mypage() {
     };
 
     fetchMemberInfo();
-  }, []);
+  }, [userInfo]);
 
   if (isLoading) {
     return <div>Loading...</div>;

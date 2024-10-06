@@ -1,10 +1,10 @@
 import styles from '@/pages/Mypage/Mypage.module.scss';
-import { MyInfo } from '@/types/Member';
+import { Info } from '@/types/Member';
 
 import { Certificated } from './Certificated';
 import { NonCertificated } from './NonCertificated';
 
-export function Myinfo({ myInfos }: { myInfos: MyInfo }) {
+export function Myinfo({ myInfos }: { myInfos: Info }) {
   return (
     <div className={styles.myinfo}>
       <div className={styles.kakaoinfo}>
@@ -17,7 +17,11 @@ export function Myinfo({ myInfos }: { myInfos: MyInfo }) {
         </div>
       </div>
       <div className={styles.accountinfo}>
-        {myInfos.verified ? <NonCertificated /> : <Certificated />}
+        {myInfos.verified ? (
+          <Certificated myInfos={myInfos} />
+        ) : (
+          <NonCertificated />
+        )}
       </div>
       <div className={styles.accountbtn}>
         <button>계좌이용내역</button>

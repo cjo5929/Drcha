@@ -5,7 +5,6 @@
   @include Pretendard;
   width: 100%;
   height: 100%;
-  border: solid 1px;
   position: relative;
   overflow: hidden;
 }
@@ -258,4 +257,13 @@
   font-size: 3rem;
   font-weight: bold;
   text-align: center;
+}
+
+.sendButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
 }

@@ -1,8 +1,8 @@
 import CertificatedSVG from '@/assets/icons/certificated.svg?react';
 import styles from '@/pages/Mypage/Mypage.module.scss';
-import { MyInfo } from '@/types/MyInfo';
+import { Info } from '@/types/Member';
 
-export function Certificated({ myInfos }: { myInfos: MyInfo }) {
+export function Certificated({ myInfos }: { myInfos: Info }) {
   return (
     <div className={styles.card}>
       <div className={styles.bankinfo}>

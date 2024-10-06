@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 import { Navbar } from '@/components/Navbar/Navbar';
 import { useUserState } from '@/hooks/useUserState';
 import styles from '@/pages/Mypage/Mypage.module.scss';
-import { MyInfo } from '@/types/MyInfo';
+import { Info } from '@/types/Member';
 
 import { MyDealList } from './MyDealList';
 import { Myinfo } from './Myinfo';
 
 export function Mypage() {
-  const [myData, setMyData] = useState<MyInfo | null>(null);
+  const [myData, setMyData] = useState<Info | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { userInfo } = useUserState();

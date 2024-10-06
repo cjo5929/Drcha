@@ -1,10 +1,10 @@
 import styles from '@/pages/Mypage/Mypage.module.scss';
-import { MyInfo } from '@/types/Member';
+import { Info } from '@/types/Member';
 
 import { Certificated } from './Certificated';
 import { NonCertificated } from './NonCertificated';
 
-export function Myinfo({ myInfos }: { myInfos: MyInfo }) {
+export function Myinfo({ myInfos }: { myInfos: Info }) {
   return (
     <div className={styles.myinfo}>
       <div className={styles.kakaoinfo}>

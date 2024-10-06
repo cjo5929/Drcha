@@ -49,4 +49,12 @@ public class Account extends BaseTimeEntity {
     public void changeBalance(BigDecimal balance) {
         this.balance = balance;
     }
+
+    // ==== Member - Account 간의 연관관계 메서드 ===== //
+    public void setMember(Member member) {
+        this.member = member;
+        if (member != null && member.getAccount() != this) {
+            member.setAccount(this);
+        }
+    }
 }

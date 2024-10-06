@@ -10,6 +10,7 @@ import lombok.Data;
 @Builder
 public class WithdrawResponse {
 
+    @JsonProperty("Header")
     private HeaderResponse headerResponse; // 공통
     @JsonProperty("REC")
     private REC rec;                       // 거래 정보

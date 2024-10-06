@@ -1,4 +1,4 @@
-package com.ssafy.drcha.virtualaccount.entity;
+package com.ssafy.drcha.transaction.entity;
 
 import com.ssafy.drcha.global.basetime.BaseTimeEntity;
 import com.ssafy.drcha.iou.entity.Iou;
@@ -21,10 +21,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "virtual_account")
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -72,4 +74,5 @@ public class VirtualAccount extends BaseTimeEntity {
     public void linkIou(Iou iou) {
         this.iou = iou;
     }
+
 }

@@ -1,14 +1,17 @@
 package com.ssafy.drcha.member.entity;
 
+import com.ssafy.drcha.account.entity.Account;
 import com.ssafy.drcha.global.basetime.BaseTimeEntity;
 import com.ssafy.drcha.member.enums.Role;
 import com.ssafy.drcha.trust.entity.MemberTrust;
-import com.ssafy.drcha.virtualaccount.entity.VirtualAccount;
+import com.ssafy.drcha.transaction.entity.VirtualAccount;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -60,6 +63,9 @@ public class Member extends BaseTimeEntity {
     @OneToOne(mappedBy = "member")
     private MemberTrust memberTrust;
 
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Account account;
+
     @OneToMany(mappedBy = "creditor")
     private List<VirtualAccount> creditorAccounts = new ArrayList<>();
 
@@ -92,5 +98,13 @@ public class Member extends BaseTimeEntity {
 
     public void markAsVerified() {
         this.isVerified = true;
+    }
+
+    // ==== Member - Account 간의 연관관계 메서드 ===== //
+    public void setAccount(Account account) {
+        this.account = account;
+        if (account != null && account.getMember() != this) {
+            account.setMember(this);
+        }
     }
 }

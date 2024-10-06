@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 public class DepositResponse {
+    @JsonProperty("Header")
     private HeaderResponse headerResponse; // 공통
     @JsonProperty("REC")
     private REC rec;                       // 거래 정보

@@ -49,7 +49,7 @@ public enum ErrorCode {
 	 * Account
 	 */
 	ACCOUNT_NOT_FOUND(NOT_FOUND, "ACCOUNT-001", "계좌가 존재하지 않습니다."),
-
+	INSUFFICIENT_BALANCE(BAD_REQUEST, "ACCOUNT-002", "잔액이 부족합니다."),
 	/**
 	 * VirtualAccount
 	 */

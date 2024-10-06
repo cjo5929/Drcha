@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ssafy.drcha.global.security.strategy.RedirectStrategy;
+import com.ssafy.drcha.global.security.strategy.RedirectStrategyFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -33,9 +35,10 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final MemberService memberService;
     private final RestClientUtil restClientUtil;
     private final AccountService accountService;
+    private final RedirectStrategyFactory redirectStrategyFactory;
 
     @Value("${app.url.front}")
-    private String redirectUri;
+    private String frontendUrl;
 
     /**
      * OAuth2 인증 성공 시 호출되는 메서드
@@ -60,7 +63,11 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         setTokenCookies(response, accessToken, refreshToken);
 
-        getRedirectStrategy().sendRedirect(request, response, redirectUri);
+        String chatRoomId = request.getParameter("chatRoomId");
+        RedirectStrategy strategy = redirectStrategyFactory.getStrategy(chatRoomId);
+        String redirectUrl = strategy.getRedirectUrl(member, frontendUrl, chatRoomId);
+
+        getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 
     /**

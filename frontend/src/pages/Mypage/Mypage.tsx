@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Navbar } from '@/components/Navbar/Navbar';
 import styles from '@/pages/Mypage/Mypage.module.scss';
 import { API } from '@/services/api';
-import { MyInfo } from '@/types/MyInfo';
+import { MyInfo } from '@/types/Member';
 
 import { MyDealList } from './MyDealList';
 import { Myinfo } from './Myinfo';

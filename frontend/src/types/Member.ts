@@ -1,4 +1,4 @@
-export type MyInfo = {
+export type Info = {
   memberId: number;
   username: string;
   email: string;
@@ -6,4 +6,8 @@ export type MyInfo = {
   accountNo: string;
   balance: number;
   verified: boolean;
+};
+
+export type PhoneNumber = {
+  pheonNumber: string;
 };

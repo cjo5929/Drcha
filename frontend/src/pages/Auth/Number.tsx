@@ -1,25 +1,31 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import styles from './Auth.module.scss';
+import { useUserState } from '@/hooks/useUserState';
+import { account } from '@/services/account';
 
-const user = { userName: '김박사', accountNo: 1234567890, isVerified: false };
+import styles from './Auth.module.scss';
 
 export function Number() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  // TODO : 사용자 정보 불러오기
-  const { isVerified } = user;
+  const { userInfo } = useUserState();
+  const [verificationCode, setVerificationCode] = useState(
+    state?.verificationCode || '',
+  );
 
   useEffect(() => {
-    if (isVerified) {
+    if (userInfo.verified) {
       navigate('/', { replace: true });
     }
-  }, [navigate, isVerified]);
+  }, [navigate, userInfo]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    navigate('/auth/phone-number', { state: { accountNo: state.accountNo } });
+    const isCheck = await account.checkVerificationCode(verificationCode);
+    if (isCheck) {
+      navigate('/auth/phone-number');
+    }
   };
 
   return (
@@ -34,7 +40,8 @@ export function Number() {
           type="text"
           placeholder="인증번호"
           className={styles.input}
-          defaultValue={state.certificationNumber}
+          value={verificationCode}
+          onChange={(e) => setVerificationCode(e.target.value)}
         />
       </form>
     </div>

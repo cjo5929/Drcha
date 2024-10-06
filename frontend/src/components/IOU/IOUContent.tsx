@@ -16,6 +16,9 @@ export function IOUContent({ iouData, iouRef }: IOUContentProps) {
   const interestAmount = Math.round(iouAmount * (interestRate / 100));
   const startDate = new Date(contractStartDate);
   const endDate = new Date(contractEndDate);
+  // KST로 변경
+  startDate.setHours(startDate.getHours() - 9);
+  endDate.setHours(endDate.getHours() - 9);
 
   return (
     <div className={styles.iou} ref={iouRef}>
@@ -66,11 +69,15 @@ export function IOUContent({ iouData, iouRef }: IOUContentProps) {
       <div className={styles.content}>
         <div className={styles.detail}>
           <div className={styles.bold}>채권자</div>
-          <div>{iouData.creditorName}(010-0000-0000)</div>
+          <div>
+            {iouData.creditorName}({iouData.creditorPhoneNumber})
+          </div>
         </div>
         <div className={styles.detail}>
           <div className={styles.bold}>채무자</div>
-          <div>{iouData.debtorName}(010-0000-0000)</div>
+          <div>
+            {iouData.debtorName}({iouData.debtorPhoneNumber})
+          </div>
         </div>
       </div>
     </div>

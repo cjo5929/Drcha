@@ -8,6 +8,7 @@ import com.ssafy.drcha.global.api.dto.DepositResponse;
 import com.ssafy.drcha.global.api.dto.TransferResponse;
 import com.ssafy.drcha.global.api.dto.WithdrawResponse;
 import com.ssafy.drcha.global.error.ErrorCode;
+import com.ssafy.drcha.global.error.type.AccountNotFoundException;
 import com.ssafy.drcha.global.error.type.InsufficientBalanceException;
 import com.ssafy.drcha.global.error.type.IouNotFoundException;
 import com.ssafy.drcha.global.error.type.UserNotFoundException;
@@ -17,16 +18,24 @@ import com.ssafy.drcha.iou.repository.IouRepository;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.repository.MemberRepository;
 import com.ssafy.drcha.transaction.dto.DepositRequestDto;
+import com.ssafy.drcha.transaction.dto.TransactionHistoryResponseDto;
 import com.ssafy.drcha.transaction.dto.TransferRequestDto;
 import com.ssafy.drcha.transaction.dto.WithdrawRequestDto;
+import com.ssafy.drcha.transaction.entity.TransactionHistory;
+import com.ssafy.drcha.transaction.entity.TransactionType;
 import com.ssafy.drcha.transaction.entity.VirtualAccount;
 import com.ssafy.drcha.transaction.entity.VirtualAccountStatus;
+import com.ssafy.drcha.transaction.repository.TransactionHistoryRepository;
 import com.ssafy.drcha.transaction.repository.VirtualAccountRepository;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +50,7 @@ public class TransactionService {
     private final IouRepository iouRepository;
     private final MemberRepository memberRepository;
     private final AccountRepository accountRepository;
+    private final TransactionHistoryRepository transactionHistoryRepository;
 
     /**
      * TODO : 무통장 계좌(가상계좌) 생성
@@ -87,13 +97,44 @@ public class TransactionService {
     }
 
     /**
+     * TODO : 회원 계좌 입금 처리
+     *
+     * @param email 입금 요청한 회원의 email
+     * @param depositRequestDto 입금 요청 정보
+     * @return DepositResponse
+     */
+    public DepositResponse depositMemberAccount(String email, DepositRequestDto depositRequestDto) {
+        log.info("---------- 사용자 계좌 입금 처리 시작: 사용자 {}, 요청 {} ---------", email, depositRequestDto);
+
+        Member member = getMemberByEmail(email);
+        log.info("accountNo : {}", depositRequestDto.getAccountNo());
+        Account account = getMemberAccountByAccountNumber(depositRequestDto.getAccountNo());
+
+        DepositResponse response = restClientUtil.deposit(
+                member.getUserKey(),
+                depositRequestDto.getAccountNo(),
+                depositRequestDto.getTransactionBalance(),
+                depositRequestDto.getTransactionSummary()
+        );
+
+        // ! 계좌 잔액 업데이트
+        BigDecimal newBalance = account.getBalance().add(BigDecimal.valueOf(depositRequestDto.getTransactionBalance()));
+        account.changeBalance(newBalance);
+        accountRepository.save(account);
+
+        log.info("------------ 사용자 계좌 입금 처리 완료: {} ------------", response);
+        return response;
+    }
+
+
+    /**
      * TODO : 가상 계좌 입금 처리
      *
      * @param email 입금 요청한 회원의 email
      * @param depositRequestDto 입금 요청 정보
      * @return DepositResponse
      */
-    public DepositResponse deposit(String email, DepositRequestDto depositRequestDto) {
+    public DepositResponse depositVirtualAccount(String email, DepositRequestDto depositRequestDto) {
         log.info("---------- 계좌 입금 처리 시작: 사용자 {}, 요청 {} ---------", email, depositRequestDto);
 
         Member member = getMemberByEmail(email);
@@ -120,7 +161,7 @@ public class TransactionService {
         account.setBalance(newBalance);
         virtualAccountRepository.save(account);
 
-        log.info("------------ 계좌 입금 처리 완료: {} ------------", response);
+        log.info("------------ 가상 계좌 입금 처리 완료: {} ------------", response);
         return response;
     }
 
@@ -160,7 +201,7 @@ public class TransactionService {
     }
 
     /**
-     * TODO : 계좌 이체 처리 -> 채권자의 userKey 사용
+     * TODO : 계좌 이체 처리 -> 채권자의 userKey 사용 : test
      *
      * @param email 이체 요청한 회원의 email
      * @param transferRequestDto 이체 요청 정보
@@ -207,7 +248,69 @@ public class TransactionService {
      * TODO : 앞단에서 사용할 채무자 -> 가상계좌 계좌이체
      *
      * @param iouId 차용증 ID
+     * @param amount 갚을 금액
+     * @return TransferResponse
      */
+    @Transactional
+    public TransferResponse repayDebt(String email, Long iouId, BigDecimal amount) {
+        Iou iou = iouRepository.findById(iouId)
+                               .orElseThrow(() -> new IouNotFoundException(ErrorCode.IOU_NOT_FOUND));
+        VirtualAccount virtualAccount = iou.getVirtualAccount(); // 차용증에 대한 가상계좌
+        if (ObjectUtils.isEmpty(virtualAccount)) {
+            throw new VirtualAccountException(ErrorCode.VIRTUAL_ACCOUNT_NOT_FOUND);
+        }
+
+        Account debtorAccount = iou.getDebtor().getAccount();   // 채무자 계좌
+        if (ObjectUtils.isEmpty(debtorAccount)) {
+            throw new AccountNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND);
+        }
+
+        log.info("============ 차용증 : {}==============", iou.getIouId());
+        log.info("============ 차용증에 대한 가상계좌 : {}", virtualAccount.getAccountNumber());
+        log.info("============ 채무자 계좌 : {}, 채무자 ID : {}, 채무자 이름 : {}, 채권자 ID : {}, 채권자 이름 : {}", debtorAccount.getAccountNumber(), debtorAccount.getMember().getId(), debtorAccount.getMember().getUsername(), iou.getCreditor().getId(), iou.getCreditor().getUsername());
+        // ! 채무자의 계좌에서 이체 가능 여부 확인
+        if (debtorAccount.getBalance().compareTo(amount) < 0) {
+            throw new InsufficientBalanceException(ErrorCode.INSUFFICIENT_BALANCE);
+        }
+
+        // ! 이체 요청 생성
+        TransferRequestDto transferRequestDto = TransferRequestDto.builder()
+                                                                  .withdrawalAccountNo(debtorAccount.getAccountNumber())
+                                                                  .depositAccountNo(virtualAccount.getAccountNumber())
+                                                                  .transactionBalance(amount.longValue())
+                                                                  .depositTransactionSummary("채무 상환")
+                                                                  .withdrawalTransactionSummary("채무 상환")
+                                                                  .build();
+
+        // ! 채무자의 userKey를 사용하여 이체 실행 -> 출금 기준 userKey를 사용 ?
+        TransferResponse response = restClientUtil.transfer(
+                iou.getDebtor().getUserKey(),
+                transferRequestDto.getWithdrawalAccountNo(),
+                transferRequestDto.getDepositAccountNo(),
+                transferRequestDto.getTransactionBalance(),
+                transferRequestDto.getDepositTransactionSummary(),
+                transferRequestDto.getWithdrawalTransactionSummary()
+        );
+
+        // ! 이체 성공 시 채무자 계좌와 가상계좌 잔액 업데이트
+        if ("H0000".equals(response.getHeaderResponse().getResponseCode())) {
+            // 채무자 계좌 잔액 감소
+            BigDecimal newDebtorAccountBalance = debtorAccount.getBalance().subtract(amount);
+            debtorAccount.changeBalance(newDebtorAccountBalance);
+            accountRepository.save(debtorAccount);
+
+            // ! 가상계좌 잔액 증가
+            BigDecimal newVirtualAccountBalance = virtualAccount.getBalance().add(amount);
+            virtualAccount.setBalance(newVirtualAccountBalance);
+            virtualAccountRepository.save(virtualAccount);
+        } else {
+            log.error("이체 실패: {}", response.getHeaderResponse().getResponseMessage());
+            throw new RuntimeException("이체 실패: " + response.getHeaderResponse().getResponseMessage());
+        }
+
+        log.info("채무 상환을 위한 이체 완료: 차용증 ID {}", iouId);
+        return response;
+    }
 
     /**
      * TODO : 입금모니터링에서 사용할 가상계좌 -> 채권자 계좌이체
@@ -267,6 +370,27 @@ public class TransactionService {
         return response;
     }
 
+    /**
+     * TODO : 차용증에 대한 입금 거래내역 리스트 반환
+     * @param iouId 차용증 ID
+     * @return 입금 거래내역 리스트
+     */
+    public List<TransactionHistoryResponseDto> getDepositTransactionHistory(Long iouId) {
+        log.info("차용증 입금 거래 내역 조회 - 차용증 ID: {}", iouId);
+
+        if (!iouRepository.existsById(iouId)) {
+            throw new IouNotFoundException(ErrorCode.IOU_NOT_FOUND);
+        }
+
+        List<TransactionHistory> transactionHistories = transactionHistoryRepository
+                .findDepositTransactionsByIouId(iouId, TransactionType.DEPOSIT);
+
+        log.info("조회된 입금 거래 내역 수: {}", transactionHistories.size());
+
+        return transactionHistories.stream()
+                                   .map(TransactionHistoryResponseDto::from)
+                                   .collect(Collectors.toList());
+    }
 
     private Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
@@ -276,5 +400,10 @@ public class TransactionService {
     private VirtualAccount getVirtualAccountByAccountNumber(String accountNumber) {
         return virtualAccountRepository.findByAccountNumber(accountNumber)
                                 .orElseThrow(() -> new VirtualAccountException(ErrorCode.VIRTUAL_ACCOUNT_NOT_FOUND, "Account number : " + accountNumber + " not found"));
+    }
+
+    private Account getMemberAccountByAccountNumber(String accountNumber) {
+        return accountRepository.findByAccountNumber(accountNumber)
+                                .orElseThrow(() -> new AccountNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND));
     }
 }

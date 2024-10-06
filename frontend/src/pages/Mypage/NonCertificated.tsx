@@ -17,7 +17,7 @@ export function NonCertificated() {
           color="lightblue"
           size="small"
           onClick={() => {
-            navigate('/auth');
+            navigate('/auth/account');
           }}
         >
           등록하기

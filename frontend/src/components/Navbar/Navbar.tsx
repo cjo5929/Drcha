@@ -1,9 +1,10 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 import ChaticonSVG from '@/assets/icons/chaticon.svg?react';
 import MypageiconSVG from '@/assets/icons/mypageicon.svg?react';
 import StarticonSVG from '@/assets/icons/starticon.svg?react';
 import { URL } from '@/constants/url';
+import { useUserState } from '@/hooks/useUserState';
 import { API } from '@/services/api';
 import { Invitation } from '@/types/Invitation';
 
@@ -30,13 +31,25 @@ const kakaoShare = async () => {
 };
 
 export function Navbar() {
+  const { userInfo } = useUserState();
+  const navigate = useNavigate();
+  const handleTransaction = () => {
+    if (!userInfo) {
+      return;
+    }
+    if (userInfo.verified) {
+      kakaoShare();
+    } else {
+      navigate('/auth/account');
+    }
+  };
   return (
     <div className={styles.navbar}>
       <NavLink className={styles.navItem} to="/">
         <ChaticonSVG />
         채팅
       </NavLink>
-      <div className={styles.navItem} onClick={kakaoShare}>
+      <div className={styles.navItem} onClick={handleTransaction}>
         <StarticonSVG />
         거래 시작
       </div>

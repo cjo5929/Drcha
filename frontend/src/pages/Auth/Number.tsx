@@ -25,7 +25,7 @@ export function Number() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const isCheck = await account.checkVerificationCode(verificationCode);
+    const isCheck = await account.checkVerificationCode(verificationCode.code);
     if (isCheck) {
       navigate('/auth/phone-number');
     }
@@ -43,7 +43,7 @@ export function Number() {
           type="text"
           placeholder="인증번호"
           className={styles.input}
-          value={verificationCode}
+          value={verificationCode.code}
           onChange={(e) => setVerificationCode(e.target.value)}
         />
       </form>

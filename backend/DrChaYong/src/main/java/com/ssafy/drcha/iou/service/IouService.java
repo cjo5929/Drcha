@@ -1,9 +1,7 @@
 package com.ssafy.drcha.iou.service;
 
-import com.ssafy.drcha.iou.enums.ContractStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +22,8 @@ import com.ssafy.drcha.chat.service.ChatService;
 import com.ssafy.drcha.global.error.ErrorCode;
 import com.ssafy.drcha.global.error.type.DataNotFoundException;
 import com.ssafy.drcha.global.error.type.UserNotFoundException;
+import com.ssafy.drcha.iou.dto.FinancialCalculator;
+import com.ssafy.drcha.iou.dto.IouCreateAiRequestDto;
 import com.ssafy.drcha.iou.dto.IouCreateRequestDto;
 import com.ssafy.drcha.iou.dto.IouCreateResponseDto;
 import com.ssafy.drcha.iou.dto.IouDetailResponseDto;
@@ -31,6 +31,7 @@ import com.ssafy.drcha.iou.dto.IouPdfResponseDto;
 import com.ssafy.drcha.iou.dto.IouResponseDto;
 import com.ssafy.drcha.iou.dto.IouTransactionResponseDto;
 import com.ssafy.drcha.iou.entity.Iou;
+import com.ssafy.drcha.iou.enums.ContractStatus;
 import com.ssafy.drcha.iou.repository.IouRepository;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.repository.MemberRepository;
@@ -56,9 +57,14 @@ public class IouService {
 	@Transactional
 	public void createAiIou(Long chatRoomId, String email) {
 		ChatRoom chatRoom = getChatRoomById(chatRoomId);
+
+		log.info("@@@@@@@@@@@@ 통과");
 		String messages = chatMongoService.getConversationByChatRoomId(chatRoomId);
 
+		log.info("$$$$$$$$$$$$ 통과");
 		IouCreateRequestDto requestDTO = getIouDetailsFromAI(chatRoomId, messages);
+
+		log.info("########## 통과");
 
 		String creditorName = null;
 		String debtorName = null;
@@ -71,20 +77,20 @@ public class IouService {
 			}
 		}
 
-		// Iou 저장 후 응답 생성 (변경된 부분)
 		Iou savedIou = createAndSaveIou(chatRoom, requestDTO);
 
 		IouCreateResponseDto responseDto = new IouCreateResponseDto(
-			savedIou.getIouId().toString(),
+			savedIou.getIouId(),
 			creditorName,
 			debtorName,
-			savedIou.getIouAmount().toString(),
-			savedIou.getContractStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), // contractStartDate
-			savedIou.getContractEndDate().toString(),
-			String.valueOf(savedIou.getInterestRate()),
+			savedIou.getIouAmount(),
+			savedIou.getContractStartDate(),
+			savedIou.getContractEndDate(),
+			savedIou.getInterestRate(),
 			savedIou.getBorrowerAgreement(),
 			savedIou.getLenderAgreement(),
-			calculateTotalAmount(savedIou.getIouAmount(), savedIou.getInterestRate(), 12)
+			FinancialCalculator.calculateTotalAmount(savedIou.getIouAmount(), savedIou.getInterestRate(), 12)
+
 		);
 
 		chatService.sendIouDetailsMessage(chatRoomId, responseDto);
@@ -206,36 +212,22 @@ public class IouService {
 		Map<String, String> requestBody = new HashMap<>();
 		requestBody.put("conversation", messages);
 
-		return webClient.post()
+		IouCreateAiRequestDto aiResponse = webClient.post()
 			.uri("/extract")
 			.bodyValue(requestBody)
 			.retrieve()
-			.bodyToMono(IouCreateRequestDto.class)
-			.block(); // 동기적으로 결과를 받기 위해 block() 호출
+			.bodyToMono(IouCreateAiRequestDto.class)
+			.block();
+
+		log.info(aiResponse.toString());
+
+		if (aiResponse == null) {
+			throw new IllegalArgumentException("Failed to receive response from AI server.");
+		}
+
+		return aiResponse.toIouCreateRequestDto();
 	}
 
-	/**
-	 * 원리금을 계산하는 메서드 (단리 방식)
-	 *
-	 * @param iouAmount 원금 (문자열로 입력받아 변환)
-	 * @param interestRate 이자율 (문자열로 입력받아 변환)
-	 * @param months 기간 (개월 단위, 예: 1개월)
-	 * @return 원금과 이자를 합한 금액 (문자열로 반환)
-	 */
-	private static String calculateTotalAmount(Long iouAmount, Double interestRate, int months) {
-		if (iouAmount == null || interestRate == null || months <= 0) {
-			return null;
-		}
-		try {
-			long principal = iouAmount;
-			double rate = interestRate / 100;
-			double period = months / 12.0;
-			double interest = principal * rate * period;
-			return String.valueOf(Math.round(principal + interest));
-		} catch (NumberFormatException e) {
-			return null;
-		}
-	}
 
 	// ========  입금 모니터링 관련 ====== //
 	public List<Iou> findAllActiveIous() {

@@ -12,13 +12,14 @@ export function Histories() {
   const curhistory = location.state?.curhistory as
     | TransactionDetailHistory[]
     | undefined;
-
+  const addKSTOffset = (date: Date): Date =>
+    new Date(date.getTime() + 9 * 60 * 60 * 1000);
   const getLastUpdateDate = () => {
     if (!curhistory || curhistory.length === 0) {
       return '업데이트 없음';
     }
     const lastTransaction = curhistory[curhistory.length - 1];
-    const kstDate = new Date(lastTransaction.transactionDate);
+    const kstDate = addKSTOffset(new Date(lastTransaction.transactionDate));
     return kstDate.toLocaleString('ko-KR', {
       year: 'numeric',
       month: '2-digit',

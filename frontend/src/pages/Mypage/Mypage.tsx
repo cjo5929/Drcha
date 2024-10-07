@@ -66,16 +66,17 @@ export function Mypage() {
     return <div>Error: {error}</div>;
   }
 
-  const lendCount = lendItems.length;
-  const borrowCount = borrowItems.length;
-  const lendTotal = lendItems.reduce(
-    (sum, item) => sum + item.principalAmount,
-    0,
-  );
-  const borrowTotal = borrowItems.reduce(
-    (sum, item) => sum + item.principalAmount,
-    0,
-  );
+  const isActiveOrOverdue = (item: TransactionHistory) =>
+    item.contractStatus === 'ACTIVE' || item.contractStatus === 'OVERDUE';
+
+  const lendCount = lendItems.filter(isActiveOrOverdue).length;
+  const borrowCount = borrowItems.filter(isActiveOrOverdue).length;
+  const lendTotal = lendItems
+    .filter(isActiveOrOverdue)
+    .reduce((sum, item) => sum + item.principalAmount, 0);
+  const borrowTotal = borrowItems
+    .filter(isActiveOrOverdue)
+    .reduce((sum, item) => sum + item.principalAmount, 0);
 
   const formatCurrency = (amount: number) =>
     `${amount.toLocaleString('ko-KR', {

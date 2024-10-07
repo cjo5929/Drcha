@@ -112,7 +112,7 @@ public class TransactionController {
     }
 
 
-    @Operation(summary = "채무 상환", description = "채무자가 차용증의 가상계좌로 계좌이체를 진행합니다.")
+    @Operation(summary = "채무 상환(채무자 -> 차용증의 가상계좌로의 계좌이체 진행", description = "채무자가 차용증의 가상계좌로 계좌이체를 진행합니다.")
     @ApiResponse(responseCode = "200", description = "이체 성공",
                  content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = TransferResponse.class)))

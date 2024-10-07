@@ -272,9 +272,9 @@ public class TransactionService {
             throw new AccountNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND);
         }
 
-        log.info("============ 차용증 : {}==============", iou.getIouId());
+        log.info("============ 차용증 : {}, 채무자 계좌 -> 차용증 거래금액 : {}==============", iou.getIouId(), amount);
         log.info("============ 차용증에 대한 가상계좌 : {}", virtualAccount.getAccountNumber());
-        log.info("============ 채무자 계좌 : {}, 채무자 ID : {}, 채무자 이름 : {}, 채권자 ID : {}, 채권자 이름 : {}", debtorAccount.getAccountNumber(), debtorAccount.getMember().getId(), debtorAccount.getMember().getUsername(), iou.getCreditor().getId(), iou.getCreditor().getUsername());
+        log.info("============ 채무자 계좌 : {}, 채무자 ID : {}, 채무자 이름 : {}, 채권자 ID : {}, 채권자 이름 : {}, 채무자 이름 : {}", debtorAccount.getAccountNumber(), debtorAccount.getMember().getId(), debtorAccount.getMember().getUsername(), iou.getCreditor().getId(), iou.getCreditor().getUsername(), iou.getDebtor().getUsername());
         // ! 채무자의 계좌에서 이체 가능 여부 확인
         if (debtorAccount.getBalance().compareTo(amount) < 0) {
             throw new InsufficientBalanceException(ErrorCode.INSUFFICIENT_BALANCE);
@@ -301,7 +301,7 @@ public class TransactionService {
 
         // ! 이체 성공 시 채무자 계좌와 가상계좌 잔액 업데이트
         if ("H0000".equals(response.getHeaderResponse().getResponseCode())) {
-            // 채무자 계좌 잔액 감소
+            // ! 채무자 계좌 잔액 감소
             BigDecimal newDebtorAccountBalance = debtorAccount.getBalance().subtract(amount);
             debtorAccount.changeBalance(newDebtorAccountBalance);
             accountRepository.save(debtorAccount);
@@ -311,8 +311,8 @@ public class TransactionService {
             virtualAccount.setBalance(newVirtualAccountBalance);
             virtualAccountRepository.save(virtualAccount);
 
-            // 차용증 잔액 갱신
-            iou.updateBalance(amount);
+            // ! 차용증 잔액 갱신
+            iou.updateBalance(amount); // ! 만약 잔액 0이하 -> 여기서 COMPLETED로 처리
             iouRepository.save(iou);
 
             // ! 거래 내역 저장
@@ -371,7 +371,7 @@ public class TransactionService {
                 .amount(amount)
                 .build();
         eventPublisher.publishEvent(event);
-        log.info("새 입금 이벤트 발행 - 차용증 ID: {}, 금액: {}", iou.getIouId(), amount);
+//        log.info("새 입금 이벤트 발행 - 차용증 ID: {}, 금액: {}", iou.getIouId(), amount);
     }
 
     /**

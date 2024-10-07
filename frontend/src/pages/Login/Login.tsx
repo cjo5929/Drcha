@@ -9,11 +9,11 @@ import styles from './Login.module.scss';
 
 export function Login() {
   const { state } = useLocation();
-  // TODO : login
+
   const handleLogin = () => {
     if (state) {
       if (state.chatRoomId) {
-        window.location.href = `${URL.LOGIN}/oauth2/authorization/kakao?chatRoomId=${state.chatRoomId}`;
+        window.location.href = `${URL.LOGIN}/oauth2/authorization/kakao?custom_state=${state.chatRoomId}`;
         return;
       }
     }

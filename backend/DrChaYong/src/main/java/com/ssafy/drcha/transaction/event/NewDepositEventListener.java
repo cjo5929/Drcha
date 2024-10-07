@@ -25,9 +25,9 @@ public class NewDepositEventListener {
         log.info("새 입금 이벤트 수신: 차용증 ID {}, 금액 {}", event.getIou().getIouId(), event.getAmount());
         
         Iou iou = event.getIou();
-        log.info("iou : {}", iou);
+        log.info("새 입금 이벤트로 인한 계좌이체 처리 : 차용증 가상계좌 -> 채권자 계좌로 이체 진행, 금액 : {}", event.getAmount());
         VirtualAccount virtualAccount = iou.getVirtualAccount();
-        log.info("차용증에 대한 가상계좌 : {}", virtualAccount);
+//        log.info("차용증에 대한 가상계좌 : {}", virtualAccount);
         
         try {
             TransferResponse response = transactionService.transferToCreditor(virtualAccount, event.getAmount());

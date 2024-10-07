@@ -20,13 +20,17 @@ export function Main() {
   const [chatList, setChatList] = useState<ChatRoom[]>([]);
 
   const getChattingLists = useCallback(async () => {
-    if (filter === FILTER.CREDIT) {
+    if (filter === FILTER.DEBT) {
       const newChattingList = await chat.getBorrowedChattings();
-      setChatList(newChattingList);
+      setChatList(
+        newChattingList.filter((chatting: ChatRoom) => chatting.member),
+      );
       return;
     }
     const newChattingList = await chat.getLentChattings();
-    setChatList(newChattingList);
+    setChatList(
+      newChattingList.filter((chatting: ChatRoom) => chatting.member),
+    );
   }, [filter]);
 
   useEffect(() => {

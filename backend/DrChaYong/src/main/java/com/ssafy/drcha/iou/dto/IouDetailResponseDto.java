@@ -1,5 +1,6 @@
 package com.ssafy.drcha.iou.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.ssafy.drcha.iou.entity.Iou;
@@ -26,6 +27,7 @@ public final class IouDetailResponseDto {
 	private Long totalAmount;
 	private Integer notificationSchedule;
 	private String phoneNumber;
+	private BigDecimal iouBalance;
 	private Long daysUntilDue;
 
 
@@ -44,6 +46,7 @@ public final class IouDetailResponseDto {
 			calculateTotalAmount(iou.getIouAmount(), iou.getInterestRate(), 12),
 			iou.getNotificationSchedule(),
 			member.getPhoneNumber(),
+			iou.getBalance(),
 			daysUntilDue
 			);
 	}

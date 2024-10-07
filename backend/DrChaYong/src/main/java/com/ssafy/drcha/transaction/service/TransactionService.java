@@ -19,6 +19,7 @@ import com.ssafy.drcha.iou.repository.IouRepository;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.repository.MemberRepository;
 import com.ssafy.drcha.transaction.dto.DepositRequestDto;
+import com.ssafy.drcha.transaction.dto.IouTransactionHistoryResponse;
 import com.ssafy.drcha.transaction.dto.TransactionHistoryResponseDto;
 import com.ssafy.drcha.transaction.dto.TransferRequestDto;
 import com.ssafy.drcha.transaction.dto.WithdrawRequestDto;
@@ -356,7 +357,8 @@ public class TransactionService {
                 transactionRecord.getTransactionUniqueNo(), amount, balanceAfterTransaction);
 
         if (iou.getContractStatus() == ContractStatus.COMPLETED) {
-            log.info("차용증 ID: {}가 완료 상태로 변경되었습니다.", iou.getIouId());
+            log.info("차용증 ID: {}가 완전히 상환되었습니다. 상환 날짜 : {}", iou.getIouId(), iou.getRepaymentDate());
+            // ! 채무자, 채권자에게 알림 보낼 것인지 ?
         }
     }
 
@@ -437,21 +439,17 @@ public class TransactionService {
      * @param iouId 차용증 ID
      * @return 입금 거래내역 리스트
      */
-    public List<TransactionHistoryResponseDto> getDepositTransactionHistory(Long iouId) {
+    public IouTransactionHistoryResponse getDepositTransactionHistory(Long iouId) {
         log.info("차용증 입금 거래 내역 조회 - 차용증 ID: {}", iouId);
 
-        if (!iouRepository.existsById(iouId)) {
-            throw new IouNotFoundException(ErrorCode.IOU_NOT_FOUND);
-        }
+        Iou iou = iouRepository.findById(iouId)
+                               .orElseThrow(() -> new IouNotFoundException(ErrorCode.IOU_NOT_FOUND));
 
         List<TransactionHistory> transactionHistories = transactionHistoryRepository
                 .findDepositTransactionsByIouId(iouId, TransactionType.DEPOSIT);
 
         log.info("조회된 입금 거래 내역 수: {}", transactionHistories.size());
-
-        return transactionHistories.stream()
-                                   .map(TransactionHistoryResponseDto::from)
-                                   .collect(Collectors.toList());
+        return IouTransactionHistoryResponse.from(iou, transactionHistories);
     }
 
     private Member getMemberByEmail(String email) {

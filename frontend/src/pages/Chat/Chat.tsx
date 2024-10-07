@@ -18,6 +18,7 @@ import { SendButton } from './SendButton';
 
 export function Chat() {
   const { chatRoomId } = useParams<{ chatRoomId: string }>();
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [modalType, setModalType] = useState<
     'create' | 'correction' | 'check' | null
@@ -39,22 +40,25 @@ export function Chat() {
     setModalType(null);
   };
 
-  const handleSend = useCallback(() => {
-    if (!userInfo) {
-      return;
-    }
-    const trimmedMessage = message.trim();
-    if (trimmedMessage) {
-      sendMessage(trimmedMessage, userInfo.memberId);
-      setMessage('');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sendMessage, userInfo]);
+  const handleSend = useCallback(
+    (text: string) => {
+      if (!userInfo) {
+        return;
+      }
+      if (text && textAreaRef.current) {
+        sendMessage(text, userInfo.memberId);
+        setMessage('');
+        textAreaRef.current.value = '';
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [sendMessage, userInfo],
+  );
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      handleSend(message);
     }
   };
 
@@ -125,6 +129,7 @@ export function Chat() {
       {/* 채팅 입력창 */}
       <div className={styles.chatinput}>
         <textarea
+          ref={textAreaRef}
           className={styles.inputField}
           placeholder="메세지를 입력하세요."
           // value={message}
@@ -132,7 +137,7 @@ export function Chat() {
           onKeyDown={handleKeyDown}
           rows={1}
         />
-        <SendButton onClick={handleSend} />
+        <SendButton onClick={() => handleSend(message)} />
       </div>
       {/* 오버레이 */}
       {isMenuOpen && (

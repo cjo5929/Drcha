@@ -1,3 +1,5 @@
+import { useLocation } from 'react-router-dom';
+
 import KakaoSVG from '@/assets/icons/kakao.svg?react';
 import LogoSVG from '@/assets/icons/logo.svg?react';
 import STAMP_IMAGE from '@/assets/images/stamp.png';
@@ -6,8 +8,15 @@ import { URL } from '@/constants/url';
 import styles from './Login.module.scss';
 
 export function Login() {
+  const { state } = useLocation();
   // TODO : login
   const handleLogin = () => {
+    if (state) {
+      if (state.chatRoomId) {
+        window.location.href = `${URL.LOGIN}/oauth2/authorization/kakao?chatRoomId=${state.chatRoomId}`;
+        return;
+      }
+    }
     window.location.href = `${URL.LOGIN}/oauth2/authorization/kakao`;
   };
 
@@ -21,7 +30,11 @@ export function Login() {
         <LogoSVG className={styles.logo} />
         <img src={STAMP_IMAGE} alt="stamp" className={styles.stamp} />
       </div>
-      <button className={styles.loginButton} onClick={handleLogin}>
+      <button
+        className={styles.loginButton}
+        onClick={handleLogin}
+        style={{ color: '#000000' }}
+      >
         <KakaoSVG />
         카카오 로그인
       </button>

@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ssafy.drcha.global.security.strategy.RedirectStrategy;
-import com.ssafy.drcha.global.security.strategy.RedirectStrategyFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 import com.ssafy.drcha.account.service.AccountService;
 import com.ssafy.drcha.global.api.RestClientUtil;
 import com.ssafy.drcha.global.api.dto.UserResponse;
+import com.ssafy.drcha.global.security.strategy.RedirectStrategy;
+import com.ssafy.drcha.global.security.strategy.RedirectStrategyFactory;
 import com.ssafy.drcha.global.security.util.JwtUtil;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.service.MemberService;
@@ -36,6 +38,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final RestClientUtil restClientUtil;
     private final AccountService accountService;
     private final RedirectStrategyFactory redirectStrategyFactory;
+    private final HttpSessionOAuth2AuthorizationRequestRepository authorizationRequestRepository = new HttpSessionOAuth2AuthorizationRequestRepository();
 
     @Value("${app.url.front}")
     private String frontendUrl;
@@ -52,9 +55,10 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException {
+        Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         Member member = processOAuth2User(oAuth2User);
+        log.info("---- {} 님 로그인 성공했습니다. ----", member.getUsername());
 
         String accessToken = jwtUtil.generateToken(member.getEmail());
         String refreshToken = jwtUtil.generateRefreshToken(member.getEmail());
@@ -63,13 +67,30 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         setTokenCookies(response, accessToken, refreshToken);
 
-        String chatRoomId = request.getParameter("chatRoomId");
-        RedirectStrategy strategy = redirectStrategyFactory.getStrategy(chatRoomId);
-        String redirectUrl = strategy.getRedirectUrl(member, frontendUrl, chatRoomId);
+        // 세션에서 OAuth2AuthorizationRequest 가져오기
+        OAuth2AuthorizationRequest savedRequest = authorizationRequestRepository.removeAuthorizationRequest(request, response);
+        String customState = null;
+
+        if (savedRequest != null && savedRequest.getAdditionalParameters().containsKey("custom_state")) {
+            customState = (String) savedRequest.getAdditionalParameters().get("custom_state");
+            log.info("---- customState 값 {} 가 세션에서 가져왔습니다 ----", customState);
+        }
+
+        // customState 값이 null인 경우 세션에서 직접 가져옵니다.
+        if (customState == null) {
+            customState = (String) request.getSession().getAttribute("custom_state");
+            if (customState != null) {
+                log.info("---- 세션에서 customState 값을 찾았습니다: {} ----", customState);
+            } else {
+                log.info("---- 세션에서 customState 값을 찾지 못했습니다 ----");
+            }
+        }
+
+        RedirectStrategy strategy = redirectStrategyFactory.getStrategy(customState);
+        String redirectUrl = strategy.getRedirectUrl(member, frontendUrl, customState);
 
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
-
     /**
      * OAuth2User 객체에서 필요한 사용자 정보를 추출하고 처리
      *
@@ -142,11 +163,11 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
      */
     private ResponseCookie createCookie(String name, String value) {
         return ResponseCookie.from(name, value)
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
-                .path("/")
-                .build();
+            .httpOnly(true)
+            .secure(true)
+            .sameSite("Strict")
+            .path("/")
+            .build();
     }
 
     /**

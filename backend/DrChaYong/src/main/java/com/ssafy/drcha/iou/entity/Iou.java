@@ -173,5 +173,7 @@ public class Iou extends BaseTimeEntity {
 		}
 	}
 
-
+	public void updateNotificationSchedule(Integer notificationSchedule) {
+		this.notificationSchedule = notificationSchedule;
+	}
 }

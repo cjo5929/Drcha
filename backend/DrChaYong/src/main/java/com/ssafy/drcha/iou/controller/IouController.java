@@ -2,6 +2,7 @@ package com.ssafy.drcha.iou.controller;
 
 import java.util.List;
 
+import com.ssafy.drcha.iou.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,11 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.drcha.chat.enums.MemberRole;
 import com.ssafy.drcha.global.error.response.ErrorResponse;
-import com.ssafy.drcha.iou.dto.IouCreateRequestDto;
-import com.ssafy.drcha.iou.dto.IouDetailResponseDto;
-import com.ssafy.drcha.iou.dto.IouPdfResponseDto;
-import com.ssafy.drcha.iou.dto.IouResponseDto;
-import com.ssafy.drcha.iou.dto.IouTransactionResponseDto;
 import com.ssafy.drcha.iou.service.IouService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -206,6 +202,18 @@ public class IouController {
 		@PathVariable Long iouId,
 		@AuthenticationPrincipal String email) {
 		iouService.agreeToIou(iouId, email);
+		return ResponseEntity.ok().build();
+	}
+
+	@Operation(summary = "IOU 알림 주기 변경", description = "채권자가 알림 주기를 변경합니다.")
+	@ApiResponse(responseCode = "200", description = "변경 성공",
+			content = @Content(mediaType = "application/json",
+					schema = @Schema(implementation = Void.class)))
+	@PatchMapping("/{iouId}/notification-schedule")
+	public ResponseEntity<?> updateNotificationSchedule(
+			@PathVariable Long iouId,
+			@RequestBody UpdateNotificationScheduleRequestDto requestDto) {
+		iouService.updateNotificationSchedule(iouId, requestDto.getNotificationSchedule());
 		return ResponseEntity.ok().build();
 	}
 }

@@ -198,6 +198,13 @@ public class IouService {
 		return savedIou;
 	}
 
+	@Transactional
+	public void updateNotificationSchedule(Long iouId, Integer notificationSchedule) {
+		Iou iou = iouRepository.findById(iouId)
+				.orElseThrow(() -> new DataNotFoundException(ErrorCode.IOU_NOT_FOUND));
+		iou.updateNotificationSchedule(notificationSchedule);
+	}
+
 	private Member findMemberByRole(ChatRoom chatRoom, MemberRole role) {
 		return chatRoom.getChatRoomMembers().stream()
 			.filter(member -> member.getMemberRole() == role)

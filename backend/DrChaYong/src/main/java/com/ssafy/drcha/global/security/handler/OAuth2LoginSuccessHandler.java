@@ -63,7 +63,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         setTokenCookies(response, accessToken, refreshToken);
 
-        String chatRoomId = request.getParameter("chatRoomId");
+        String chatRoomId = request.getParameter("state");
         RedirectStrategy strategy = redirectStrategyFactory.getStrategy(chatRoomId);
         String redirectUrl = strategy.getRedirectUrl(member, frontendUrl, chatRoomId);
 

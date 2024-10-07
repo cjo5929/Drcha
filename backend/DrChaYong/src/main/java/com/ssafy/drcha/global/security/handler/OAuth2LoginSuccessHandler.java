@@ -1,7 +1,9 @@
 package com.ssafy.drcha.global.security.handler;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.ssafy.drcha.global.security.strategy.RedirectStrategy;
@@ -55,6 +57,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                                         Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         Member member = processOAuth2User(oAuth2User);
+        log.info("---- {} 님 로그인 성공했습니다. ----", member.getUsername());
 
         String accessToken = jwtUtil.generateToken(member.getEmail());
         String refreshToken = jwtUtil.generateRefreshToken(member.getEmail());
@@ -63,11 +66,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         setTokenCookies(response, accessToken, refreshToken);
 
-        String chatRoomId = request.getParameter("chatRoomId");
-        RedirectStrategy strategy = redirectStrategyFactory.getStrategy(chatRoomId);
-        String redirectUrl = strategy.getRedirectUrl(member, frontendUrl, chatRoomId);
-
-        getRedirectStrategy().sendRedirect(request, response, redirectUrl);
+        getRedirectStrategy().sendRedirect(request, response, frontendUrl);
     }
 
     /**

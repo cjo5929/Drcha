@@ -8,6 +8,7 @@ interface UserProps {
   setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
   userInfo: Info | undefined;
   setUserInfo: React.Dispatch<React.SetStateAction<Info | undefined>>;
+  getMyInfo: () => Promise<void>;
 }
 
 type UserProviderProps = {
@@ -38,7 +39,7 @@ export function UserProvider({ children }: UserProviderProps) {
   return (
     <UserContext.Provider
       // eslint-disable-next-line react/jsx-no-constructed-context-values
-      value={{ isLogin, setIsLogin, userInfo, setUserInfo }}
+      value={{ isLogin, setIsLogin, userInfo, setUserInfo, getMyInfo }}
     >
       {children}
     </UserContext.Provider>

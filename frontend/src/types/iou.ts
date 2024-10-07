@@ -12,3 +12,21 @@ export type IouData = {
   creditorPhoneNumber: string;
   debtorPhoneNumber: string;
 };
+
+export type IouDetailData = {
+  iouId: string;
+  creditorName: string;
+  debtorName: string;
+  iouAmount: number;
+  contractStartDate: string;
+  contractEndDate: string;
+  interestRate: number;
+  borrowerAgreement: true;
+  lenderAgreement: true;
+  contractStatus: 'DRAFTING' | 'ACTIVE' | 'COMPLETED' | 'OVERDUE' | 'CANCELLED';
+  totalAmount: number;
+  notificationSchedule: number;
+  phoneNumber: string;
+  daysUntilDue: number;
+  iouBalance: number;
+};

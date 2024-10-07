@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-
 import DownSVG from '@/assets/icons/downarrow.svg?react';
 import RightSVG from '@/assets/icons/rightarrow.svg?react';
 import styles from '@/pages/Mypage/Mypage.module.scss';
@@ -10,21 +8,16 @@ import { Dealitem } from './Dealitem';
 export function ListDetail({
   items,
   types,
+  lendorborrow,
   expanding,
   onToggle,
 }: {
   items: Array<TransactionHistory>;
   types: string;
+  lendorborrow: string;
   expanding: boolean;
   onToggle: () => void;
 }) {
-  const [curItem, setCurItem] = useState<Array<TransactionHistory>>([]);
-
-  useEffect(() => {
-    const filteredItems = items.filter((item) => item.types === types);
-    setCurItem(filteredItems);
-  }, [items, types]);
-
   return (
     <div className={styles.category}>
       <button onClick={onToggle}>
@@ -36,8 +29,8 @@ export function ListDetail({
       </button>
       {expanding && (
         <div className={styles.details}>
-          {curItem.map((item) => (
-            <Dealitem key={item.name + item.dates} item={item} />
+          {items.map((item) => (
+            <Dealitem item={item} lendorborrow={lendorborrow} />
           ))}
         </div>
       )}

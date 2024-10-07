@@ -23,10 +23,6 @@ export function Myinfo({ myInfos }: { myInfos: Info }) {
           <NonCertificated />
         )}
       </div>
-      <div className={styles.accountbtn}>
-        <button>계좌이용내역</button>
-        <button>대표계좌변경</button>
-      </div>
     </div>
   );
 }

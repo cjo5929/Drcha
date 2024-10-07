@@ -92,3 +92,37 @@
   font-size: 1.5rem;
   font-weight: bold;
 }
+
+.contentMoney {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.contentMoneyDescription {
+  font-size: 1.8rem;
+}
+
+.contentMoneyDetail {
+  font-weight: lighter;
+  font-size: 1.1rem;
+}
+
+.dateTime {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.date {
+  font-size: 1.8rem;
+}
+
+.time {
+  font-weight: lighter;
+  font-size: 1.1rem;
+}

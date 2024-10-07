@@ -15,9 +15,11 @@ export function Dealitem({
   const handleDetail = () => {
     navigate(`detail/${lendorborrow}/${item.iouId}`);
   };
+  const addKSTOffset = (date: Date): Date =>
+    new Date(date.getTime() + 9 * 60 * 60 * 1000);
 
   const formatDate = (dateString: string) => {
-    const kstDate = new Date(dateString);
+    const kstDate = addKSTOffset(new Date(dateString));
     return kstDate.toLocaleDateString('ko-KR', {
       year: 'numeric',
       month: '2-digit',

@@ -15,12 +15,16 @@ export function Dealitem({
   const handleDetail = () => {
     navigate(`detail/${lendorborrow}/${item.iouId}`);
   };
-  const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString('ko-KR', {
+
+  const formatDate = (dateString: string) => {
+    const kstDate = new Date(dateString);
+    return kstDate.toLocaleDateString('ko-KR', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
+      timeZone: 'Asia/Seoul',
     });
+  };
 
   const formatCurrency = (amount: number) =>
     `${amount.toLocaleString('ko-KR', {

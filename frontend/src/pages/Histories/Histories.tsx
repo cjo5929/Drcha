@@ -18,12 +18,14 @@ export function Histories() {
       return '업데이트 없음';
     }
     const lastTransaction = curhistory[curhistory.length - 1];
-    return new Date(lastTransaction.transactionDate).toLocaleString('ko-KR', {
+    const kstDate = new Date(lastTransaction.transactionDate);
+    return kstDate.toLocaleString('ko-KR', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit',
+      timeZone: 'Asia/Seoul',
     });
   };
 

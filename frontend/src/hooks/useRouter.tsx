@@ -7,7 +7,7 @@ import { AccountSend } from '@/pages/Auth/AccountSend';
 import { Auth } from '@/pages/Auth/Auth';
 import { Complete } from '@/pages/Auth/Complete';
 import { Number } from '@/pages/Auth/Number';
-import { PhoneNumber } from '@/pages/Auth/PhoneNumber';
+import { PhoneNumberPage } from '@/pages/Auth/PhoneNumber';
 import { Chat } from '@/pages/Chat/Chat';
 import { Histories } from '@/pages/Histories/Histories';
 import { Login } from '@/pages/Login/Login';
@@ -27,7 +27,7 @@ export const useRouter = () =>
           element: <Mypage />,
         },
         {
-          path: 'detail',
+          path: 'mypage/detail/:type/:iouId',
           element: <TransactionDetail />,
         },
         {
@@ -54,7 +54,7 @@ export const useRouter = () =>
             },
             {
               path: 'phone-number',
-              element: <PhoneNumber />,
+              element: <PhoneNumberPage />,
             },
             {
               path: 'complete',

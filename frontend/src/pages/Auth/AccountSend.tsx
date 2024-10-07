@@ -1,30 +1,32 @@
 import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import COIN_GIF from '@/assets/images/coin.gif';
 import { Button } from '@/components/Button/Button';
+import { useUserState } from '@/hooks/useUserState';
+import { account } from '@/services/account';
+import { VerificationCode } from '@/types/Account';
 
 import styles from './Auth.module.scss';
 
-const user = { userName: '김박사', accountNo: 1234567890, isVerified: false };
-
 export function AccountSend() {
   const navigate = useNavigate();
-  const { state } = useLocation();
-  // TODO : 사용자 정보 불러오기
-  const { isVerified } = user;
-  // TODO : 1원 인증번호 불러오기
-  const certificationNumber = 1234;
+  const { userInfo } = useUserState();
 
   useEffect(() => {
-    if (isVerified) {
+    if (!userInfo) {
+      return;
+    }
+    if (userInfo.verified) {
       navigate('/', { replace: true });
     }
-  }, [navigate, isVerified]);
+  }, [navigate, userInfo]);
 
-  const handleClick = () => {
+  const handleClick = async () => {
+    const verificationCode: VerificationCode =
+      await account.sendVerificationCode();
     navigate('/auth/number', {
-      state: { accountNo: state.accountNo, certificationNumber },
+      state: { verificationCode },
     });
   };
 
@@ -33,7 +35,9 @@ export function AccountSend() {
       <div>
         <img src={COIN_GIF} alt="coin" className={styles.coin} />
         <div>
-          <span className={styles.blue}>{state.userName}</span>
+          <span className={styles.blue}>
+            {userInfo ? userInfo.username : ''}
+          </span>
           <span>님 계좌가 맞는지</span>
           <div>확인하기 위해</div>
           <div>

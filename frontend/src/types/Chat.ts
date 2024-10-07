@@ -13,3 +13,13 @@ export type ChatRoom = {
     message: string;
   };
 };
+
+export type ChatRoomSummary = {
+  chatRoomId: number;
+  opponentName: string;
+  lastMessageId?: number;
+  lastMessage?: string;
+  lastMessageTime?: string;
+  unreadCount: number;
+  memberRole: 'DEBTOR' | 'CREDITOR';
+};

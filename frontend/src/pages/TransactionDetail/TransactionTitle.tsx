@@ -1,13 +1,42 @@
+import { useEffect, useState } from 'react';
+
 import ShieldSVG from '@/assets/icons/shield.svg?react';
+import { IouDetailData } from '@/types/iou';
 
 import styles from './TransactionDetail.module.scss';
 
-export function TransactionTitle() {
+export function TransactionTitle({
+  types,
+  curiou,
+}: {
+  types: string;
+  curiou: IouDetailData;
+}) {
+  const [curState, setCurState] = useState(' ');
+
+  useEffect(() => {
+    if (curiou.contractStatus === 'ACTIVE') {
+      setCurState('상환 중');
+    } else if (curiou.contractStatus === 'OVERDUE') {
+      setCurState('연체 중');
+    } else {
+      setCurState('상환 완료');
+    }
+  }, [types, curiou]);
+
+  const formatCurrency = (amount: number) =>
+    `${amount.toLocaleString('ko-KR', {
+      maximumFractionDigits: 0,
+    })}원`;
+
   return (
     <div className={styles.title}>
-      <div className={styles.state}>연체중</div>
-      <div className={styles.name}>지종권님께 빌려준</div>
-      <div className={styles.amount}>10348134원</div>
+      <div className={styles.state}>{curState}</div>
+      <div className={styles.name}>
+        {types === 'lend' ? curiou.debtorName : curiou.creditorName}님께{' '}
+        {types === 'lend' ? '빌려준' : '빌린'}
+      </div>
+      <div className={styles.amount}>{formatCurrency(curiou.iouAmount)}</div>
       <div className={styles.titlebuttons}>
         <div className={styles.shield}>
           <ShieldSVG />

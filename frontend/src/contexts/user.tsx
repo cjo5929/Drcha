@@ -1,13 +1,14 @@
 import { createContext, useCallback, useEffect, useState } from 'react';
 
 import { member } from '@/services/member';
-import { MyInfo } from '@/types/Member';
+import { Info } from '@/types/Member';
 
 interface UserProps {
   isLogin: boolean;
   setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
-  userInfo: MyInfo | undefined;
-  setUserInfo: React.Dispatch<React.SetStateAction<MyInfo | undefined>>;
+  userInfo: Info | undefined;
+  setUserInfo: React.Dispatch<React.SetStateAction<Info | undefined>>;
+  getMyInfo: () => Promise<void>;
 }
 
 type UserProviderProps = {
@@ -18,7 +19,7 @@ export const UserContext = createContext<UserProps | undefined>(undefined);
 
 export function UserProvider({ children }: UserProviderProps) {
   const [isLogin, setIsLogin] = useState(true);
-  const [userInfo, setUserInfo] = useState<MyInfo | undefined>();
+  const [userInfo, setUserInfo] = useState<Info | undefined>();
 
   const getMyInfo = useCallback(async () => {
     try {
@@ -38,7 +39,7 @@ export function UserProvider({ children }: UserProviderProps) {
   return (
     <UserContext.Provider
       // eslint-disable-next-line react/jsx-no-constructed-context-values
-      value={{ isLogin, setIsLogin, userInfo, setUserInfo }}
+      value={{ isLogin, setIsLogin, userInfo, setUserInfo, getMyInfo }}
     >
       {children}
     </UserContext.Provider>

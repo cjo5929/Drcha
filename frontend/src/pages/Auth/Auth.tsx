@@ -2,21 +2,22 @@ import { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 
 import { BackwardButton } from '@/components/BackwardButton/BackwardButton';
+import { useUserState } from '@/hooks/useUserState';
 
 import styles from './Auth.module.scss';
 
-const user = { userName: '김박사', accountNo: 1234567890, isVerified: false };
-
 export function Auth() {
   const navigate = useNavigate();
-  // TODO : 사용자 정보 불러오기
-  const { isVerified } = user;
+  const { userInfo } = useUserState();
 
   useEffect(() => {
-    if (isVerified) {
+    if (!userInfo) {
+      return;
+    }
+    if (userInfo.verified) {
       navigate('/', { replace: true });
     }
-  }, [navigate, isVerified]);
+  }, [navigate, userInfo]);
 
   return (
     <div>

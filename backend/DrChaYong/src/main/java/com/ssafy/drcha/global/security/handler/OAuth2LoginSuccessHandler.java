@@ -55,6 +55,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                                         Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         Member member = processOAuth2User(oAuth2User);
+        log.info("---- {} 님 로그인 성공했습니다. ----", member.getUsername());
 
         String accessToken = jwtUtil.generateToken(member.getEmail());
         String refreshToken = jwtUtil.generateRefreshToken(member.getEmail());
@@ -64,6 +65,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         setTokenCookies(response, accessToken, refreshToken);
 
         String chatRoomId = request.getParameter("state");
+        log.info("---- chatRoomId {} 가 넙어 왔습니다 ----", chatRoomId);
+
         RedirectStrategy strategy = redirectStrategyFactory.getStrategy(chatRoomId);
         String redirectUrl = strategy.getRedirectUrl(member, frontendUrl, chatRoomId);
 

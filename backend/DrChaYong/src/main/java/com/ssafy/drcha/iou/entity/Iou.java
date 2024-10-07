@@ -69,6 +69,9 @@ public class Iou extends BaseTimeEntity {
 	@Column(name = "contract_end_date", nullable = false)
 	private LocalDateTime contractEndDate;
 
+	@Column(name = "repayment_date")
+	private LocalDateTime repaymentDate; // ! 차용증 상환날짜 컬럼 추가
+
 	@Column(name = "interest_rate", nullable = false)
 	@PositiveOrZero
 	private Double interestRate;
@@ -170,6 +173,7 @@ public class Iou extends BaseTimeEntity {
 		this.balance = this.balance.subtract(depositAmount);
 		if (this.balance.compareTo(BigDecimal.ZERO) <= 0) {
 			this.contractStatus = ContractStatus.COMPLETED;
+			this.repaymentDate = LocalDateTime.now(); // ! 상환 시 날짜 기록
 		}
 	}
 

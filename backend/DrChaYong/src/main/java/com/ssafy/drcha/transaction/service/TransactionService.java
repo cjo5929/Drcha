@@ -356,7 +356,8 @@ public class TransactionService {
                 transactionRecord.getTransactionUniqueNo(), amount, balanceAfterTransaction);
 
         if (iou.getContractStatus() == ContractStatus.COMPLETED) {
-            log.info("차용증 ID: {}가 완료 상태로 변경되었습니다.", iou.getIouId());
+            log.info("차용증 ID: {}가 완전히 상환되었습니다. 상환 날짜 : {}", iou.getIouId(), iou.getRepaymentDate());
+            // ! 채무자, 채권자에게 알림 보낼 것인지 ?
         }
     }
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import ShieldSVG from '@/assets/icons/shield.svg?react';
 import { IouDetailData } from '@/types/iou';
@@ -12,6 +13,7 @@ export function TransactionTitle({
   types: string;
   curiou: IouDetailData;
 }) {
+  const navigate = useNavigate();
   const [curState, setCurState] = useState(' ');
 
   useEffect(() => {
@@ -29,6 +31,10 @@ export function TransactionTitle({
       maximumFractionDigits: 0,
     })}원`;
 
+  const handleIOU = () => {
+    navigate(`/iou/${curiou.iouId}`);
+  };
+
   return (
     <div className={styles.title}>
       <div className={styles.state}>{curState}</div>
@@ -42,7 +48,7 @@ export function TransactionTitle({
           <ShieldSVG />
           상호 동의 기록
         </div>
-        <button>차용증 확인</button>
+        <button onClick={handleIOU}>차용증 확인</button>
       </div>
     </div>
   );

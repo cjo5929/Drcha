@@ -296,7 +296,37 @@
 
 .dealItem {
   @include Pretendard;
-  height: 5rem;
+  height: 8rem;
   background-color: #efefef;
   border-radius: 1rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  padding-left: 3rem;
+  padding-right: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.dealItemOne {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.dealItemTwo {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+}
+
+.checked {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

@@ -1,12 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import styles from '@/pages/Mypage/Mypage.module.scss';
-import { iou } from '@/services/iou';
 import { TransactionHistory } from '@/types/history';
 
 import { ListDetail } from './ListDetail';
 
-export function MyDealList() {
+export function MyDealList({
+  lendItems,
+  borrowItems,
+}: {
+  lendItems: TransactionHistory[];
+  borrowItems: TransactionHistory[];
+}) {
   const [activeTab, setActiveTab] = useState<'lend' | 'borrow'>('lend');
   const [lendExpanding, setLendExpanding] = useState<{
     [key: string]: boolean;
@@ -14,39 +19,6 @@ export function MyDealList() {
   const [borrowExpanding, setBorrowExpanding] = useState<{
     [key: string]: boolean;
   }>({});
-
-  const [lendItems, setLendItems] = useState<Array<TransactionHistory>>([]);
-  const [borrowItems, setBorrowItems] = useState<Array<TransactionHistory>>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [lendingData, borrowingData] = await Promise.all([
-          iou.getLendingRecords(),
-          iou.getBorrowingRecords(),
-        ]);
-
-        const transformData = (
-          data: Array<TransactionHistory>,
-        ): TransactionHistory[] =>
-          data.map((item: TransactionHistory) => ({
-            iouId: item.iouId,
-            opponentName: item.opponentName,
-            principalAmount: item.principalAmount,
-            contractStartDate: item.contractStartDate,
-            agreementStatus: item.agreementStatus,
-            contractStatus: item.contractStatus,
-          }));
-
-        setLendItems(transformData(lendingData));
-        setBorrowItems(transformData(borrowingData));
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const handleTabClick = (tab: 'lend' | 'borrow') => {
     setActiveTab(tab);

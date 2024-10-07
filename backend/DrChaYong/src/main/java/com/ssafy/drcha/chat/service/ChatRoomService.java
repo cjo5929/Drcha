@@ -3,6 +3,7 @@ package com.ssafy.drcha.chat.service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -70,6 +71,7 @@ public class ChatRoomService {
 
 		return chatRoomMembers.stream()
 			.map(this::createChatRoomListResponseDTO)
+			.filter(Objects::nonNull)
 			.collect(Collectors.toList());
 	}
 
@@ -163,9 +165,8 @@ public class ChatRoomService {
 		ChatRoom chatRoom = chatRoomMember.getChatRoom();
 		Member currentMember = chatRoomMember.getMember();
 		Member opponent = findOpponentMember(chatRoom, currentMember);
-		boolean isMember = true;
 		if(opponent == null) {
-			isMember = false;
+			return null;
 		}
 		Iou iou = iouRepository.findLatestByChatRoomId(chatRoom).orElse(null);
 
@@ -179,7 +180,6 @@ public class ChatRoomService {
 			chatRoom,
 			opponent,
 			contractStatus,
-			isMember,
 			iouAmount,
 			daysUntilDue,
 			memberTrustInfoResponse,

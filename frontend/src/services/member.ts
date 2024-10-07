@@ -8,6 +8,7 @@ export const member = {
     myInfo: '/member/info',
     phoneNumber: '/member/phone-number',
     authStatus: '/member/auth/status',
+    logout: '/member/logout',
   },
 
   getMemberInfo: async (): Promise<Info> => {
@@ -26,6 +27,12 @@ export const member = {
 
   getMemberAuthStatus: async (): Promise<boolean> => {
     const { data } = await API.get(`${member.endpoint.authStatus}`);
+
+    return data;
+  },
+
+  doLogout: async () => {
+    const { data } = await API.post(`${member.endpoint.logout}`);
 
     return data;
   },

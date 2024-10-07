@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Input } from '@/components/Input/Input';
 import { Navbar } from '@/components/Navbar/Navbar';
@@ -18,19 +18,26 @@ export function Main() {
   const [showCompleted, setShowCompleted] = useState(true);
   const [showOverdue, setShowOverdue] = useState(true);
   const [chatList, setChatList] = useState<ChatRoom[]>([]);
+  const [visibleChatList, setVisibleChatList] = useState<ChatRoom[]>([]);
+  const [isError, setIsError] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const getChattingLists = useCallback(async () => {
-    if (filter === FILTER.DEBT) {
-      const newChattingList = await chat.getBorrowedChattings();
-      setChatList(
-        newChattingList.filter((chatting: ChatRoom) => chatting.member),
-      );
-      return;
+    try {
+      if (filter === FILTER.DEBT) {
+        const newChattingList = await chat.getBorrowedChattings();
+        setChatList(newChattingList);
+        return;
+      }
+      const newChattingList = await chat.getLentChattings();
+      setChatList(newChattingList);
+    } catch {
+      setIsError(true);
+    } finally {
+      if (searchInputRef.current) {
+        searchInputRef.current.value = '';
+      }
     }
-    const newChattingList = await chat.getLentChattings();
-    setChatList(
-      newChattingList.filter((chatting: ChatRoom) => chatting.member),
-    );
   }, [filter]);
 
   useEffect(() => {
@@ -38,21 +45,27 @@ export function Main() {
   }, [getChattingLists]);
 
   useEffect(() => {
+    setVisibleChatList(chatList);
+  }, [chatList]);
+
+  useEffect(() => {
     setActiveChat(
-      chatList.filter(
+      visibleChatList.filter(
         (chatting) =>
           chatting.contractStatus === STATUS.ACTIVE || STATUS.DRAFTING,
       ),
     );
     setCompletedChat(
-      chatList.filter(
+      visibleChatList.filter(
         (chatting) => chatting.contractStatus === STATUS.COMPLETED,
       ),
     );
     setOverdueChat(
-      chatList.filter((chatting) => chatting.contractStatus === STATUS.OVERDUE),
+      visibleChatList.filter(
+        (chatting) => chatting.contractStatus === STATUS.OVERDUE,
+      ),
     );
-  }, [chatList]);
+  }, [visibleChatList]);
 
   const handleCreditClick = () => {
     setFilter(FILTER.CREDIT);
@@ -61,6 +74,17 @@ export function Main() {
   const handleDebtClick = () => {
     setFilter(FILTER.DEBT);
   };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setVisibleChatList(
+      chatList.filter((chatting) => chatting.name.includes(value)),
+    );
+  };
+
+  if (isError) {
+    return <div>채팅 목록을 불러올 수 없습니다</div>;
+  }
 
   return (
     <div className={styles.container}>
@@ -80,7 +104,12 @@ export function Main() {
             빌린 기록
           </button>
         </div>
-        <Input type="search" placeholder="사람 이름 검색" />
+        <Input
+          type="search"
+          placeholder="사람 이름 검색"
+          onChange={handleSearch}
+          ref={searchInputRef}
+        />
       </div>
       <div className={styles.mainContent}>
         <ChattingList

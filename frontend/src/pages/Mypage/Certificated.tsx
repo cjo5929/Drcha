@@ -3,6 +3,10 @@ import styles from '@/pages/Mypage/Mypage.module.scss';
 import { Info } from '@/types/Member';
 
 export function Certificated({ myInfos }: { myInfos: Info }) {
+  const formatCurrency = (amount: number) =>
+    `${amount.toLocaleString('ko-KR', {
+      maximumFractionDigits: 0,
+    })}원`;
   return (
     <div className={styles.card}>
       <div className={styles.bankinfo}>
@@ -18,7 +22,7 @@ export function Certificated({ myInfos }: { myInfos: Info }) {
         </div>
       </div>
       <div className={styles.balance}>
-        <span>{myInfos.balance}원</span>
+        <span>{formatCurrency(myInfos.balance)}</span>
       </div>
     </div>
   );

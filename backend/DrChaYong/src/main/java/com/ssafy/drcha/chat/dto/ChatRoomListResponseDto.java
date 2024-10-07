@@ -14,7 +14,6 @@ public final class ChatRoomListResponseDto {
 	private String name;
 	private String avatarUrl;
 	private String contractStatus;
-	private boolean isMember;
 	private String lastMessage;
 	private Double iouAmount;
 	private Long daysUntilDue;
@@ -25,7 +24,6 @@ public final class ChatRoomListResponseDto {
 		ChatRoom chatRoom,
 		Member opponent,
 		String contractStatus,
-		boolean isMember,
 		Double iouAmount,
 		Long daysUntilDue,
 		MemberTrustInfoResponse memberTrustInfoResponse,
@@ -35,7 +33,6 @@ public final class ChatRoomListResponseDto {
 			opponent != null ? opponent.getUsername() : "Unknown",
 			opponent != null ? opponent.getAvatarUrl() : null,
 			contractStatus,
-			isMember,
 			chatRoom.getLastMessage(),
 			iouAmount,
 			daysUntilDue,

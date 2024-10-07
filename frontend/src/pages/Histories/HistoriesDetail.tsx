@@ -16,12 +16,15 @@ export function HistoriesDetail({
     }
     setEvents(curhistory);
   }, [curhistory]);
-  const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString('ko-KR', {
+  const formatDate = (dateString: string) => {
+    const kstDate = new Date(dateString);
+    return kstDate.toLocaleDateString('ko-KR', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
+      timeZone: 'Asia/Seoul',
     });
+  };
   return (
     <div className={styles.detailContainer}>
       {events.map((item, index) => (

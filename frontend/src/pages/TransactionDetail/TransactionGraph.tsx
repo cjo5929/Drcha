@@ -19,7 +19,9 @@ export function TransactionGraph({
         throw new Error('IOU is missing');
       }
       setPaidPercentage(
-        Math.round((curiou.iouBalance / curiou.totalAmount) * 100),
+        Math.round(
+          ((curiou.totalAmount - curiou.iouBalance) / curiou.totalAmount) * 100,
+        ),
       );
     } catch (err) {
       throw new Error('something is missing');
@@ -47,11 +49,11 @@ export function TransactionGraph({
       <div className={styles.amountInfo}>
         <div>
           <div>현재 상환 금액</div>
-          <div>{formatCurrency(curiou.iouBalance)}</div>
+          <div>{formatCurrency(curiou.totalAmount - curiou.iouBalance)}</div>
         </div>
         <div>
           <div>잔여 상환 금액(이자 포함)</div>
-          <div>{formatCurrency(curiou.totalAmount - curiou.iouBalance)}</div>
+          <div>{formatCurrency(curiou.iouBalance)}</div>
         </div>
       </div>
 

@@ -19,31 +19,45 @@ export function TransactionHistories({
   const handleDetail = () => {
     navigate('/histories', { state: { curhistory } });
   };
+
+  const formatDate = (dateString: string) => {
+    const kstDate = new Date(dateString);
+    return kstDate.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: 'Asia/Seoul',
+    });
+  };
+
   const getLastUpdateDate = () => {
     if (curhistory.length === 0) {
       return '업데이트 없음';
     }
     const lastTransaction = curhistory[curhistory.length - 1];
-    return new Date(lastTransaction.transactionDate).toLocaleString('ko-KR', {
+    const kstDate = new Date(lastTransaction.transactionDate);
+    return kstDate.toLocaleString('ko-KR', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit',
+      timeZone: 'Asia/Seoul',
     });
   };
-
-  const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
 
   const formatCurrency = (amount: number) =>
     `${amount.toLocaleString('ko-KR', {
       maximumFractionDigits: 0,
     })}원`;
+
+  const formatDDay = (daysUntilDue: number) => {
+    if (daysUntilDue === 0) {
+      return 'D-Day';
+    }
+    const prefix = daysUntilDue > 0 ? 'D-' : 'D+';
+    return `${prefix}${Math.abs(daysUntilDue)}`;
+  };
 
   return (
     <div className={styles.histories}>
@@ -61,12 +75,8 @@ export function TransactionHistories({
         <div className={styles.repaydate}>
           <div className={styles.repaydatetitle}>상환일</div>
           <div className={styles.repaydatedetail}>
-            {formatDate(curiou.contractStartDate)} (D
-            {curiou.daysUntilDue >= 0 ? '-' : '+'}
-            {curiou.daysUntilDue >= 0
-              ? curiou.daysUntilDue
-              : curiou.daysUntilDue * -1}
-            )
+            {formatDate(curiou.contractStartDate)} (
+            {formatDDay(curiou.daysUntilDue)})
           </div>
         </div>
         <div className={styles.repaydetail}>

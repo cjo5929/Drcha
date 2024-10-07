@@ -9,11 +9,11 @@ import styles from './Login.module.scss';
 
 export function Login() {
   const { state } = useLocation();
-  // TODO : login
+
   const handleLogin = () => {
     if (state) {
       if (state.chatRoomId) {
-        window.location.href = `${URL.LOGIN}/oauth2/authorization/kakao?chatRoomId=${state.chatRoomId}`;
+        window.location.href = `${URL.LOGIN}/oauth2/authorization/kakao?custom_state=${state.chatRoomId}`;
         return;
       }
     }
@@ -30,11 +30,7 @@ export function Login() {
         <LogoSVG className={styles.logo} />
         <img src={STAMP_IMAGE} alt="stamp" className={styles.stamp} />
       </div>
-      <button
-        className={styles.loginButton}
-        onClick={handleLogin}
-        style={{ color: '#000000' }}
-      >
+      <button className={styles.loginButton} onClick={handleLogin}>
         <KakaoSVG />
         카카오 로그인
       </button>

@@ -12,6 +12,7 @@ export type ChatRoom = {
     debtTrades: number;
     message: string;
   };
+  member: boolean;
 };
 
 export type ChatRoomSummary = {

@@ -2,7 +2,6 @@ package com.ssafy.drcha.iou.controller;
 
 import java.util.List;
 
-import com.ssafy.drcha.iou.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.drcha.chat.enums.MemberRole;
 import com.ssafy.drcha.global.error.response.ErrorResponse;
+import com.ssafy.drcha.iou.dto.IouCreateRequestDto;
+import com.ssafy.drcha.iou.dto.IouDetailResponseDto;
+import com.ssafy.drcha.iou.dto.IouPdfResponseDto;
+import com.ssafy.drcha.iou.dto.IouResponseDto;
+import com.ssafy.drcha.iou.dto.IouTransactionResponseDto;
+import com.ssafy.drcha.iou.dto.UpdateNotificationScheduleRequestDto;
 import com.ssafy.drcha.iou.service.IouService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -200,8 +205,8 @@ public class IouController {
 	@PatchMapping("/agree/{iouId}")
 	public ResponseEntity<Void> agreeToIou(
 		@PathVariable Long iouId,
-		@AuthenticationPrincipal String email) {
-		iouService.agreeToIou(iouId, email);
+		@AuthenticationPrincipal UserDetails userDetails) {
+		iouService.agreeToIou(iouId, userDetails.getUsername());
 		return ResponseEntity.ok().build();
 	}
 

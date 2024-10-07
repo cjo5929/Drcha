@@ -11,6 +11,6 @@ public class ChatRoomRedirectStrategy implements RedirectStrategy{
             return frontendUrl + "/chat/" + chatRoomId;
         }
 
-        return frontendUrl + "/auth/account";
+        return frontendUrl + "/auth/account?chatRoomId=" + chatRoomId ;
     }
 }

@@ -39,7 +39,20 @@ public class MemberTrust extends BaseTimeEntity {
     @Column(name = "completed_trades")
     private int completedTrades;
 
+    //== 생성 메서드 ==//
+    public static MemberTrust initializeMemberTrust(Member member) {
+        return MemberTrust.builder()
+                .member(member)
+                .currentLateTrades(0)
+                .currentDebtTrades(0)
+                .completedTrades(0)
+                .build();
+    }
+
     //== 비즈니스 로직 ==//
+    public void initMember(Member member){
+        this.member = member;
+    }
 
     /**
      * 현재 연체 중인 거래 수를 1 증가시킵니다.

@@ -21,6 +21,7 @@ import com.ssafy.drcha.iou.dto.IouDetailResponseDto;
 import com.ssafy.drcha.iou.dto.IouPdfResponseDto;
 import com.ssafy.drcha.iou.dto.IouResponseDto;
 import com.ssafy.drcha.iou.dto.IouTransactionResponseDto;
+import com.ssafy.drcha.iou.dto.UpdateNotificationScheduleRequestDto;
 import com.ssafy.drcha.iou.service.IouService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -204,8 +205,20 @@ public class IouController {
 	@PatchMapping("/agree/{iouId}")
 	public ResponseEntity<Void> agreeToIou(
 		@PathVariable Long iouId,
-		@AuthenticationPrincipal String email) {
-		iouService.agreeToIou(iouId, email);
+		@AuthenticationPrincipal UserDetails userDetails) {
+		iouService.agreeToIou(iouId, userDetails.getUsername());
+		return ResponseEntity.ok().build();
+	}
+
+	@Operation(summary = "IOU 알림 주기 변경", description = "채권자가 알림 주기를 변경합니다.")
+	@ApiResponse(responseCode = "200", description = "변경 성공",
+			content = @Content(mediaType = "application/json",
+					schema = @Schema(implementation = Void.class)))
+	@PatchMapping("/{iouId}/notification-schedule")
+	public ResponseEntity<?> updateNotificationSchedule(
+			@PathVariable Long iouId,
+			@RequestBody UpdateNotificationScheduleRequestDto requestDto) {
+		iouService.updateNotificationSchedule(iouId, requestDto.getNotificationSchedule());
 		return ResponseEntity.ok().build();
 	}
 }

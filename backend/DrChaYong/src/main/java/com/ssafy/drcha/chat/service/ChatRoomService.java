@@ -3,6 +3,7 @@ package com.ssafy.drcha.chat.service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -70,6 +71,7 @@ public class ChatRoomService {
 
 		return chatRoomMembers.stream()
 			.map(this::createChatRoomListResponseDTO)
+			.filter(Objects::nonNull)
 			.collect(Collectors.toList());
 	}
 
@@ -81,8 +83,7 @@ public class ChatRoomService {
 
 		Member opponent = findOpponentMember(chatRoom, member);
 
-		// Update the last read message for the entering member
-		updateLastReadMessage(chatRoomMember, chatMongoService.getLastMessages(chatRoomId.toString(), 1));
+		updateLastReadMessage(chatRoomMember, chatMongoService.getLastMessages(chatRoomId.toString(), 1), chatRoomId);
 
 		return ChatRoomEntryResponseDto.from(chatRoom, chatRoomMember, opponent);
 	}
@@ -105,7 +106,7 @@ public class ChatRoomService {
 		ChatRoomMember chatRoomMember = addDebtorToChatRoom(chatRoom, debtor);
 		Member opponent = findOpponentMember(chatRoom, debtor);
 
-		updateLastReadMessage(chatRoomMember, chatMongoService.getLastMessages(chatRoom.getChatRoomId().toString(), 1));
+		updateLastReadMessage(chatRoomMember, chatMongoService.getLastMessages(chatRoom.getChatRoomId().toString(), 1), chatRoom.getChatRoomId());
 
 		return ChatRoomEntryResponseDto.from(chatRoom, chatRoomMember, opponent);
 	}
@@ -164,9 +165,8 @@ public class ChatRoomService {
 		ChatRoom chatRoom = chatRoomMember.getChatRoom();
 		Member currentMember = chatRoomMember.getMember();
 		Member opponent = findOpponentMember(chatRoom, currentMember);
-		boolean isMember = true;
 		if(opponent == null) {
-			isMember = false;
+			return null;
 		}
 		Iou iou = iouRepository.findLatestByChatRoomId(chatRoom).orElse(null);
 
@@ -180,7 +180,6 @@ public class ChatRoomService {
 			chatRoom,
 			opponent,
 			contractStatus,
-			isMember,
 			iouAmount,
 			daysUntilDue,
 			memberTrustInfoResponse,
@@ -216,10 +215,17 @@ public class ChatRoomService {
 			.orElseThrow(() -> new BusinessException(ErrorCode.CHAT_USER_NOT_IN_ROOM));
 	}
 
-	private void updateLastReadMessage(ChatRoomMember chatRoomMember, List<ChatMessage> messages) {
+	private void updateLastReadMessage(ChatRoomMember chatRoomMember, List<ChatMessage> messages, Long chatRoomId) {
 		if (!messages.isEmpty()) {
 			ChatMessage lastMessage = messages.get(messages.size() - 1);
 			chatRoomMember.updateLastRead(lastMessage.getId(), LocalDateTime.now());
+			ChatRoom chatRoom = getChatRoomById(chatRoomId);
+			chatRoom.updateLastMessage(lastMessage.getId(), lastMessage.getContent(), LocalDateTime.now());
 		}
+	}
+
+	private ChatRoom getChatRoomById(Long chatRoomId) {
+		return chatRoomRepository.findById(chatRoomId)
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CHAT_ROOM_NOT_FOUND));
 	}
 }

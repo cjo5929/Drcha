@@ -160,6 +160,8 @@ public class IouService {
 		Iou iou = iouRepository.findById(iouId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.IOU_NOT_FOUND));
 
+		log.info(email);
+
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new UserNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
@@ -196,6 +198,13 @@ public class IouService {
 		}
 
 		return savedIou;
+	}
+
+	@Transactional
+	public void updateNotificationSchedule(Long iouId, Integer notificationSchedule) {
+		Iou iou = iouRepository.findById(iouId)
+				.orElseThrow(() -> new DataNotFoundException(ErrorCode.IOU_NOT_FOUND));
+		iou.updateNotificationSchedule(notificationSchedule);
 	}
 
 	private Member findMemberByRole(ChatRoom chatRoom, MemberRole role) {

@@ -22,6 +22,8 @@
   height: 20%;
   display: flex;
   flex-direction: row;
+  padding-right: 5%;
+  align-items: center;
 }
 
 .kakaoprofileimg {
@@ -66,6 +68,15 @@
 .kakaoemail {
   @include Pretendard;
   font-size: 1.3rem;
+}
+
+.logout {
+  width: 10rem;
+  height: 60%;
+  color: white;
+  font-size: 1.3rem;
+  background-color: #3288ff;
+  border-radius: 0.7rem;
 }
 
 .accountinfo {

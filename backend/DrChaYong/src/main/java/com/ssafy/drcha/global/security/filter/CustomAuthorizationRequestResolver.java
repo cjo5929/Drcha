@@ -38,7 +38,7 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
 
 		// HttpServletRequest에서 custom_state 값을 가져옵니다.
 		String customState = request.getParameter("custom_state");
-		log.info("custom_state: " + customState + " ======");
+		log.info("===========custom_state: {}", customState);
 
 		if (customState != null) {
 			additionalParameters.put("custom_state", customState);

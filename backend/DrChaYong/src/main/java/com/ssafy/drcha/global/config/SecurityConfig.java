@@ -64,8 +64,6 @@ public class SecurityConfig {
         CustomAuthorizationRequestResolver customAuthorizationRequestResolver =
             new CustomAuthorizationRequestResolver(clientRegistrationRepository);
 
-        log.info(customAuthorizationRequestResolver + "@@@@@@@@@@@@@@@@@@@@@@");
-
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(AbstractHttpConfigurer::disable)
@@ -79,16 +77,18 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers("/api/v1/**").hasAuthority(Role.MEMBER.name())
                     .anyRequest().authenticated()
-                //                        .anyRequest().permitAll()
             )
             .oauth2Login(oauth2 -> oauth2
                 .authorizationEndpoint(authorizationEndpoint ->
                     authorizationEndpoint
                         .authorizationRequestResolver(customAuthorizationRequestResolver)
                         .authorizationRequestRepository(authorizationRequestRepository())
-                        .baseUri("/oauth2/authorization"))
+//                        .baseUri("/oauth2/authorization"))
+                        .baseUri("/api/oauth2/authorization"))
                 .redirectionEndpoint(redirectionEndpoint ->
-                    redirectionEndpoint.baseUri("/login/oauth2/code/*"))
+                    redirectionEndpoint
+//                        .baseUri("/login/oauth2/code/*"))
+                        .baseUri("/api/login/oauth2/code/*"))
                 .successHandler(oAuth2LoginSuccessHandler)
             )
             .sessionManagement(session -> session

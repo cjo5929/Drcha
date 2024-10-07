@@ -7,6 +7,6 @@ export function useUserState() {
   if (context === undefined) {
     throw new Error('useUserState should be used within UserContext');
   }
-  const { isLogin, setIsLogin, userInfo, setUserInfo } = context;
-  return { isLogin, setIsLogin, userInfo, setUserInfo };
+  const { isLogin, setIsLogin, userInfo, setUserInfo, getMyInfo } = context;
+  return { isLogin, setIsLogin, userInfo, setUserInfo, getMyInfo };
 }

@@ -27,7 +27,7 @@ export const useRouter = () =>
           element: <Mypage />,
         },
         {
-          path: 'detail',
+          path: 'mypage/detail/:type/:iouId',
           element: <TransactionDetail />,
         },
         {

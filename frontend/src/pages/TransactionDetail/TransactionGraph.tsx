@@ -1,7 +1,35 @@
+import { useEffect, useState } from 'react';
+
+import { IouDetailData } from '@/types/iou';
+
 import styles from './TransactionDetail.module.scss';
 
-export function TransactionGraph() {
-  const paidPercentage = 60;
+export function TransactionGraph({
+  types,
+  curiou,
+}: {
+  types: string;
+  curiou: IouDetailData;
+}) {
+  const [paidPercentage, setPaidPercentage] = useState<number>(0);
+
+  useEffect(() => {
+    try {
+      if (!curiou) {
+        throw new Error('IOU is missing');
+      }
+      setPaidPercentage(
+        Math.round((curiou.iouBalance / curiou.totalAmount) * 100),
+      );
+    } catch (err) {
+      throw new Error('something is missing');
+    }
+  }, [types, curiou]);
+
+  const formatCurrency = (amount: number) =>
+    `${amount.toLocaleString('ko-KR', {
+      maximumFractionDigits: 0,
+    })}원`;
 
   return (
     <div className={styles.graph}>
@@ -19,11 +47,11 @@ export function TransactionGraph() {
       <div className={styles.amountInfo}>
         <div>
           <div>현재 상환 금액</div>
-          <div>0원</div>
+          <div>{formatCurrency(curiou.iouBalance)}</div>
         </div>
         <div>
           <div>잔여 상환 금액(이자 포함)</div>
-          <div>0원</div>
+          <div>{formatCurrency(curiou.totalAmount - curiou.iouBalance)}</div>
         </div>
       </div>
 

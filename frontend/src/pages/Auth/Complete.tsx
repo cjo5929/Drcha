@@ -9,7 +9,7 @@ import styles from './Auth.module.scss';
 
 export function Complete() {
   const navigate = useNavigate();
-  const { userInfo } = useUserState();
+  const { userInfo, getMyInfo } = useUserState();
 
   useEffect(() => {
     if (!userInfo) {
@@ -21,6 +21,7 @@ export function Complete() {
   }, [navigate, userInfo]);
 
   const handleClick = () => {
+    getMyInfo();
     navigate('/');
   };
 

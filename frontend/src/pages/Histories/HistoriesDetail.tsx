@@ -1,20 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+import { TransactionDetailHistory } from '@/types/history';
 
 import styles from './Histories.module.scss';
 
-export function HistoriesDetail() {
-  const [events] = useState([
-    { date: '123213', description: '거래 시작' },
-    { date: '1111233', description: '얼마 갚음zzzzzzzzzzzzzzzzzzzz' },
-    { date: '1111233', description: '얼마 갚음zzzzzzzzzzzzzzzzzzzz' },
-    { date: '1111233', description: '얼마 갚음zzzzzzzzzzzzzzzzzzzz' },
-    { date: '1111233', description: '얼마 갚음zzzzzzzzzzzzzzzzzzzz' },
-    { date: '1111233', description: '얼마 갚음zzzzzzzzzzzzzzzzzzzz' },
-    { date: '1111233', description: '얼마 갚음zzzzzzzzzzzzzzzzzzzz' },
-    { date: '1111233', description: '얼마 갚음zzzzzzzzzzzzzzzzzzzz' },
-    { date: '1111233', description: '얼마 갚음zzzzzzzzzzzzzzzzzzzz' },
-    { date: '11111', description: '거래 완료' },
-  ]);
+export function HistoriesDetail({
+  curhistory,
+}: {
+  curhistory: TransactionDetailHistory[] | undefined;
+}) {
+  const [events, setEvents] = useState<TransactionDetailHistory[]>([]);
+  useEffect(() => {
+    if (!curhistory || curhistory.length === 0) {
+      throw new Error('no history');
+    }
+    setEvents(curhistory);
+  }, [curhistory]);
+  const formatDate = (dateString: string) =>
+    new Date(dateString).toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
   return (
     <div className={styles.detailContainer}>
       {events.map((item, index) => (
@@ -29,7 +36,7 @@ export function HistoriesDetail() {
         >
           <div className={styles.dot} />
           <div className={styles.content}>
-            <p>{item.date}</p>
+            <p>{formatDate(item.transactionDate)}</p>
             <p>{item.description}</p>
           </div>
         </div>

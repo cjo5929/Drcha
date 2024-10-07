@@ -21,7 +21,11 @@ export function Login() {
         <LogoSVG className={styles.logo} />
         <img src={STAMP_IMAGE} alt="stamp" className={styles.stamp} />
       </div>
-      <button className={styles.loginButton} onClick={handleLogin}>
+      <button
+        className={styles.loginButton}
+        onClick={handleLogin}
+        style={{ color: '#000000' }}
+      >
         <KakaoSVG />
         카카오 로그인
       </button>

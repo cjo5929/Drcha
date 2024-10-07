@@ -41,12 +41,12 @@ public class TransactionMonitoringService {
      * TODO : 모든 활성 가상 계좌의 새로운 입금 확인
      * ! Quartz에 의해 주기적으로 실행됨
      */
-    public void checkNewDeposits() {
-        log.info("============== 모니터링 시작 =================");
-        iouService.findAllActiveIous()
-                  .forEach(this::processIouDeposits);
-        log.info("============== 모니터링 종료 =================");
-    }
+//    public void checkNewDeposits() {
+//        log.info("============== 모니터링 시작 =================");
+//        iouService.findAllActiveIous()
+//                  .forEach(this::processIouDeposits);
+//        log.info("============== 모니터링 종료 =================");
+//    }
 
     /**
      * TODO : 특정 가상 계좌의 새로운 입금을 처리

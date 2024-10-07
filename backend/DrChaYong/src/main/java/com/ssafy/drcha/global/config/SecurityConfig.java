@@ -1,4 +1,3 @@
-
 package com.ssafy.drcha.global.config;
 
 import java.util.Arrays;
@@ -11,31 +10,45 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.ssafy.drcha.global.security.filter.CustomAuthorizationRequestResolver;
 import com.ssafy.drcha.global.security.filter.JwtAuthenticationFilter;
 import com.ssafy.drcha.global.security.handler.OAuth2LoginSuccessHandler;
 import com.ssafy.drcha.member.enums.Role;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final ClientRegistrationRepository clientRegistrationRepository;
+
 
     @Value("${app.url.front}")
     private String frontUrl;
 
     @Value("${ai.llm.service-url}")
     private String llmServiceUrl;
+
+    @Bean
+    public HttpSessionOAuth2AuthorizationRequestRepository authorizationRequestRepository() {
+        return new HttpSessionOAuth2AuthorizationRequestRepository();
+    }
+
 
     /**
      * Spring Security 의 보안 필터 체인을 정의
@@ -47,34 +60,41 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        CustomAuthorizationRequestResolver customAuthorizationRequestResolver =
+            new CustomAuthorizationRequestResolver(clientRegistrationRepository);
+
+        log.info(customAuthorizationRequestResolver + "@@@@@@@@@@@@@@@@@@@@@@");
+
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/login","/api/v1/member/logout", "/error", "/oauth2/**",
-                                        "/h2-console", "/swagger-ui/index.html", "/swagger",
-                                        "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**",
-                                        "/api/swagger-ui/index.html", "/api/swagger",
-                                        "/api/swagger-ui.html", "/api/swagger-ui/**", "/api/api-docs", "/api/api-docs/**",
-                                    "/ws/**", "/sub/**", "/pub/**")
-                                .permitAll()
-                                .requestMatchers("/api/v1/**").hasAuthority(Role.MEMBER.name())
-                                .anyRequest().authenticated()
-//                        .anyRequest().permitAll()
-                )
-                .oauth2Login(oauth2 -> oauth2
-                                .authorizationEndpoint(authorizationEndpoint ->
-                                        authorizationEndpoint.baseUri("/api/oauth2/authorization"))
-                               // authorizationEndpoint.baseUri("/oauth2/authorization"))
-                                .redirectionEndpoint(redirectionEndpoint ->
-                                        redirectionEndpoint.baseUri("/api/login/oauth2/code/*"))
-                               // redirectionEndpoint.baseUri("/login/oauth2/code/*"))
-                                .successHandler(oAuth2LoginSuccessHandler)
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/login","/api/v1/member/logout", "/error", "/oauth2/**",
+                        "/h2-console", "/swagger-ui/index.html", "/swagger",
+                        "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**",
+                        "/api/swagger-ui/index.html", "/api/swagger",
+                        "/api/swagger-ui.html", "/api/swagger-ui/**", "/api/api-docs", "/api/api-docs/**",
+                        "/ws/**", "/sub/**", "/pub/**")
+                    .permitAll()
+                    .requestMatchers("/api/v1/**").hasAuthority(Role.MEMBER.name())
+                    .anyRequest().authenticated()
+                //                        .anyRequest().permitAll()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                .authorizationEndpoint(authorizationEndpoint ->
+                    authorizationEndpoint
+                        .authorizationRequestResolver(customAuthorizationRequestResolver)
+                        .authorizationRequestRepository(authorizationRequestRepository())
+                        .baseUri("/oauth2/authorization"))
+                .redirectionEndpoint(redirectionEndpoint ->
+                    redirectionEndpoint.baseUri("/login/oauth2/code/*"))
+                .successHandler(oAuth2LoginSuccessHandler)
+            )
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -102,4 +122,3 @@ public class SecurityConfig {
         return source;
     }
 }
-

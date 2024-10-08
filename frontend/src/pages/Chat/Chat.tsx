@@ -64,6 +64,10 @@ export function Chat() {
 
   const getChatRoomInfo = useCallback(async () => {
     if (chatRoomId) {
+      if (userInfo && !userInfo.verified) {
+        navigate(`/auth/account?chatRoomId=${chatRoomId}`);
+        return;
+      }
       try {
         const data = await chat.getChatRoomData(chatRoomId);
         setOpponentName(data.opponentName);
@@ -74,7 +78,7 @@ export function Chat() {
         setIsLoading(false);
       }
     }
-  }, [chatRoomId]);
+  }, [navigate, chatRoomId, userInfo]);
 
   useEffect(() => {
     if (!userInfo) {

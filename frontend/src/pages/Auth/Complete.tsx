@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import CompleteSVG from '@/assets/icons/complete.svg?react';
 import { Button } from '@/components/Button/Button';
@@ -8,7 +8,8 @@ import { useUserState } from '@/hooks/useUserState';
 import styles from './Auth.module.scss';
 
 export function Complete() {
-  const { chatRoomId } = useParams();
+  const queryParams = new URLSearchParams(window.location.search);
+  const chatRoomId = queryParams.get('chatRoomId');
   const navigate = useNavigate();
   const { userInfo, getMyInfo } = useUserState();
 

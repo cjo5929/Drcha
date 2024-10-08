@@ -1,12 +1,13 @@
 import { useCallback, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { useUserState } from '@/hooks/useUserState';
 
 import styles from './Auth.module.scss';
 
 export function Account() {
-  const { chatRoomId } = useParams();
+  const queryParams = new URLSearchParams(window.location.search);
+  const chatRoomId = queryParams.get('chatRoomId');
   const navigate = useNavigate();
   const { userInfo } = useUserState();
 

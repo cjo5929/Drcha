@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { useUserState } from '@/hooks/useUserState';
 import { member } from '@/services/member';
@@ -8,7 +8,8 @@ import { PhoneNumber } from '@/types/Member';
 import styles from './Auth.module.scss';
 
 export function PhoneNumberPage() {
-  const { chatRoomId } = useParams();
+  const queryParams = new URLSearchParams(window.location.search);
+  const chatRoomId = queryParams.get('chatRoomId');
   const navigate = useNavigate();
   const { userInfo } = useUserState();
   const [phoneNumber, setPhoneNumber] = useState<PhoneNumber>({
@@ -30,6 +31,7 @@ export function PhoneNumberPage() {
       await member.registPhoneNumber(phoneNumber);
       if (chatRoomId) {
         navigate(`/auth/complete?chatRoomId=${chatRoomId}`);
+        return;
       }
       navigate('/auth/complete');
     },

@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import COIN_GIF from '@/assets/images/coin.gif';
 import { Button } from '@/components/Button/Button';
@@ -10,7 +10,8 @@ import { VerificationCode } from '@/types/Account';
 import styles from './Auth.module.scss';
 
 export function AccountSend() {
-  const { chatRoomId } = useParams();
+  const queryParams = new URLSearchParams(window.location.search);
+  const chatRoomId = queryParams.get('chatRoomId');
   const navigate = useNavigate();
   const { userInfo } = useUserState();
 

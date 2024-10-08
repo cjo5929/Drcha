@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { Toast } from '@/components/Toast/Toast';
 import { useUserState } from '@/hooks/useUserState';
@@ -8,12 +8,14 @@ import { account } from '@/services/account';
 import styles from './Auth.module.scss';
 
 export function Number() {
-  const { chatRoomId } = useParams();
+  const queryParams = new URLSearchParams(window.location.search);
+  const chatRoomId = queryParams.get('chatRoomId');
   const navigate = useNavigate();
   const { state } = useLocation();
   const { userInfo } = useUserState();
   const [verificationCode, setVerificationCode] = useState<string>();
   const [showToast, setShowToast] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!userInfo) {
@@ -25,7 +27,7 @@ export function Number() {
   }, [navigate, userInfo]);
 
   useEffect(() => {
-    if (state?.verificationCode) {
+    if (state.verificationCode) {
       setShowToast(true);
 
       const hideToastTimer = setTimeout(() => {
@@ -33,8 +35,11 @@ export function Number() {
       }, 3000);
 
       const fillInputTimer = setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.value = state.verificationCode.code;
+        }
         setVerificationCode(state.verificationCode.code);
-      }, 3700);
+      }, 500);
 
       return () => {
         clearTimeout(hideToastTimer);
@@ -51,6 +56,7 @@ export function Number() {
         if (isCheck) {
           if (chatRoomId) {
             navigate(`/auth/phone-number?chatRoomId=${chatRoomId}`);
+            return;
           }
           navigate('/auth/phone-number');
         }
@@ -73,10 +79,10 @@ export function Number() {
       </div>
       <form onSubmit={handleSubmit}>
         <input
+          ref={inputRef}
           type="text"
           placeholder="인증번호"
           className={styles.input}
-          value={verificationCode}
           onChange={(e) => setVerificationCode(e.target.value)}
         />
       </form>

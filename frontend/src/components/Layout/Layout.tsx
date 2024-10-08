@@ -7,7 +7,7 @@ import styles from './Layout.module.scss';
 
 export function Layout() {
   const navigate = useNavigate();
-  const { isLogin, userInfo } = useUserState();
+  const { isLogin } = useUserState();
   const { chatRoomId } = useParams();
 
   useEffect(() => {
@@ -20,10 +20,7 @@ export function Layout() {
       }
       navigate('/login');
     }
-    if (userInfo && !userInfo?.verified) {
-      navigate(`/auth/account?chatRoomId=${chatRoomId}`);
-    }
-  }, [chatRoomId, isLogin, userInfo, navigate]);
+  }, [chatRoomId, isLogin, navigate]);
 
   return (
     <div className={styles.container}>

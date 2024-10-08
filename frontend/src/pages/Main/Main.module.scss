@@ -13,6 +13,13 @@
     background-color: $white;
     z-index: 10;
   }
+
+  .error {
+    padding: 4rem 0;
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+  }
 }
 
 .filter {

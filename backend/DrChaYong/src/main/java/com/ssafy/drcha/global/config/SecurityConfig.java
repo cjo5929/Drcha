@@ -84,12 +84,12 @@ public class SecurityConfig {
                     authorizationEndpoint
                         .authorizationRequestResolver(customAuthorizationRequestResolver)
                         .authorizationRequestRepository(authorizationRequestRepository())
-//                        .baseUri("/oauth2/authorization"))
-                        .baseUri("/api/oauth2/authorization"))
+                       .baseUri("/oauth2/authorization"))
+//                         .baseUri("/api/oauth2/authorization"))
                 .redirectionEndpoint(redirectionEndpoint ->
                     redirectionEndpoint
-//                        .baseUri("/login/oauth2/code/*"))
-                        .baseUri("/api/login/oauth2/code/*"))
+                       .baseUri("/login/oauth2/code/*"))
+//                         .baseUri("/api/login/oauth2/code/*"))
                 .successHandler(oAuth2LoginSuccessHandler)
             )
             .sessionManagement(session -> session

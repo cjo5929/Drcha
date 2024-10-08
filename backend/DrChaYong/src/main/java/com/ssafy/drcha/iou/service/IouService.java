@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -188,23 +189,41 @@ public class IouService {
 	public Iou createAndSaveIou(ChatRoom chatRoom, IouCreateRequestDto requestDTO) {
 		Member creditor = findMemberByRole(chatRoom, MemberRole.CREDITOR);
 		Member debtor = findMemberByRole(chatRoom, MemberRole.DEBTOR);
-		Iou iou = requestDTO.toEntity(creditor, debtor, chatRoom);
-		Iou savedIou = iouRepository.save(iou);
 
-		// ! 가상계좌 생성 및 연결
-		if (ObjectUtils.isEmpty(savedIou.getVirtualAccount())) {
-			VirtualAccount virtualAccount = transactionService.createVirtualAccount(savedIou.getIouId());
-			savedIou.linkVirtualAccount(virtualAccount);
+		Optional<Iou> existingIou = iouRepository.findByChatRoomAndContractStatus(chatRoom, ContractStatus.DRAFTING);
+
+		if (existingIou.isPresent()) {
+			Iou iou = existingIou.get();
+			iou.updateFromRequest(requestDTO);
+			return saveAndLinkVirtualAccount(iou);
 		}
 
-		return savedIou;
+		Iou newIou = requestDTO.toEntity(creditor, debtor, chatRoom);
+		return saveAndLinkVirtualAccount(newIou);
 	}
+
 
 	@Transactional
 	public void updateNotificationSchedule(Long iouId, Integer notificationSchedule) {
 		Iou iou = iouRepository.findById(iouId)
 				.orElseThrow(() -> new DataNotFoundException(ErrorCode.IOU_NOT_FOUND));
 		iou.updateNotificationSchedule(notificationSchedule);
+	}
+
+	private Iou saveAndLinkVirtualAccount(Iou iou) {
+		Iou savedIou = iouRepository.save(iou);
+
+		VirtualAccount virtualAccount = savedIou.getVirtualAccount();
+		// 가상계좌가 없으면 생성 및 연결
+		if (ObjectUtils.isEmpty(savedIou.getVirtualAccount())) {
+			virtualAccount = transactionService.createVirtualAccount(savedIou.getIouId());
+			savedIou.linkVirtualAccount(virtualAccount);
+		}
+
+
+		virtualAccount.updateTotalAmount(BigDecimal.valueOf(savedIou.getIouAmount())); // totalAmount 업데이트
+
+		return savedIou;
 	}
 
 	private Member findMemberByRole(ChatRoom chatRoom, MemberRole role) {

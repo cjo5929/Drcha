@@ -67,13 +67,19 @@ export function IOUContent({ iouData, iouRef }: IOUContentProps) {
         <div className={styles.detail}>
           <div className={styles.bold}>채권자</div>
           <div>
-            {iouData.creditorName}({iouData.creditorPhoneNumber})
+            {iouData.creditorName}
+            {iouData.creditorPhoneNumber && (
+              <span>({iouData.creditorPhoneNumber})</span>
+            )}
           </div>
         </div>
         <div className={styles.detail}>
           <div className={styles.bold}>채무자</div>
           <div>
-            {iouData.debtorName}({iouData.debtorPhoneNumber})
+            {iouData.debtorName}
+            {iouData.debtorPhoneNumber && (
+              <span>({iouData.debtorPhoneNumber})</span>
+            )}
           </div>
         </div>
       </div>

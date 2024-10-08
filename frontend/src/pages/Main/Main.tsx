@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Input } from '@/components/Input/Input';
+import { Loading } from '@/components/Loading/Loading';
 import { Navbar } from '@/components/Navbar/Navbar';
 import { FILTER, STATUS } from '@/constants/chatting';
 import { chat } from '@/services/chat';
@@ -19,10 +20,12 @@ export function Main() {
   const [showOverdue, setShowOverdue] = useState(true);
   const [chatList, setChatList] = useState<ChatRoom[]>([]);
   const [visibleChatList, setVisibleChatList] = useState<ChatRoom[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const getChattingLists = useCallback(async () => {
+    setIsLoading(true);
     try {
       if (filter === FILTER.DEBT) {
         const newChattingList = await chat.getBorrowedChattings();
@@ -37,6 +40,7 @@ export function Main() {
       if (searchInputRef.current) {
         searchInputRef.current.value = '';
       }
+      setIsLoading(false);
     }
   }, [filter]);
 
@@ -52,7 +56,8 @@ export function Main() {
     setActiveChat(
       visibleChatList.filter(
         (chatting) =>
-          chatting.contractStatus === STATUS.ACTIVE || STATUS.DRAFTING,
+          chatting.contractStatus === STATUS.ACTIVE ||
+          chatting.contractStatus === STATUS.DRAFTING,
       ),
     );
     setCompletedChat(
@@ -82,10 +87,6 @@ export function Main() {
     );
   };
 
-  if (isError) {
-    return <div>채팅 목록을 불러올 수 없습니다</div>;
-  }
-
   return (
     <div className={styles.container}>
       <div className={styles.mainHeader}>
@@ -111,26 +112,31 @@ export function Main() {
           ref={searchInputRef}
         />
       </div>
-      <div className={styles.mainContent}>
-        <ChattingList
-          name="거래 중"
-          chattings={activeChat}
-          status={showActive}
-          setStatus={setShowActive}
-        />
-        <ChattingList
-          name="연체"
-          chattings={overdueChat}
-          status={showOverdue}
-          setStatus={setShowOverdue}
-        />
-        <ChattingList
-          name="거래 완료"
-          chattings={completedChat}
-          status={showCompleted}
-          setStatus={setShowCompleted}
-        />
-      </div>
+      {!isError && isLoading ? (
+        <Loading size={100} />
+      ) : (
+        <div className={styles.mainContent}>
+          <ChattingList
+            name="거래 중"
+            chattings={activeChat}
+            status={showActive}
+            setStatus={setShowActive}
+          />
+          <ChattingList
+            name="연체"
+            chattings={overdueChat}
+            status={showOverdue}
+            setStatus={setShowOverdue}
+          />
+          <ChattingList
+            name="거래 완료"
+            chattings={completedChat}
+            status={showCompleted}
+            setStatus={setShowCompleted}
+          />
+        </div>
+      )}
+      {isError && <div>채팅 목록을 불러올 수 없습니다</div>}
       <Navbar />
     </div>
   );

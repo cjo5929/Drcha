@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import com.ssafy.drcha.account.service.AccountService;
 import com.ssafy.drcha.global.api.RestClientUtil;
 import com.ssafy.drcha.global.api.dto.UserResponse;
+import com.ssafy.drcha.global.security.strategy.RedirectStrategyFactory;
 import com.ssafy.drcha.global.security.strategy.RedirectStrategy;
 import com.ssafy.drcha.global.security.strategy.RedirectStrategyFactory;
 import com.ssafy.drcha.global.security.util.JwtUtil;

@@ -50,9 +50,9 @@ export function CorrectionIouModal({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    createManualIou(
+    await createManualIou(
       formData.iouAmount,
       formData.interestRate,
       formData.contractEndDate,

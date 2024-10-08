@@ -11,10 +11,44 @@ export function HistoriesDetail({
 }) {
   const [events, setEvents] = useState<Transaction[]>([]);
   useEffect(() => {
-    if (!curhistory || curhistory.transactions.length === 0) {
+    if (!curhistory) {
       throw new Error('no history');
     }
-    setEvents(curhistory.transactions);
+    const startTransaction: Transaction = {
+      amount: -1,
+      balanceAfterTransaction: -1,
+      balanceBeforeTransaction: -1,
+      description: '거래 시작',
+      transactionDate: curhistory.transactionStartDate,
+      transactionId: -1,
+      transactionType: 'START',
+      transactionUniqueNo: -1,
+    };
+
+    const repaymentTransaction: Transaction = {
+      amount: -1,
+      balanceAfterTransaction: -1,
+      balanceBeforeTransaction: -1,
+      description: '상환일',
+      transactionDate: curhistory.repaymentDate,
+      transactionId: -2,
+      transactionType: 'REPAYMENT',
+      transactionUniqueNo: -2,
+    };
+
+    const allEvents = [
+      startTransaction,
+      ...curhistory.transactions,
+      repaymentTransaction,
+    ];
+
+    const sortedEvents = allEvents.sort(
+      (a, b) =>
+        new Date(a.transactionDate).getTime() -
+        new Date(b.transactionDate).getTime(),
+    );
+
+    setEvents(sortedEvents);
   }, [curhistory]);
   const addKSTOffset = (date: Date): Date =>
     new Date(date.getTime() + 9 * 60 * 60 * 1000);
@@ -64,10 +98,12 @@ export function HistoriesDetail({
                 <div className={styles.contentMoneyDescription}>
                   {item.description}
                 </div>
-                <div className={styles.contentMoneyDetail}>
-                  ({formatCurrency(item.amount)} 상환 /{' '}
-                  {formatCurrency(item.balanceAfterTransaction)} 남음)
-                </div>
+                {item.amount !== -1 && (
+                  <div className={styles.contentMoneyDetail}>
+                    ({formatCurrency(item.amount)} 상환 /{' '}
+                    {formatCurrency(item.balanceAfterTransaction)} 남음)
+                  </div>
+                )}
               </div>
             </div>
           </div>

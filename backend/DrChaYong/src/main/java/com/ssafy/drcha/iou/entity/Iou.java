@@ -125,10 +125,13 @@ public class Iou extends BaseTimeEntity {
 		this.lenderAgreement = false;
 	}
 
+	public void updateContractStatus(ContractStatus contractStatus){
+		this.contractStatus = contractStatus;
+	}
+
 	public boolean isBothAgreed() {
 		return this.borrowerAgreement && this.lenderAgreement;
 	}
-
 
 	public void borrowerAgree() {
 		this.borrowerAgreement = true;

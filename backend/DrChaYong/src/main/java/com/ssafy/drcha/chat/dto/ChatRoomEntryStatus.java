@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ChatRoomEntryStatus {
-	private final String invitationLink;
+	private final Long chatRoomId;
 	private final boolean needsRegistration;
 	private final boolean needsVerification;
 

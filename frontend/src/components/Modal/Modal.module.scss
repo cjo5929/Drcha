@@ -1,3 +1,6 @@
+@import '@/styles/theme.module.scss';
+@import '@/styles/font.module.scss';
+
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -20,7 +23,7 @@
   max-height: 90%;
   overflow-y: auto;
   position: relative;
-  width: 400px;
+  width: 30rem;
 }
 
 .modalTitle {
@@ -28,6 +31,27 @@
   font-weight: bold;
   margin-bottom: 1rem;
   text-align: center;
+}
+
+.modalBtns {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding-top: 1rem;
+}
+
+.doctorprofile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding-bottom: 2rem;
+}
+
+.doctorprofileimg {
+  width: 10rem;
+  height: 10rem;
+  border-radius: 1.5rem;
 }
 
 .iouImageContainer {
@@ -56,34 +80,6 @@
   margin-top: 1rem;
 }
 
-.editButton,
-.cancelButton {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 0.4rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.editButton {
-  background-color: #007bff;
-  color: white;
-
-  &:hover {
-    background-color: #0056b3;
-  }
-}
-
-.cancelButton {
-  background-color: #f8f9fa;
-  color: #343a40;
-
-  &:hover {
-    background-color: #e2e6ea;
-  }
-}
-
 .iouForm {
   display: flex;
   flex-direction: column;
@@ -91,20 +87,24 @@
 }
 
 .iouDetails {
+  @include Pretendard;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1rem;
 
   label {
+    @include Pretendard;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 1rem;
     font-weight: bold;
+    font-size: 1.2rem;
   }
 
   input {
+    @include Pretendard;
     padding: 0.5rem;
-    border: 1px solid #ccc;
+    border: 0.1rem solid #ccc;
     border-radius: 0.25rem;
     font-size: 1rem;
   }

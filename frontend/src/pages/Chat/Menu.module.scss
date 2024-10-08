@@ -70,3 +70,18 @@
 .transactions {
   padding: 2rem;
 }
+
+.transactionList {
+  list-style-type: none;
+  padding: 0;
+}
+
+.transactionItem {
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+}
+
+.noTransactions {
+  text-align: center;
+  color: #888;
+}

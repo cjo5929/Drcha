@@ -13,6 +13,18 @@ export type IouData = {
   debtorPhoneNumber: string;
 };
 
+export type IouDatainChatroom = {
+  iouId: string;
+  iouAmount: number;
+  contractStartDate: string;
+  contractEndDate: string;
+  interestRate: number;
+  totalAmount: number;
+  contractStatus: 'DRAFTING' | 'ACTIVE' | 'COMPLETED' | 'OVERDUE' | 'CANCELLED';
+  borrowerAgreement: boolean;
+  lenderAgreement: boolean;
+};
+
 export type IouDetailData = {
   iouId: string;
   creditorName: string;
@@ -21,12 +33,19 @@ export type IouDetailData = {
   contractStartDate: string;
   contractEndDate: string;
   interestRate: number;
-  borrowerAgreement: true;
-  lenderAgreement: true;
+  borrowerAgreement: boolean;
+  lenderAgreement: boolean;
   contractStatus: 'DRAFTING' | 'ACTIVE' | 'COMPLETED' | 'OVERDUE' | 'CANCELLED';
   totalAmount: number;
   notificationSchedule: number;
   phoneNumber: string;
   daysUntilDue: number;
   iouBalance: number;
+};
+
+export type ManualIouData = {
+  chatRoomId: string;
+  iouAmount: number;
+  interestRate: number;
+  contractEndDate: string;
 };

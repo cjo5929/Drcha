@@ -1,4 +1,9 @@
-import { IouData, IouDetailData } from '@/types/iou';
+import {
+  IouData,
+  IouDatainChatroom,
+  IouDetailData,
+  ManualIouData,
+} from '@/types/iou';
 
 import { API } from './api';
 
@@ -10,6 +15,7 @@ export const iou = {
     getBorrowingRecords: '/iou/borrowing-records',
     getLendingDetail: '/iou/lending-detail',
     getBorrowingDetail: '/iou/borrowing-detail',
+    agree: '/iou/agree/',
   },
 
   getIouPdf: async (iouId: string): Promise<IouData> => {
@@ -38,5 +44,24 @@ export const iou = {
       `${iou.endpoint.getBorrowingDetail}/${iouId}`,
     );
     return data;
+  },
+
+  getIou: async (chatRoomId: string): Promise<IouDatainChatroom[]> => {
+    const { data } = await API.get(`${iou.endpoint.default}/${chatRoomId}`);
+    return data;
+  },
+
+  agreeIou: async (iouId: string) => {
+    const { data } = await API.patch(`${iou.endpoint.agree}/${iouId}`);
+    return data;
+  },
+
+  createIou: async (chatRoomId: string) => {
+    const { data } = await API.post(`${iou.endpoint.default}/${chatRoomId}`);
+    return data;
+  },
+
+  createManualIou: async (manualData: ManualIouData) => {
+    await API.post(`${iou.endpoint.default}/${manualData.chatRoomId}/manual`);
   },
 };

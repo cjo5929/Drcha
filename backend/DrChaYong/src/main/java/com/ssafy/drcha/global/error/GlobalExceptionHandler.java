@@ -57,19 +57,16 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(NeedsRegistrationException.class)
-	public ResponseEntity<Void> handleNeedsRegistrationException(NeedsRegistrationException e) {
+	public ResponseEntity<ErrorResponse> handleNeedsRegistrationException(NeedsRegistrationException e) {
 		log.error("NeedsRegistrationException: ", e);
-		return ResponseEntity.status(HttpStatus.FOUND)
-			.header("Location", e.getInvitationLink())
-			.build();
+		return createErrorResponse(e.getErrorCode());
+
 	}
 
 	@ExceptionHandler(NeedsVerificationException.class)
-	public ResponseEntity<Void> handleNeedsVerificationException(NeedsVerificationException e) {
+	public ResponseEntity<ErrorResponse> handleNeedsVerificationException(NeedsVerificationException e) {
 		log.error("NeedsVerificationException: ", e);
-		return ResponseEntity.status(HttpStatus.FOUND)
-			.header("Location", "/verify?invitationLink=" + e.getInvitationLink())
-			.build();
+		return createErrorResponse(e.getErrorCode());
 	}
 
 	@ExceptionHandler(Exception.class)

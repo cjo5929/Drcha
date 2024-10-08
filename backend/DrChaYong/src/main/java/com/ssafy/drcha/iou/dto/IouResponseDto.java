@@ -3,6 +3,7 @@ package com.ssafy.drcha.iou.dto;
 import java.time.LocalDateTime;
 
 import com.ssafy.drcha.iou.entity.Iou;
+import com.ssafy.drcha.iou.enums.ContractStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +18,9 @@ public final class IouResponseDto {
 	private LocalDateTime contractEndDate;
 	private Double interestRate;
 	private Long totalAmount;
+	private ContractStatus contractStatus;
+	private boolean borrowerAgreement;
+	private boolean lenderAgreement;
 
 
 	public static IouResponseDto from(Iou iou) {
@@ -26,7 +30,10 @@ public final class IouResponseDto {
 			iou.getContractStartDate(),
 			iou.getContractEndDate(),
 			iou.getInterestRate(),
-			FinancialCalculator.calculateTotalAmount(iou.getIouAmount(), iou.getInterestRate(), 12)
+			FinancialCalculator.calculateTotalAmount(iou.getIouAmount(), iou.getInterestRate(), 12),
+			iou.getContractStatus(),
+			iou.getBorrowerAgreement(),
+			iou.getLenderAgreement()
 		);
 	}
 

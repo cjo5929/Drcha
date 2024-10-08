@@ -188,7 +188,7 @@ public class ChatRoomService {
 		if(opponent == null) {
 			return null;
 		}
-		Optional<Iou> latestIou = iouRepository.findLatestByChatRoomId(chatRoom);
+		Optional<Iou> latestIou = iouRepository.findLatestByChatRoomId(chatRoom.getChatRoomId());
 
 		Iou iou = latestIou.orElse(null);
 

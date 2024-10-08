@@ -1,8 +1,11 @@
 package com.ssafy.drcha.transaction.entity;
 
+import java.math.BigDecimal;
+
 import com.ssafy.drcha.global.basetime.BaseTimeEntity;
 import com.ssafy.drcha.iou.entity.Iou;
 import com.ssafy.drcha.member.entity.Member;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,7 +18,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -73,6 +75,11 @@ public class VirtualAccount extends BaseTimeEntity {
     // 연관관계 설정을 위한 메서드
     public void linkIou(Iou iou) {
         this.iou = iou;
+    }
+
+    public void updateTotalAmount(BigDecimal newTotalAmount) {
+        this.totalAmount = newTotalAmount;
+        this.remainingAmount = newTotalAmount;
     }
 
 }

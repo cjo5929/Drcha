@@ -8,6 +8,7 @@ import java.util.List;
 import com.ssafy.drcha.chat.entity.ChatRoom;
 import com.ssafy.drcha.global.basetime.BaseTimeEntity;
 import com.ssafy.drcha.iou.dto.FinancialCalculator;
+import com.ssafy.drcha.iou.dto.IouCreateRequestDto;
 import com.ssafy.drcha.iou.enums.ContractStatus;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.transaction.entity.TransactionHistory;
@@ -127,15 +128,6 @@ public class Iou extends BaseTimeEntity {
 		return this.borrowerAgreement && this.lenderAgreement;
 	}
 
-	public void updateLoanInfo(Long iouAmount, Double interestRate, LocalDateTime contractEndDate) {
-		this.iouAmount = iouAmount;
-		this.interestRate = interestRate;
-		this.contractEndDate = contractEndDate;
-	}
-
-	public void updateContractStatus(ContractStatus newStatus) {
-		this.contractStatus = newStatus;
-	}
 
 	public void borrowerAgree() {
 		this.borrowerAgreement = true;
@@ -153,6 +145,13 @@ public class Iou extends BaseTimeEntity {
 			this.contractStatus = ContractStatus.ACTIVE;
 		}
 	}
+	public void updateFromRequest(IouCreateRequestDto requestDTO) {
+		this.iouAmount = requestDTO.getIouAmount();
+		this.interestRate = requestDTO.getInterestRate();
+		this.contractEndDate = requestDTO.getContractEndDate();
+		this.balance = BigDecimal.valueOf(FinancialCalculator.calculateTotalAmount(requestDTO.getIouAmount(), requestDTO.getInterestRate(), 12));
+	}
+
 
 	// ======== 가상계좌와의 연관관계 메서드 ======= //
 	public void linkVirtualAccount(VirtualAccount virtualAccount) {

@@ -1,6 +1,5 @@
 package com.ssafy.drcha.iou.repository;
 
-import com.ssafy.drcha.iou.enums.ContractStatus;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.ssafy.drcha.chat.entity.ChatRoom;
 import com.ssafy.drcha.iou.entity.Iou;
+import com.ssafy.drcha.iou.enums.ContractStatus;
 import com.ssafy.drcha.member.entity.Member;
 
 @Repository
@@ -25,4 +25,6 @@ public interface IouRepository extends JpaRepository<Iou, Long> {
 	List<Iou> findByDebtor(Member debtor);
 
 	List<Iou> findAllByContractStatus(ContractStatus contractStatus);
+
+	Optional<Iou> findByChatRoomAndContractStatus(ChatRoom chatRoom, ContractStatus contractStatus);
 }

@@ -1,5 +1,6 @@
 package com.ssafy.drcha.iou.entity;
 
+import com.ssafy.drcha.trust.entity.MemberTrust;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -171,8 +172,18 @@ public class Iou extends BaseTimeEntity {
 	public void updateBalance(BigDecimal depositAmount) {
 		this.balance = this.balance.subtract(depositAmount);
 		if (this.balance.compareTo(BigDecimal.ZERO) <= 0) {
-			this.contractStatus = ContractStatus.COMPLETED;
 			this.repaymentDate = LocalDateTime.now(); // ! 상환 시 날짜 기록
+
+			// 채무 완료 개수 증가
+			if(this.contractStatus == ContractStatus.ACTIVE){
+				this.debtor.getMemberTrust().completeDebtTrade();
+			}
+
+			if(this.contractStatus == ContractStatus.OVERDUE){
+				this.debtor.getMemberTrust().completeLateTrade();
+			}
+
+			this.contractStatus = ContractStatus.COMPLETED;
 		}
 	}
 

@@ -118,13 +118,13 @@ public class ChatController {
 			content = @Content(mediaType = "application/json",
 				schema = @Schema(implementation = ErrorResponse.class)))
 	})
-	@PatchMapping("/{invitationLink}")
+	@PatchMapping("/{chatRoomId}")
 	public ResponseEntity<ChatRoomEntryResponseDto> enterChatRoomViaInvitationLink(
 		@Parameter(description = "채팅방 링크", required = true)
-		@PathVariable String invitationLink,
+		@PathVariable Long chatRoomId,
 		@Parameter(description = "인증된 사용자 정보", hidden = true)
 		@AuthenticationPrincipal UserDetails userDetails) {
-		return ResponseEntity.ok(chatRoomService.enterChatRoomViaLink(invitationLink, userDetails));
+		return ResponseEntity.ok(chatRoomService.enterChatRoomViaLink(chatRoomId, userDetails));
 	}
 
 }

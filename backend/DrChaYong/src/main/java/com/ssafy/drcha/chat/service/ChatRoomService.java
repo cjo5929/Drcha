@@ -3,6 +3,7 @@ package com.ssafy.drcha.chat.service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +18,6 @@ import com.ssafy.drcha.chat.entity.ChatMessage;
 import com.ssafy.drcha.chat.entity.ChatRoom;
 import com.ssafy.drcha.chat.entity.ChatRoomMember;
 import com.ssafy.drcha.chat.enums.MemberRole;
-import com.ssafy.drcha.chat.factory.ChatMessageFactory;
 import com.ssafy.drcha.chat.repository.ChatRoomMemberRepository;
 import com.ssafy.drcha.chat.repository.ChatRoomRepository;
 import com.ssafy.drcha.global.error.ErrorCode;
@@ -70,6 +70,7 @@ public class ChatRoomService {
 
 		return chatRoomMembers.stream()
 			.map(this::createChatRoomListResponseDTO)
+			.filter(Objects::nonNull)
 			.collect(Collectors.toList());
 	}
 
@@ -79,42 +80,51 @@ public class ChatRoomService {
 		Member member = findMemberByEmail(email);
 		ChatRoomMember chatRoomMember = findChatRoomMember(chatRoom, member);
 
+		Member creditor = findCreditorMember(chatRoom);
+		Member debtor = findDebtorMember(chatRoom);
 		Member opponent = findOpponentMember(chatRoom, member);
+
+
 
 		updateLastReadMessage(chatRoomMember, chatMongoService.getLastMessages(chatRoomId.toString(), 1), chatRoomId);
 
-		return ChatRoomEntryResponseDto.from(chatRoom, chatRoomMember, opponent);
+		return ChatRoomEntryResponseDto.from(chatRoom, chatRoomMember, opponent, creditor, debtor);
 	}
 
+
 	@Transactional
-	public ChatRoomEntryResponseDto enterChatRoomViaLink(String invitationLink, UserDetails userDetails) {
-		ChatRoomEntryStatus entryStatus = processEntryRequest(invitationLink, userDetails.getUsername());
+	public ChatRoomEntryResponseDto enterChatRoomViaLink(Long chatRoomId, UserDetails userDetails) {
+		ChatRoomEntryStatus entryStatus = processEntryRequest(chatRoomId, userDetails.getUsername());
 
 		if (entryStatus.isNeedsRegistration()) {
-			throw new NeedsRegistrationException(ErrorCode.MEMBER_NOT_FOUND, invitationLink);
+			throw new NeedsRegistrationException(ErrorCode.MEMBER_NOT_FOUND);
 		}
 
 		if (entryStatus.isNeedsVerification()) {
-			throw new NeedsVerificationException(ErrorCode.MEMBER_FORBIDDEN_ERROR, invitationLink);
+			throw new NeedsVerificationException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
 		}
 
-		ChatRoom chatRoom = findChatRoomByInvitationLink(invitationLink);
+		ChatRoom chatRoom = findChatRoomByInvitationLink(chatRoomId);
 		Member debtor = findMemberByEmail(userDetails.getUsername());
 
 		ChatRoomMember chatRoomMember = addDebtorToChatRoom(chatRoom, debtor);
+		Member creditor = findCreditorMember(chatRoom);
+
 		Member opponent = findOpponentMember(chatRoom, debtor);
+
+
 
 		updateLastReadMessage(chatRoomMember, chatMongoService.getLastMessages(chatRoom.getChatRoomId().toString(), 1), chatRoom.getChatRoomId());
 
-		return ChatRoomEntryResponseDto.from(chatRoom, chatRoomMember, opponent);
+		return ChatRoomEntryResponseDto.from(chatRoom, chatRoomMember, opponent, creditor, debtor);
 	}
 
-	public ChatRoomEntryStatus processEntryRequest(String invitationLink, String email) {
+	public ChatRoomEntryStatus processEntryRequest(Long chatRoomId, String email) {
 		Member member = findMemberByEmail(email);
 
 		if (member == null) {
 			return ChatRoomEntryStatus.builder()
-				.invitationLink(invitationLink)
+				.chatRoomId(chatRoomId)
 				.needsRegistration(true)
 				.build();
 		}
@@ -122,7 +132,7 @@ public class ChatRoomService {
 		boolean isVerified = memberService.getVerificationStatusByEmail(email);
 
 		return ChatRoomEntryStatus.builder()
-			.invitationLink(invitationLink)
+			.chatRoomId(chatRoomId)
 			.needsVerification(!isVerified)
 			.build();
 	}
@@ -131,6 +141,24 @@ public class ChatRoomService {
 	/*
 	  호출용 메서드
 	 */
+
+	// 채권자 찾는 메소드
+	private Member findCreditorMember(ChatRoom chatRoom) {
+		return chatRoom.getChatRoomMembers().stream()
+			.filter(chatRoomMember -> chatRoomMember.getMemberRole() == MemberRole.CREDITOR)
+			.map(ChatRoomMember::getMember)
+			.findFirst()
+			.orElse(null);
+	}
+
+	// 채무자 찾는 메소드
+	private Member findDebtorMember(ChatRoom chatRoom) {
+		return chatRoom.getChatRoomMembers().stream()
+			.filter(chatRoomMember -> chatRoomMember.getMemberRole() == MemberRole.DEBTOR)
+			.map(ChatRoomMember::getMember)
+			.findFirst()
+			.orElse(null);
+	}
 
 	private Member findMemberByEmail(String email) {
 		return memberRepository.findByEmail(email)
@@ -142,8 +170,8 @@ public class ChatRoomService {
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CHAT_ROOM_NOT_FOUND));
 	}
 
-	private ChatRoom findChatRoomByInvitationLink(String invitationLink) {
-		return chatRoomRepository.findByInvitationLink(invitationLink)
+	private ChatRoom findChatRoomByInvitationLink(Long chatRoomId) {
+		return chatRoomRepository.findById(chatRoomId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CHAT_ROOM_NOT_FOUND));
 	}
 
@@ -152,20 +180,12 @@ public class ChatRoomService {
 		return ChatRoomMember.createMember(debtor, chatRoom, MemberRole.DEBTOR);
 	}
 
-	private ChatMessage createAndSaveEnterMessage(ChatRoom chatRoom, Member debtor) {
-		ChatMessage enterMessage = ChatMessageFactory.createEnterMessage(chatRoom.getChatRoomId().toString(), debtor);
-		chatMongoService.saveChatMessage(enterMessage);
-		chatRoom.updateLastMessage(enterMessage.getId(), enterMessage.getContent(), enterMessage.getCreatedAt());
-		return enterMessage;
-	}
-
 	private ChatRoomListResponseDto createChatRoomListResponseDTO(ChatRoomMember chatRoomMember) {
 		ChatRoom chatRoom = chatRoomMember.getChatRoom();
 		Member currentMember = chatRoomMember.getMember();
 		Member opponent = findOpponentMember(chatRoom, currentMember);
-		boolean isMember = true;
 		if(opponent == null) {
-			isMember = false;
+			return null;
 		}
 		Iou iou = iouRepository.findLatestByChatRoomId(chatRoom).orElse(null);
 
@@ -179,7 +199,6 @@ public class ChatRoomService {
 			chatRoom,
 			opponent,
 			contractStatus,
-			isMember,
 			iouAmount,
 			daysUntilDue,
 			memberTrustInfoResponse,
@@ -211,6 +230,7 @@ public class ChatRoomService {
 	}
 
 	private ChatRoomMember findChatRoomMember(ChatRoom chatRoom, Member member) {
+		log.info(chatRoom.getChatRoomId() + "  " + member.getUsername());
 		return chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member)
 			.orElseThrow(() -> new BusinessException(ErrorCode.CHAT_USER_NOT_IN_ROOM));
 	}

@@ -4,6 +4,7 @@ import com.ssafy.drcha.global.api.dto.DepositResponse;
 import com.ssafy.drcha.global.api.dto.TransferResponse;
 import com.ssafy.drcha.global.api.dto.WithdrawResponse;
 import com.ssafy.drcha.transaction.dto.DepositRequestDto;
+import com.ssafy.drcha.transaction.dto.IouTransactionHistoryResponse;
 import com.ssafy.drcha.transaction.dto.TransactionHistoryResponseDto;
 import com.ssafy.drcha.transaction.dto.TransferRequestDto;
 import com.ssafy.drcha.transaction.dto.VirtualAccountResponse;
@@ -112,7 +113,7 @@ public class TransactionController {
     }
 
 
-    @Operation(summary = "채무 상환", description = "채무자가 차용증의 가상계좌로 계좌이체를 진행합니다.")
+    @Operation(summary = "채무 상환(채무자 -> 차용증의 가상계좌로의 계좌이체 진행", description = "채무자가 차용증의 가상계좌로 계좌이체를 진행합니다.")
     @ApiResponse(responseCode = "200", description = "이체 성공",
                  content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = TransferResponse.class)))
@@ -132,11 +133,12 @@ public class TransactionController {
                  content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = TransactionHistoryResponseDto.class)))
     @GetMapping("/history/deposit/{iouId}")
-    public ResponseEntity<List<TransactionHistoryResponseDto>> getDepositTransactionHistory(
+    public ResponseEntity<IouTransactionHistoryResponse> getDepositTransactionHistory(
             @PathVariable("iouId") Long iouId) {
         log.info("차용증 입금 거래 내역 조회 요청 - 차용증 ID: {}", iouId);
-        List<TransactionHistoryResponseDto> history = transactionService.getDepositTransactionHistory(iouId);
-        return ResponseEntity.ok(history);
+        IouTransactionHistoryResponse history = transactionService.getDepositTransactionHistory(
+                iouId);
+        return new ResponseEntity<>(history, HttpStatus.OK);
     }
 
 

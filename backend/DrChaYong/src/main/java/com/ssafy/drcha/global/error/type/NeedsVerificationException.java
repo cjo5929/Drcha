@@ -6,21 +6,17 @@ import lombok.Getter;
 
 @Getter
 public class NeedsVerificationException extends BusinessException {
-	private final String invitationLink;
 
-	public NeedsVerificationException(ErrorCode errorCode, String invitationLink) {
+	public NeedsVerificationException(ErrorCode errorCode) {
 		super(errorCode);
-		this.invitationLink = invitationLink;
 	}
 
-	public NeedsVerificationException(ErrorCode errorCode, String message, String invitationLink) {
+	public NeedsVerificationException(ErrorCode errorCode, String message) {
 		super(errorCode, message);
-		this.invitationLink = invitationLink;
 	}
 
-	public NeedsVerificationException(ErrorCode errorCode, String message, Throwable cause, String invitationLink) {
+	public NeedsVerificationException(ErrorCode errorCode, String message, Throwable cause) {
 		super(errorCode, message, cause);
-		this.invitationLink = invitationLink;
 	}
 
 }

@@ -14,10 +14,12 @@ import com.ssafy.drcha.global.error.type.IouNotFoundException;
 import com.ssafy.drcha.global.error.type.UserNotFoundException;
 import com.ssafy.drcha.global.error.type.VirtualAccountException;
 import com.ssafy.drcha.iou.entity.Iou;
+import com.ssafy.drcha.iou.enums.ContractStatus;
 import com.ssafy.drcha.iou.repository.IouRepository;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.repository.MemberRepository;
 import com.ssafy.drcha.transaction.dto.DepositRequestDto;
+import com.ssafy.drcha.transaction.dto.IouTransactionHistoryResponse;
 import com.ssafy.drcha.transaction.dto.TransactionHistoryResponseDto;
 import com.ssafy.drcha.transaction.dto.TransferRequestDto;
 import com.ssafy.drcha.transaction.dto.WithdrawRequestDto;
@@ -25,14 +27,19 @@ import com.ssafy.drcha.transaction.entity.TransactionHistory;
 import com.ssafy.drcha.transaction.entity.TransactionType;
 import com.ssafy.drcha.transaction.entity.VirtualAccount;
 import com.ssafy.drcha.transaction.entity.VirtualAccountStatus;
+import com.ssafy.drcha.transaction.event.NewDepositEvent;
 import com.ssafy.drcha.transaction.repository.TransactionHistoryRepository;
 import com.ssafy.drcha.transaction.repository.VirtualAccountRepository;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -51,6 +58,7 @@ public class TransactionService {
     private final MemberRepository memberRepository;
     private final AccountRepository accountRepository;
     private final TransactionHistoryRepository transactionHistoryRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * TODO : 무통장 계좌(가상계좌) 생성
@@ -265,9 +273,9 @@ public class TransactionService {
             throw new AccountNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND);
         }
 
-        log.info("============ 차용증 : {}==============", iou.getIouId());
+        log.info("============ 차용증 : {}, 채무자 계좌 -> 차용증 거래금액 : {}==============", iou.getIouId(), amount);
         log.info("============ 차용증에 대한 가상계좌 : {}", virtualAccount.getAccountNumber());
-        log.info("============ 채무자 계좌 : {}, 채무자 ID : {}, 채무자 이름 : {}, 채권자 ID : {}, 채권자 이름 : {}", debtorAccount.getAccountNumber(), debtorAccount.getMember().getId(), debtorAccount.getMember().getUsername(), iou.getCreditor().getId(), iou.getCreditor().getUsername());
+        log.info("============ 채무자 계좌 : {}, 채무자 ID : {}, 채무자 이름 : {}, 채권자 ID : {}, 채권자 이름 : {}, 채무자 이름 : {}", debtorAccount.getAccountNumber(), debtorAccount.getMember().getId(), debtorAccount.getMember().getUsername(), iou.getCreditor().getId(), iou.getCreditor().getUsername(), iou.getDebtor().getUsername());
         // ! 채무자의 계좌에서 이체 가능 여부 확인
         if (debtorAccount.getBalance().compareTo(amount) < 0) {
             throw new InsufficientBalanceException(ErrorCode.INSUFFICIENT_BALANCE);
@@ -294,15 +302,26 @@ public class TransactionService {
 
         // ! 이체 성공 시 채무자 계좌와 가상계좌 잔액 업데이트
         if ("H0000".equals(response.getHeaderResponse().getResponseCode())) {
-            // 채무자 계좌 잔액 감소
+            // ! 채무자 계좌 잔액 감소
             BigDecimal newDebtorAccountBalance = debtorAccount.getBalance().subtract(amount);
             debtorAccount.changeBalance(newDebtorAccountBalance);
             accountRepository.save(debtorAccount);
 
-            // ! 가상계좌 잔액 증가
+            // ! 차용증에 대한 가상계좌 잔액 증가
             BigDecimal newVirtualAccountBalance = virtualAccount.getBalance().add(amount);
             virtualAccount.setBalance(newVirtualAccountBalance);
             virtualAccountRepository.save(virtualAccount);
+
+            // ! 차용증 잔액 갱신
+            iou.updateBalance(amount); // ! 만약 잔액 0이하 -> 여기서 COMPLETED로 처리
+            iouRepository.save(iou);
+
+            // ! 거래 내역 저장
+            saveTransactionHistory(iou, response, amount);
+
+            // ! 이벤트 발행
+            publishNewDepositEvent(iou, amount);
+
         } else {
             log.error("이체 실패: {}", response.getHeaderResponse().getResponseMessage());
             throw new RuntimeException("이체 실패: " + response.getHeaderResponse().getResponseMessage());
@@ -310,6 +329,51 @@ public class TransactionService {
 
         log.info("채무 상환을 위한 이체 완료: 차용증 ID {}", iouId);
         return response;
+    }
+
+    private void saveTransactionHistory(Iou iou, TransferResponse response, BigDecimal amount) {
+        BigDecimal balanceBeforeTransaction = iou.getBalance().add(amount); // 입금 전 잔액
+        BigDecimal balanceAfterTransaction = iou.getBalance(); // 입금 후 잔액
+
+        TransferResponse.TransactionRecord transactionRecord = response.getRec().get(0); // 첫 번째 거래 기록 사용(출금 -> 채무자의 계좌에서 출금이니까)
+
+        TransactionHistory history = TransactionHistory.builder()
+                .iou(iou)
+                .transactionUniqueNo(transactionRecord.getTransactionUniqueNo())
+                .amount(amount)
+                .transactionType(TransactionType.DEPOSIT)
+                .transactionDate(parseTransactionDate(transactionRecord.getTransactionDate()))
+                .creditorName(iou.getCreditor().getUsername())
+                .debtorName(iou.getDebtor().getUsername())
+                .description("채무 상환")
+                .balanceBeforeTransaction(balanceBeforeTransaction)
+                .balanceAfterTransaction(balanceAfterTransaction)
+                .build();
+
+        transactionHistoryRepository.save(history);
+        iou.addTransactionHistory(history);
+
+        log.info("거래 내역 저장 완료 - 거래 고유번호: {}, 금액: {}, 거래 후 잔액: {}",
+                transactionRecord.getTransactionUniqueNo(), amount, balanceAfterTransaction);
+
+        if (iou.getContractStatus() == ContractStatus.COMPLETED) {
+            log.info("차용증 ID: {}가 완전히 상환되었습니다. 상환 날짜 : {}", iou.getIouId(), iou.getRepaymentDate());
+            // ! 채무자, 채권자에게 알림 보낼 것인지 ?
+        }
+    }
+
+    private LocalDateTime parseTransactionDate(String transactionDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        return LocalDate.parse(transactionDate, formatter).atStartOfDay();
+    }
+
+    private void publishNewDepositEvent(Iou iou, BigDecimal amount) {
+        NewDepositEvent event = NewDepositEvent.builder()
+                .iou(iou)
+                .amount(amount)
+                .build();
+        eventPublisher.publishEvent(event);
+//        log.info("새 입금 이벤트 발행 - 차용증 ID: {}, 금액: {}", iou.getIouId(), amount);
     }
 
     /**
@@ -375,21 +439,17 @@ public class TransactionService {
      * @param iouId 차용증 ID
      * @return 입금 거래내역 리스트
      */
-    public List<TransactionHistoryResponseDto> getDepositTransactionHistory(Long iouId) {
+    public IouTransactionHistoryResponse getDepositTransactionHistory(Long iouId) {
         log.info("차용증 입금 거래 내역 조회 - 차용증 ID: {}", iouId);
 
-        if (!iouRepository.existsById(iouId)) {
-            throw new IouNotFoundException(ErrorCode.IOU_NOT_FOUND);
-        }
+        Iou iou = iouRepository.findById(iouId)
+                               .orElseThrow(() -> new IouNotFoundException(ErrorCode.IOU_NOT_FOUND));
 
         List<TransactionHistory> transactionHistories = transactionHistoryRepository
                 .findDepositTransactionsByIouId(iouId, TransactionType.DEPOSIT);
 
         log.info("조회된 입금 거래 내역 수: {}", transactionHistories.size());
-
-        return transactionHistories.stream()
-                                   .map(TransactionHistoryResponseDto::from)
-                                   .collect(Collectors.toList());
+        return IouTransactionHistoryResponse.from(iou, transactionHistories);
     }
 
     private Member getMemberByEmail(String email) {

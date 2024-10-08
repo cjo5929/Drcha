@@ -1,11 +1,27 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { ModalProps } from '@/types/ModalProps';
+import { ManualModalProps } from '@/types/ModalProps';
 
 import styles from './Modal.module.scss';
+import { Button } from '../Button/Button';
 
-export function CorrectionIouModal({ isOpen, onClose }: ModalProps) {
+interface IouFormData {
+  contractEndDate: string;
+  iouAmount: number;
+  interestRate: number;
+}
+
+export function CorrectionIouModal({
+  isOpen,
+  onClose,
+  createManualIou,
+}: ManualModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
+  const [formData, setFormData] = useState<IouFormData>({
+    contractEndDate: '',
+    iouAmount: 0,
+    interestRate: 0,
+  });
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -26,57 +42,51 @@ export function CorrectionIouModal({ isOpen, onClose }: ModalProps) {
     };
   }, [isOpen, onClose]);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === 'contractEndDate' ? value : Number(value),
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    createManualIou(
+      formData.iouAmount,
+      formData.interestRate,
+      formData.contractEndDate,
+    );
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent} ref={modalRef}>
-        <h2 className={styles.modalTitle}>차용증 수정</h2>
-        <form className={styles.iouForm}>
+        <h2 className={styles.modalTitle}>차용증 작성</h2>
+        <form className={styles.iouForm} onSubmit={handleSubmit}>
           <div className={styles.iouDetails}>
-            <label>
-              차용자:
-              <input
-                type="text"
-                name="borrower"
-                // value={iouDetails.borrower}
-                // onChange={handleChange}
-              />
-            </label>
-            <label>
-              대여자:
-              <input
-                type="text"
-                name="lender"
-                // value={iouDetails.lender}
-                // onChange={handleChange}
-              />
-            </label>
-            <label>
-              차용일자:
-              <input
-                type="date"
-                name="borrowDate"
-                // value={iouDetails.borrowDate}
-                // onChange={handleChange}
-              />
-            </label>
             <label>
               변제일자:
               <input
                 type="date"
-                name="repaymentDate"
-                // value={iouDetails.repaymentDate}
-                // onChange={handleChange}
+                name="contractEndDate"
+                value={formData.contractEndDate}
+                onChange={handleChange}
+                required
               />
             </label>
             <label>
               원금:
               <input
                 type="number"
-                name="principal"
-                // value={iouDetails.principal}
-                // onChange={handleChange}
+                name="iouAmount"
+                value={formData.iouAmount}
+                onChange={handleChange}
+                required
+                min="0"
               />
             </label>
             <label>
@@ -84,23 +94,26 @@ export function CorrectionIouModal({ isOpen, onClose }: ModalProps) {
               <input
                 type="number"
                 name="interestRate"
-                // value={iouDetails.interestRate}
-                // onChange={handleChange}
+                value={formData.interestRate}
+                onChange={handleChange}
+                required
+                min="0"
                 step="0.1"
               />
             </label>
           </div>
           <div className={styles.buttonContainer}>
-            <button type="submit" className={styles.editButton}>
-              수정 요청 보내기
-            </button>
-            <button
-              type="button"
-              className={styles.cancelButton}
+            <Button color="lightblue" size="small" type="submit">
+              작성
+            </Button>
+            <Button
+              color="lightred"
+              size="small"
               onClick={onClose}
+              type="button"
             >
               취소
-            </button>
+            </Button>
           </div>
         </form>
       </div>

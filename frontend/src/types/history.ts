@@ -1,14 +1,20 @@
-export type TransactionDetailHistory = {
-  transactionId: number;
+export type Transaction = {
   amount: number;
-  balanceBeforeTransaction: number;
   balanceAfterTransaction: number;
+  balanceBeforeTransaction: number;
+  description: string;
   transactionDate: string;
+  transactionId: number;
+  transactionType: string;
   transactionUniqueNo: number;
+};
+
+export type TransactionDetailHistory = {
   creditorName: string;
   debtorName: string;
-  description: string;
-  transactionType: string;
+  repaymentDate: string;
+  transactionStartDate: string;
+  transactions: Transaction[];
 };
 
 export type TransactionHistory = {

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -267,5 +268,39 @@ public class IouService {
 
 	public void save(Iou iou) {
 		iouRepository.save(iou);
+	}
+
+	//========== 상태 처리 ============//
+	// TODO: 현재 시간 기준으로 차용증 기간이 지나면 상태 변경 ACTIVE -> OVERDUE
+	@Transactional
+	public void updateOverdueStatus() {
+		log.info("==================== 차용증 계약 상태 업데이트 시작 ====================");
+		LocalDateTime now = LocalDateTime.now();
+		List<Iou> activeIous = iouRepository.findAllByContractStatus(ContractStatus.ACTIVE);
+
+		for (Iou iou : activeIous) {
+			if (now.isAfter(iou.getContractEndDate())) {
+				// 차용증 상태 업데이트
+				iou.updateContractStatus(ContractStatus.OVERDUE);
+				log.info("IOU with ID {} ==> 상태 OVERDUE 로 변경", iou.getIouId());
+
+				// 신뢰도 업데이트
+				iou.getDebtor().getMemberTrust().convertDebtTradeToLateTrade();
+				log.info("{} 신뢰도 업데이트: 채무개수 {}, 연체 개수 {}, 완료 개수 {}",
+						iou.getDebtor().getUsername(),
+						iou.getDebtor().getMemberTrust().getCurrentDebtTrades(),
+						iou.getDebtor().getMemberTrust().getCurrentLateTrades(),
+						iou.getDebtor().getMemberTrust().getCompletedTrades());
+
+				iouRepository.save(iou);
+			}
+		}
+		log.info("==================== 차용증 계약 상태 업데이트 완료 ====================");
+	}
+
+	@Scheduled(cron = "0 * * * * ?")
+	@Transactional
+	public void scheduledOverdueCheck() {
+		updateOverdueStatus();
 	}
 }

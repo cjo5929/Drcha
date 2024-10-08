@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react';
 
-import { TransactionDetailHistory } from '@/types/history';
+import { Transaction, TransactionDetailHistory } from '@/types/history';
 
 import styles from './Histories.module.scss';
 
 export function HistoriesDetail({
   curhistory,
 }: {
-  curhistory: TransactionDetailHistory[] | undefined;
+  curhistory: TransactionDetailHistory | undefined;
 }) {
-  const [events, setEvents] = useState<TransactionDetailHistory[]>([]);
+  const [events, setEvents] = useState<Transaction[]>([]);
   useEffect(() => {
-    if (!curhistory || curhistory.length === 0) {
+    if (!curhistory || curhistory.transactions.length === 0) {
       throw new Error('no history');
     }
-    setEvents(curhistory);
+    setEvents(curhistory.transactions);
   }, [curhistory]);
   const addKSTOffset = (date: Date): Date =>
     new Date(date.getTime() + 9 * 60 * 60 * 1000);

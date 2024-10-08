@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Navbar } from '@/components/Navbar/Navbar';
@@ -17,46 +17,44 @@ import { TransactionTitle } from './TransactionTitle';
 export function TransactionDetail() {
   const { type, iouId } = useParams<{ type: string; iouId: string }>();
   const [curData, setCurData] = useState<IouDetailData | null>(null);
-  const [curHistory, setCurHistory] = useState<Array<TransactionDetailHistory>>(
-    [],
-  );
+  const [curHistory, setCurHistory] = useState<TransactionDetailHistory>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [types, setTypes] = useState<string>(' ');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        if (!iouId) {
-          throw new Error('IOU ID is missing');
-        }
-        let data: IouDetailData;
-        let historydata: Array<TransactionDetailHistory> = [];
-        if (type === 'lend') {
-          setTypes('lend');
-          data = await iou.getLendingDetail(iouId);
-        } else if (type === 'borrow') {
-          setTypes('borrow');
-          data = await iou.getBorrowingDetail(iouId);
-        } else {
-          throw new Error('Invalid transaction type');
-        }
-        historydata = await transaction.getDetailHistories(iouId);
-        setCurData(data);
-        setCurHistory(historydata);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : 'An unknown error occurred',
-        );
-      } finally {
-        setIsLoading(false);
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      if (!iouId) {
+        throw new Error('IOU ID is missing');
       }
-    };
-
-    fetchData();
+      let data: IouDetailData;
+      const historydata: TransactionDetailHistory =
+        await transaction.getDetailHistories(iouId);
+      if (type === 'lend') {
+        setTypes('lend');
+        data = await iou.getLendingDetail(iouId);
+      } else if (type === 'borrow') {
+        setTypes('borrow');
+        data = await iou.getBorrowingDetail(iouId);
+      } else {
+        throw new Error('Invalid transaction type');
+      }
+      setCurData(data);
+      setCurHistory(historydata);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'An unknown error occurred',
+      );
+    } finally {
+      setIsLoading(false);
+    }
   }, [type, iouId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -75,11 +73,13 @@ export function TransactionDetail() {
       <Header />
       <TransactionTitle types={types} curiou={curData} />
       {types === 'lend' && <TransactionAlarm />}
-      <TransactionHistories
-        types={types}
-        curiou={curData}
-        curhistory={curHistory}
-      />
+      {curHistory && (
+        <TransactionHistories
+          types={types}
+          curiou={curData}
+          curhistory={curHistory}
+        />
+      )}
       <TransactionGraph types={types} curiou={curData} />
       <Navbar />
     </div>

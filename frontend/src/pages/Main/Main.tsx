@@ -50,7 +50,7 @@ export function Main() {
 
   useEffect(() => {
     setVisibleChatList(chatList);
-  }, [chatList]);
+  }, [chatList, isError]);
 
   useEffect(() => {
     setActiveChat(
@@ -112,31 +112,34 @@ export function Main() {
           ref={searchInputRef}
         />
       </div>
-      {!isError && isLoading ? (
-        <Loading size={100} />
-      ) : (
-        <div className={styles.mainContent}>
-          <ChattingList
-            name="거래 중"
-            chattings={activeChat}
-            status={showActive}
-            setStatus={setShowActive}
-          />
-          <ChattingList
-            name="연체"
-            chattings={overdueChat}
-            status={showOverdue}
-            setStatus={setShowOverdue}
-          />
-          <ChattingList
-            name="거래 완료"
-            chattings={completedChat}
-            status={showCompleted}
-            setStatus={setShowCompleted}
-          />
-        </div>
+      {!isError &&
+        (isLoading ? (
+          <Loading size={100} />
+        ) : (
+          <div className={styles.mainContent}>
+            <ChattingList
+              name="거래 중"
+              chattings={activeChat}
+              status={showActive}
+              setStatus={setShowActive}
+            />
+            <ChattingList
+              name="연체"
+              chattings={overdueChat}
+              status={showOverdue}
+              setStatus={setShowOverdue}
+            />
+            <ChattingList
+              name="거래 완료"
+              chattings={completedChat}
+              status={showCompleted}
+              setStatus={setShowCompleted}
+            />
+          </div>
+        ))}
+      {isError && (
+        <div className={styles.error}>채팅 목록을 불러올 수 없습니다</div>
       )}
-      {isError && <div>채팅 목록을 불러올 수 없습니다</div>}
       <Navbar />
     </div>
   );

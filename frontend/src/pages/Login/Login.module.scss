@@ -34,7 +34,7 @@
       position: absolute;
       top: 100%;
       left: 100%;
-      transform: rotate(-37.525deg);
+      transform: rotate(40deg);
       z-index: -1;
       animation: stamp1 2s step-end;
     }
@@ -52,27 +52,27 @@
       position: absolute;
       top: 100%;
       left: 100%;
-      width: 28rem;
-      transform: translate(-9.5rem, -12rem) rotate(-2deg);
+      width: 22rem;
+      transform: translate(-6.5rem, -17rem) rotate(-2deg);
       animation: stamp2 2s 1 ease-in-out;
       opacity: 0;
     }
 
     @keyframes stamp2 {
       0% {
-        transform: translate(-9.5rem, -200rem);
+        transform: translate(-6.5rem, -200rem);
         opacity: 1;
       }
       40% {
-        transform: translate(-9.5rem, -12rem);
+        transform: translate(-6.5rem, -17rem);
         opacity: 1;
       }
       60% {
-        transform: translate(-9.5rem, -12rem);
+        transform: translate(-6.5rem, -17rem);
         opacity: 1;
       }
       100% {
-        transform: translate(-9.5rem, -200rem);
+        transform: translate(-6.5rem, -200rem);
         opacity: 1;
       }
     }

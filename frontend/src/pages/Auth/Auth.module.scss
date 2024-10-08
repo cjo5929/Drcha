@@ -35,6 +35,12 @@
   }
 }
 
+.invalid {
+  &:focus {
+    border-bottom: 2px solid $red;
+  }
+}
+
 .accountAuthContent {
   height: calc(100% - 7.6rem);
   display: flex;
@@ -56,4 +62,9 @@
   justify-content: center;
   align-items: center;
   gap: 3rem;
+}
+
+.alert {
+  font-size: 1.2rem;
+  color: $red;
 }

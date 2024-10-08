@@ -1,20 +1,22 @@
 import { useEffect, useRef } from 'react';
 
-import { ModalProps } from '@/types/ModalProps';
+import DOCTOR_IMAGE from '@/assets/images/dr,chayongV1.png';
+import { CreateModalProps } from '@/types/ModalProps';
 
 import styles from './Modal.module.scss';
+import { Button } from '../Button/Button';
 
-// 아래 내용을 가져다쓸것
-// const [isModalOpen, setIsModalOpen] = useState(false);
-
-// <button onClick={() => setIsModalOpen(true)}>모달 열기</button>
-
-// <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="채팅 정보">
-//   <p>이곳에 채팅 관련 정보나 설정을 표시할 수 있습니다.</p>
-// </Modal>
-
-export function CreateIouModal({ isOpen, onClose }: ModalProps) {
+export function CreateIouModal({
+  isOpen,
+  onClose,
+  createIou,
+}: CreateModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
+
+  const handleCreate = () => {
+    createIou();
+    onClose();
+  };
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -40,7 +42,22 @@ export function CreateIouModal({ isOpen, onClose }: ModalProps) {
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent} ref={modalRef}>
-        작성중...
+        <div className={styles.doctorprofile}>
+          <img
+            src={DOCTOR_IMAGE}
+            alt="doctor"
+            className={styles.doctorprofileimg}
+          />
+        </div>
+        <div className={styles.modalTitle}>차용박사가 차용증을 작성합니다.</div>
+        <div className={styles.modalBtns}>
+          <Button color="lightblue" size="small" onClick={handleCreate}>
+            네
+          </Button>
+          <Button color="lightred" size="small" onClick={onClose}>
+            아니오
+          </Button>
+        </div>
       </div>
     </div>
   );

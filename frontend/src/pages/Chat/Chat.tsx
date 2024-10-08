@@ -10,6 +10,8 @@ import { CreateIouModal } from '@/components/Modal/CreateIouModal';
 import { useChatWebSocket } from '@/hooks/useChatWebsocket';
 import { useUserState } from '@/hooks/useUserState';
 import { chat } from '@/services/chat';
+import { iou } from '@/services/iou';
+import { IouDatainChatroom, ManualIouData } from '@/types/iou';
 
 import styles from './Chat.module.scss';
 import { ChatContent } from './ChatContent';
@@ -31,6 +33,18 @@ export function Chat() {
   const { messages, sendMessage } = useChatWebSocket(chatRoomId!);
   const [opponentName, setOpponentName] = useState('');
   const [isError, setIsError] = useState(false);
+  const [curIou, setCurIou] = useState<IouDatainChatroom[]>([]);
+  const [activeIou, setActiveIou] = useState<IouDatainChatroom | null>(null);
+
+  useEffect(() => {
+    if (curIou && curIou.length > 0) {
+      const foundIou = curIou.find(
+        (Iou) => ['DRAFTING', 'ACTIVE', 'OVERDUE'].includes(Iou.contractStatus),
+        // eslint-disable-next-line function-paren-newline
+      );
+      setActiveIou(foundIou || null);
+    }
+  }, [curIou]);
 
   const handleOpenModal = (type: 'create' | 'correction' | 'check') => {
     setModalType(type);
@@ -62,6 +76,26 @@ export function Chat() {
     }
   };
 
+  const createIou = useCallback(async () => {
+    if (chatRoomId) {
+      await iou.createIou(chatRoomId);
+    }
+  }, [chatRoomId]);
+
+  const getIou = useCallback(async () => {
+    if (chatRoomId) {
+      try {
+        setIsLoading(true);
+        const data = await iou.getIou(chatRoomId);
+        setCurIou(data);
+      } catch {
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }, [chatRoomId]);
+
   const getChatRoomInfo = useCallback(async () => {
     if (chatRoomId) {
       try {
@@ -76,14 +110,34 @@ export function Chat() {
     }
   }, [chatRoomId]);
 
+  const createManualIou = useCallback(
+    async (
+      iouAmount: number,
+      interestRate: number,
+      contractEndDate: string,
+    ) => {
+      if (chatRoomId) {
+        const data: ManualIouData = {
+          chatRoomId,
+          iouAmount,
+          interestRate,
+          contractEndDate,
+        };
+        await iou.createManualIou(data);
+      }
+    },
+    [chatRoomId],
+  );
+
   useEffect(() => {
     if (!userInfo) {
       setIsLoading(true);
     } else {
       setIsLoading(false);
       getChatRoomInfo();
+      getIou();
     }
-  }, [userInfo, getChatRoomInfo]);
+  }, [userInfo, getChatRoomInfo, getIou]);
 
   useEffect(() => {
     // 햄버거 메뉴판 바깥 클릭 방지
@@ -132,7 +186,6 @@ export function Chat() {
           ref={textAreaRef}
           className={styles.inputField}
           placeholder="메세지를 입력하세요."
-          // value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           rows={1}
@@ -149,6 +202,7 @@ export function Chat() {
           isOpen={isMenuOpen}
           onClose={() => setIsMenuOpen(false)}
           onOpenModal={handleOpenModal}
+          curIou={curIou}
         />
       </div>
 
@@ -157,12 +211,14 @@ export function Chat() {
         <CreateIouModal
           isOpen={modalType === 'create'}
           onClose={handleCloseModal}
+          createIou={createIou}
         />
       )}
       {modalType === 'correction' && (
         <CorrectionIouModal
           isOpen={modalType === 'correction'}
           onClose={handleCloseModal}
+          createManualIou={createManualIou}
         />
       )}
 
@@ -170,6 +226,7 @@ export function Chat() {
         <CheckIouModal
           isOpen={modalType === 'check'}
           onClose={handleCloseModal}
+          activeIou={activeIou}
         />
       )}
     </div>

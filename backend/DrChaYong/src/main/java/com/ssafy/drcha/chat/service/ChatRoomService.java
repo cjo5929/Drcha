@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -187,7 +188,9 @@ public class ChatRoomService {
 		if(opponent == null) {
 			return null;
 		}
-		Iou iou = iouRepository.findLatestByChatRoomId(chatRoom).orElse(null);
+		Optional<Iou> latestIou = iouRepository.findLatestByChatRoomId(chatRoom);
+
+		Iou iou = latestIou.orElse(null);
 
 		String contractStatus = getContractStatus(iou);
 		Double iouAmount = getIouAmount(iou);

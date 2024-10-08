@@ -282,7 +282,6 @@ public class IouService {
 			if (now.isAfter(iou.getContractEndDate())) {
 				// 차용증 상태 업데이트
 				iou.updateContractStatus(ContractStatus.OVERDUE);
-				iouRepository.save(iou);
 				log.info("IOU with ID {} ==> 상태 OVERDUE 로 변경", iou.getIouId());
 
 				// 신뢰도 업데이트
@@ -292,6 +291,8 @@ public class IouService {
 						iou.getDebtor().getMemberTrust().getCurrentDebtTrades(),
 						iou.getDebtor().getMemberTrust().getCurrentLateTrades(),
 						iou.getDebtor().getMemberTrust().getCompletedTrades());
+
+				iouRepository.save(iou);
 			}
 		}
 		log.info("==================== 차용증 계약 상태 업데이트 완료 ====================");

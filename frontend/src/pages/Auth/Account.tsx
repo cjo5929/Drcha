@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useUserState } from '@/hooks/useUserState';
@@ -6,6 +6,8 @@ import { useUserState } from '@/hooks/useUserState';
 import styles from './Auth.module.scss';
 
 export function Account() {
+  const queryParams = new URLSearchParams(window.location.search);
+  const chatRoomId = queryParams.get('chatRoomId');
   const navigate = useNavigate();
   const { userInfo } = useUserState();
 
@@ -16,12 +18,19 @@ export function Account() {
     if (userInfo.verified) {
       navigate('/', { replace: true });
     }
-  }, [navigate, userInfo]);
+  }, [navigate, userInfo, chatRoomId]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    navigate('/auth/account-send');
-  };
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (chatRoomId) {
+        navigate(`/auth/account-send?chatRoomId=${chatRoomId}`);
+        return;
+      }
+      navigate('/auth/account-send');
+    },
+    [navigate, chatRoomId],
+  );
 
   return (
     <div className={styles.content}>

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { Toast } from '@/components/Toast/Toast';
 import { useUserState } from '@/hooks/useUserState';
@@ -8,6 +8,7 @@ import { account } from '@/services/account';
 import styles from './Auth.module.scss';
 
 export function Number() {
+  const { chatRoomId } = useParams();
   const navigate = useNavigate();
   const { state } = useLocation();
   const { userInfo } = useUserState();
@@ -42,15 +43,21 @@ export function Number() {
     }
   }, [state]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (verificationCode) {
-      const isCheck = await account.checkVerificationCode(verificationCode);
-      if (isCheck) {
-        navigate('/auth/phone-number');
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (verificationCode) {
+        const isCheck = await account.checkVerificationCode(verificationCode);
+        if (isCheck) {
+          if (chatRoomId) {
+            navigate(`/auth/phone-number?chatRoomId=${chatRoomId}`);
+          }
+          navigate('/auth/phone-number');
+        }
       }
-    }
-  };
+    },
+    [navigate, chatRoomId, verificationCode],
+  );
 
   return (
     <div className={styles.content}>

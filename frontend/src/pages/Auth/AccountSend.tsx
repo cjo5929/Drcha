@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import COIN_GIF from '@/assets/images/coin.gif';
 import { Button } from '@/components/Button/Button';
@@ -10,6 +10,7 @@ import { VerificationCode } from '@/types/Account';
 import styles from './Auth.module.scss';
 
 export function AccountSend() {
+  const { chatRoomId } = useParams();
   const navigate = useNavigate();
   const { userInfo } = useUserState();
 
@@ -22,13 +23,19 @@ export function AccountSend() {
     }
   }, [navigate, userInfo]);
 
-  const handleClick = async () => {
+  const handleClick = useCallback(async () => {
     const verificationCode: VerificationCode =
       await account.sendVerificationCode();
+    if (chatRoomId) {
+      navigate(`/auth/number?chatRoomId=${chatRoomId}`, {
+        state: { verificationCode },
+      });
+      return;
+    }
     navigate('/auth/number', {
       state: { verificationCode },
     });
-  };
+  }, [navigate, chatRoomId]);
 
   return (
     <div className={`${styles.content} ${styles.accountAuthContent}`}>

@@ -1,30 +1,40 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useUserState } from '@/hooks/useUserState';
 import { member } from '@/services/member';
-import { PhoneNumber, Info } from '@/types/Member';
+import { PhoneNumber } from '@/types/Member';
 
 import styles from './Auth.module.scss';
 
 export function PhoneNumberPage() {
+  const { chatRoomId } = useParams();
   const navigate = useNavigate();
-  const { userInfo } = useUserState() as { userInfo: Info };
+  const { userInfo } = useUserState();
   const [phoneNumber, setPhoneNumber] = useState<PhoneNumber>({
     phoneNumber: '',
   });
 
   useEffect(() => {
+    if (!userInfo) {
+      return;
+    }
     if (userInfo.verified) {
       navigate('/', { replace: true });
     }
   }, [navigate, userInfo]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    await member.registPhoneNumber(phoneNumber);
-    navigate('/auth/complete');
-  };
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      await member.registPhoneNumber(phoneNumber);
+      if (chatRoomId) {
+        navigate(`/auth/complete?chatRoomId=${chatRoomId}`);
+      }
+      navigate('/auth/complete');
+    },
+    [chatRoomId, navigate, phoneNumber],
+  );
 
   const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhoneNumber({ phoneNumber: e.target.value });

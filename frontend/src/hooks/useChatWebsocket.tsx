@@ -5,7 +5,7 @@ import { Client, Message } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
 import { baseURL } from '@/services/api';
-import { ChatMessage } from '@/types/ChatMessage';
+import { ChatMessage, SendChatMessage } from '@/types/ChatMessage';
 
 export function useChatWebSocket(chatRoomId: string): {
   messages: ChatMessage[];
@@ -40,7 +40,7 @@ export function useChatWebSocket(chatRoomId: string): {
   const sendMessage = useCallback(
     (contents: string, senderId: number) => {
       if (stompClient && stompClient.active) {
-        const chatMessage: ChatMessage = {
+        const chatMessage: SendChatMessage = {
           chatRoomId,
           senderId,
           content: contents,

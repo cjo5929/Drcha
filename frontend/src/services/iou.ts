@@ -15,7 +15,7 @@ export const iou = {
     getBorrowingRecords: '/iou/borrowing-records',
     getLendingDetail: '/iou/lending-detail',
     getBorrowingDetail: '/iou/borrowing-detail',
-    agree: '/iou/agree/',
+    agree: '/iou/agree',
   },
 
   getIouPdf: async (iouId: string): Promise<IouData> => {

@@ -62,6 +62,10 @@ export const iou = {
   },
 
   createManualIou: async (manualData: ManualIouData) => {
-    await API.post(`${iou.endpoint.default}/${manualData.chatRoomId}/manual`);
+    await API.post(`${iou.endpoint.default}/${manualData.chatRoomId}/manual`, {
+      iouAmount: manualData.iouAmount,
+      interestRate: manualData.interestRate,
+      contractEndDate: manualData.contractEndDate,
+    });
   },
 };

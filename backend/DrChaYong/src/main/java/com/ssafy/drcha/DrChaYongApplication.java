@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.servers.Server;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @OpenAPIDefinition(
 	servers = {
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 )
 @SpringBootApplication
 @EnableJpaAuditing
+@EnableScheduling
 public class DrChaYongApplication {
 
 	public static void main(String[] args) {

@@ -1,0 +1,23 @@
+.container {
+  height: 100%;
+  width: 100%;
+  min-height: 20rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation-name: loading;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+
+  .loading {
+    @keyframes loading {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import CompleteSVG from '@/assets/icons/complete.svg?react';
@@ -8,6 +8,8 @@ import { useUserState } from '@/hooks/useUserState';
 import styles from './Auth.module.scss';
 
 export function Complete() {
+  const queryParams = new URLSearchParams(window.location.search);
+  const chatRoomId = queryParams.get('chatRoomId');
   const navigate = useNavigate();
   const { userInfo, getMyInfo } = useUserState();
 
@@ -20,10 +22,14 @@ export function Complete() {
     }
   }, [navigate, userInfo]);
 
-  const handleClick = () => {
-    getMyInfo();
+  const handleClick = useCallback(async () => {
+    await getMyInfo();
+    if (chatRoomId) {
+      navigate(`/chat/${chatRoomId}`);
+      return;
+    }
     navigate('/');
-  };
+  }, [getMyInfo, navigate, chatRoomId]);
 
   return (
     <div className={`${styles.content} ${styles.complete}`}>

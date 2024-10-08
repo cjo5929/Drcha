@@ -12,13 +12,13 @@ public final class ChatMessageRequestDto {
 
 	private String chatRoomId;
 	private String content;
-	private String senderId;
+	private Long senderId;
 	private ChatMessageType messageType;
 
 	public ChatMessage toEntity() {
 		return ChatMessage.builder()
 			.chatRoomId(chatRoomId)
-			.senderId(senderId)
+			.senderId(String.valueOf(senderId))
 			.content(content)
 			.messageType(messageType)
 			.build();

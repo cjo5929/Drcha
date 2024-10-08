@@ -1,24 +1,12 @@
 package com.ssafy.drcha.chat.controller;
 
-import java.util.List;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.ErrorResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.ssafy.drcha.chat.dto.ChatMessageResponseDto;
 import com.ssafy.drcha.chat.dto.ChatRoomEntryResponseDto;
 import com.ssafy.drcha.chat.dto.ChatRoomLinkResponseDto;
 import com.ssafy.drcha.chat.dto.ChatRoomListResponseDto;
 import com.ssafy.drcha.chat.enums.MemberRole;
 import com.ssafy.drcha.chat.service.ChatRoomService;
-
+import com.ssafy.drcha.chat.service.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,6 +14,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.ErrorResponse;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/chat")
@@ -33,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class ChatController {
 
 	private final ChatRoomService chatRoomService;
+	private final ChatService chatService;
 
 	@Operation(summary = "채팅방 생성", description = "사용자가 새로운 채팅방을 생성하고 초대 링크를 반환합니다.")
 	@ApiResponses({
@@ -127,6 +123,16 @@ public class ChatController {
 		return ResponseEntity.ok(chatRoomService.enterChatRoomViaLink(chatRoomId, userDetails));
 	}
 
+	@Operation(summary = "채팅방 전체 메시지 조회", description = "채팅방 전체 메시지를 조회합니다.")
+	@ApiResponse(responseCode = "200", description = "채팅방 전체 메시지 조회 성공",
+			content = @Content(mediaType = "application/json",
+			schema = @Schema(implementation = ChatMessageResponseDto.class)))
+	@GetMapping("/{chatRoomId}/messages")
+	public ResponseEntity<List<ChatMessageResponseDto>> getAllMessages(
+			@PathVariable Long chatRoomId,
+			@AuthenticationPrincipal UserDetails userDetails) {
+		return ResponseEntity.ok(chatService.loadAllMessagesAndSend(chatRoomId, userDetails.getUsername()));
+	}
 }
 
 

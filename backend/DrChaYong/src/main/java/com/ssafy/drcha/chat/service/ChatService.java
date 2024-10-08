@@ -91,17 +91,16 @@ public class ChatService {
 	}
 
 	@Transactional(readOnly = true)
-	public void loadAllMessagesAndSend(Long chatRoomId, String email) {
+	public List<ChatMessageResponseDto> loadAllMessagesAndSend(Long chatRoomId, String email) {
 		// 모든 메시지 로드
 		List<ChatMessageResponseDto> messages = chatMongoService.getAllMessages(String.valueOf(chatRoomId)).stream()
 			.map(ChatMessageResponseDto::from)
 			.collect(Collectors.toList());
 
-		// 메시지 전송
-		messagingTemplate.convertAndSend("/topic/chat." + chatRoomId, messages);
-
 		// 읽음 처리 로직 추가
 		markMessagesAsRead(chatRoomId, email, messages);
+
+		return messages;
 	}
 
 	@Transactional

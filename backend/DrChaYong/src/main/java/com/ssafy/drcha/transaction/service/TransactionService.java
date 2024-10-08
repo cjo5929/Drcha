@@ -20,7 +20,6 @@ import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.repository.MemberRepository;
 import com.ssafy.drcha.transaction.dto.DepositRequestDto;
 import com.ssafy.drcha.transaction.dto.IouTransactionHistoryResponse;
-import com.ssafy.drcha.transaction.dto.TransactionHistoryResponseDto;
 import com.ssafy.drcha.transaction.dto.TransferRequestDto;
 import com.ssafy.drcha.transaction.dto.WithdrawRequestDto;
 import com.ssafy.drcha.transaction.entity.TransactionHistory;
@@ -30,19 +29,16 @@ import com.ssafy.drcha.transaction.entity.VirtualAccountStatus;
 import com.ssafy.drcha.transaction.event.NewDepositEvent;
 import com.ssafy.drcha.transaction.repository.TransactionHistoryRepository;
 import com.ssafy.drcha.transaction.repository.VirtualAccountRepository;
+import com.ssafy.drcha.trust.entity.MemberTrust;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,7 +89,14 @@ public class TransactionService {
         save(virtualAccount);
         iou.linkVirtualAccount(virtualAccount);
 
+        // 채무 거래 업데이트
+        updateCurrentDebtTrade(iou.getDebtor().getMemberTrust());
+
         return virtualAccount;
+    }
+
+    private void updateCurrentDebtTrade(MemberTrust memberTrust){
+        memberTrust.incrementCurrentDebtTrades();
     }
 
     public List<VirtualAccount> findAllActiveAccounts() {
@@ -273,7 +276,7 @@ public class TransactionService {
             throw new AccountNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND);
         }
 
-        log.info("============ 차용증 : {}, 채무자 계좌 -> 차용증 거래금액 : {}==============", iou.getIouId(), amount);
+        log.info("============ 차용증 : {}==============", iou.getIouId());
         log.info("============ 차용증에 대한 가상계좌 : {}", virtualAccount.getAccountNumber());
         log.info("============ 채무자 계좌 : {}, 채무자 ID : {}, 채무자 이름 : {}, 채권자 ID : {}, 채권자 이름 : {}, 채무자 이름 : {}", debtorAccount.getAccountNumber(), debtorAccount.getMember().getId(), debtorAccount.getMember().getUsername(), iou.getCreditor().getId(), iou.getCreditor().getUsername(), iou.getDebtor().getUsername());
         // ! 채무자의 계좌에서 이체 가능 여부 확인
@@ -321,6 +324,7 @@ public class TransactionService {
 
             // ! 이벤트 발행
             publishNewDepositEvent(iou, amount);
+
 
         } else {
             log.error("이체 실패: {}", response.getHeaderResponse().getResponseMessage());

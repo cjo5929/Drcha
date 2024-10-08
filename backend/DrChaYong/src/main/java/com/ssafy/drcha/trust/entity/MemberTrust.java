@@ -55,13 +55,6 @@ public class MemberTrust extends BaseTimeEntity {
     }
 
     /**
-     * 현재 연체 중인 거래 수를 1 증가시킵니다.
-     */
-    public void incrementCurrentLateTrades() {
-        this.currentLateTrades++;
-    }
-
-    /**
      * 현재 진행 중인 채무 거래 수를 1 증가시킵니다.
      */
     public void incrementCurrentDebtTrades() {
@@ -69,10 +62,14 @@ public class MemberTrust extends BaseTimeEntity {
     }
 
     /**
-     * 완료된 거래 수를 1 증가시킵니다.
+     * 채무 거래를 연체 거래로 전환합니다.
+     * 현재 채무 거래 수를 1 감소시키고, 연체 거래 수를 1 증가시킵니다.
      */
-    public void incrementCompletedTrades() {
-        this.completedTrades++;
+    public void convertDebtTradeToLateTrade() {
+        if (this.currentDebtTrades > 0) {
+            this.currentDebtTrades--;
+            this.currentLateTrades++;
+        }
     }
 
     /**
@@ -94,17 +91,6 @@ public class MemberTrust extends BaseTimeEntity {
         if (this.currentLateTrades > 0) {
             this.currentLateTrades--;
             this.completedTrades++;
-        }
-    }
-
-    /**
-     * 채무 거래를 연체 거래로 전환합니다.
-     * 현재 채무 거래 수를 1 감소시키고, 연체 거래 수를 1 증가시킵니다.
-     */
-    public void convertDebtTradeToLateTrade() {
-        if (this.currentDebtTrades > 0) {
-            this.currentDebtTrades--;
-            this.currentLateTrades++;
         }
     }
 }

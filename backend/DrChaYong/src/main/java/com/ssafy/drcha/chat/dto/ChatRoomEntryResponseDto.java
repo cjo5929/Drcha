@@ -14,6 +14,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ChatRoomEntryResponseDto {
 	private Long chatRoomId;
+	private Long creditorId;
+	private Long debtorId;
 	private String opponentName;
 	private String lastMessageId;
 	private String lastMessage;
@@ -21,10 +23,15 @@ public class ChatRoomEntryResponseDto {
 	private int unreadCount;
 	private MemberRole memberRole;
 
-	public static ChatRoomEntryResponseDto from(ChatRoom chatRoom, ChatRoomMember chatRoomMember, Member opponent) {
+	// opponent가 null일 경우 처리
+	public static ChatRoomEntryResponseDto from(ChatRoom chatRoom, ChatRoomMember chatRoomMember, Member opponent,
+		Member creditor, Member debtor) {
+
 		return new ChatRoomEntryResponseDto(
 			chatRoom.getChatRoomId(),
-			opponent.getUsername(),
+			creditor != null ? creditor.getId() : null,
+			debtor != null ? debtor.getId() : null,
+			opponent != null ? opponent.getUsername() : null,
 			chatRoom.getLastMessageId(),
 			chatRoom.getLastMessage(),
 			chatRoom.getLastMessageTime(),

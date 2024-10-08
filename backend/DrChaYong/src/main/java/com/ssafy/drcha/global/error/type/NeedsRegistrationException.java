@@ -6,21 +6,17 @@ import lombok.Getter;
 
 @Getter
 public class NeedsRegistrationException extends BusinessException {
-	private final String invitationLink;
 
-	public NeedsRegistrationException(ErrorCode errorCode, String invitationLink) {
+	public NeedsRegistrationException(ErrorCode errorCode) {
 		super(errorCode);
-		this.invitationLink = invitationLink;
 	}
 
-	public NeedsRegistrationException(ErrorCode errorCode, String message, String invitationLink) {
+	public NeedsRegistrationException(ErrorCode errorCode, String message) {
 		super(errorCode, message);
-		this.invitationLink = invitationLink;
 	}
 
-	public NeedsRegistrationException(ErrorCode errorCode, String message, Throwable cause, String invitationLink) {
+	public NeedsRegistrationException(ErrorCode errorCode, String message, Throwable cause) {
 		super(errorCode, message, cause);
-		this.invitationLink = invitationLink;
 	}
 
 }

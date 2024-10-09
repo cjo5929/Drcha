@@ -107,6 +107,9 @@ export function TransactionHistories({
               {types === 'lend' ? curiou.debtorName : curiou.creditorName}
             </div>
             <div>({curiou.phoneNumber})</div>
+            {types !== 'lend' && (
+              <div>갚을 계좌 : {curiou.virtualAccountNumber}</div>
+            )}
           </div>
         </div>
       </div>

@@ -41,6 +41,7 @@ export type IouDetailData = {
   phoneNumber: string;
   daysUntilDue: number;
   iouBalance: number;
+  virtualAccountNumber: string;
 };
 
 export type ManualIouData = {

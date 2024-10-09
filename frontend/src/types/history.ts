@@ -14,6 +14,7 @@ export type TransactionDetailHistory = {
   debtorName: string;
   repaymentDate: string;
   transactionStartDate: string;
+  transactionEndDate: string;
   transactions: Transaction[];
 };
 

@@ -76,9 +76,8 @@ public class ChatRoomService {
 		ChatRoom chatRoom = findChatRoomById(chatRoomId);
 		Member member = findMemberByEmail(email);
 		Member creditor = findCreditorMember(chatRoom);
+		ChatRoomMember chatRoomMember = findChatRoomMember(chatRoom, creditor, member);
 		Member debtor = findDebtorMember(chatRoom);
-
-		ChatRoomMember chatRoomMember = findChatRoomMember(chatRoom, creditor, debtor);
 		Member opponent = findOpponentMember(chatRoom, member);
 
 

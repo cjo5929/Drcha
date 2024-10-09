@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.ssafy.drcha.global.error.type.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,11 +23,6 @@ import com.ssafy.drcha.chat.enums.MemberRole;
 import com.ssafy.drcha.chat.repository.ChatRoomMemberRepository;
 import com.ssafy.drcha.chat.repository.ChatRoomRepository;
 import com.ssafy.drcha.global.error.ErrorCode;
-import com.ssafy.drcha.global.error.type.BusinessException;
-import com.ssafy.drcha.global.error.type.DataNotFoundException;
-import com.ssafy.drcha.global.error.type.NeedsRegistrationException;
-import com.ssafy.drcha.global.error.type.NeedsVerificationException;
-import com.ssafy.drcha.global.error.type.UserNotFoundException;
 import com.ssafy.drcha.iou.entity.Iou;
 import com.ssafy.drcha.iou.enums.ContractStatus;
 import com.ssafy.drcha.iou.repository.IouRepository;
@@ -79,10 +75,10 @@ public class ChatRoomService {
 	public ChatRoomEntryResponseDto enterChatRoom(Long chatRoomId, String email) {
 		ChatRoom chatRoom = findChatRoomById(chatRoomId);
 		Member member = findMemberByEmail(email);
-		ChatRoomMember chatRoomMember = findChatRoomMember(chatRoom, member);
-
 		Member creditor = findCreditorMember(chatRoom);
 		Member debtor = findDebtorMember(chatRoom);
+
+		ChatRoomMember chatRoomMember = findChatRoomMember(chatRoom, creditor, debtor);
 		Member opponent = findOpponentMember(chatRoom, member);
 
 
@@ -232,10 +228,10 @@ public class ChatRoomService {
 		return null;
 	}
 
-	private ChatRoomMember findChatRoomMember(ChatRoom chatRoom, Member member) {
-		log.info(chatRoom.getChatRoomId() + "  " + member.getUsername());
-		return chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member)
-			.orElseThrow(() -> new BusinessException(ErrorCode.CHAT_USER_NOT_IN_ROOM, member.getId().toString()));
+	private ChatRoomMember findChatRoomMember(ChatRoom chatRoom, Member creditor, Member debtor) {
+		log.info(chatRoom.getChatRoomId() + "  " + debtor.getUsername());
+		return chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, debtor)
+			.orElseThrow(() -> new NotFoundDebtorException(ErrorCode.CHAT_USER_NOT_IN_ROOM, creditor.getId().toString()));
 	}
 
 	private void updateLastReadMessage(ChatRoomMember chatRoomMember, List<ChatMessage> messages, Long chatRoomId) {

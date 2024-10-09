@@ -1,8 +1,16 @@
+import { ReactNode } from 'react';
+
 import DOCTOR_IMAGE from '@/assets/images/dr,chayongV1.png';
 
 import styles from './Chat.module.scss';
 
-export function Doctor({ content }: { content: string }) {
+export function Doctor({
+  content,
+  children,
+}: {
+  content?: string;
+  children?: ReactNode;
+}) {
   return (
     <div className={styles.doctor}>
       <div className={styles.doctorinfo}>
@@ -12,7 +20,8 @@ export function Doctor({ content }: { content: string }) {
       <div className={styles.doctorbubbles}>
         <div className={styles.doctorbubble}>
           <div className={styles.doctorbubblearrow} />
-          {content}
+          {content && content}
+          {children && children}
         </div>
       </div>
     </div>

@@ -141,6 +141,7 @@ button {
   padding: 0;
   overflow: visible;
   cursor: pointer;
+  color: #000;
 }
 a {
   text-decoration: none;

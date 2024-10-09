@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import BackiconSVG from '@/assets/icons/backicon.svg?react';
 import DownloadSVG from '@/assets/icons/download.svg?react';
+import { Loading } from '@/components/Loading/Loading';
 import { useDownloadPdf } from '@/hooks/useDownloadPdf';
 import { iou } from '@/services/iou';
 import { IouData } from '@/types/iou';
@@ -45,38 +46,6 @@ export function IOU() {
     navigate(-1);
   };
 
-  if (isLoading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <button onClick={handleBackButton}>
-            <BackiconSVG />
-          </button>
-          <button onClick={handleDownloadIOU}>
-            <DownloadSVG />
-          </button>
-        </div>
-        <div className={styles.noContent}>차용증 정보를 불러오고 있습니다.</div>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <button onClick={handleBackButton}>
-            <BackiconSVG />
-          </button>
-          <button onClick={handleDownloadIOU}>
-            <DownloadSVG />
-          </button>
-        </div>
-        <div className={styles.noContent}>차용증 정보가 없습니다.</div>
-      </div>
-    );
-  }
-
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -87,9 +56,11 @@ export function IOU() {
           <DownloadSVG />
         </button>
       </div>
-      {iouPdfData ? (
-        <IOUContent iouRef={IOURef} iouData={iouPdfData} />
-      ) : (
+      {!isError && !isLoading && iouPdfData && (
+        <IOUContent iouRef={IOURef} iouData={iouPdfData} type="page" />
+      )}
+      {isLoading && <Loading size={100} />}
+      {!isLoading && isError && (
         <div className={styles.noContent}>차용증 정보가 없습니다.</div>
       )}
     </div>

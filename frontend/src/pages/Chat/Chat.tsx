@@ -30,7 +30,7 @@ export function Chat() {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const { userInfo } = useUserState();
-  const { messages, sendMessage } = useChatWebSocket(chatRoomId!);
+  const { messages, setMessages, sendMessage } = useChatWebSocket(chatRoomId!);
   const [opponentName, setOpponentName] = useState('');
   const [isError, setIsError] = useState(false);
   const [curIou, setCurIou] = useState<IouDatainChatroom[]>([]);
@@ -53,6 +53,24 @@ export function Chat() {
   const handleCloseModal = () => {
     setModalType(null);
   };
+
+  const getExistingMessages = useCallback(async () => {
+    if (chatRoomId) {
+      try {
+        setIsLoading(true);
+        const existingMessages = await chat.getAllMessages(chatRoomId);
+        setMessages(existingMessages);
+      } catch {
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }, [chatRoomId, setMessages]);
+
+  useEffect(() => {
+    getExistingMessages();
+  }, [chatRoomId, getExistingMessages]);
 
   const handleSend = useCallback(
     (text: string) => {
@@ -98,6 +116,10 @@ export function Chat() {
 
   const getChatRoomInfo = useCallback(async () => {
     if (chatRoomId) {
+      if (userInfo && !userInfo.verified) {
+        navigate(`/auth/account?chatRoomId=${chatRoomId}`);
+        return;
+      }
       try {
         const data = await chat.getChatRoomData(chatRoomId);
         setOpponentName(data.opponentName);
@@ -108,7 +130,7 @@ export function Chat() {
         setIsLoading(false);
       }
     }
-  }, [chatRoomId]);
+  }, [navigate, chatRoomId, userInfo]);
 
   const createManualIou = useCallback(
     async (

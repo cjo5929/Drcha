@@ -145,6 +145,8 @@
   padding-top: 2.5%;
   padding-bottom: 2.5%;
   display: flex;
+  align-items: end;
+  gap: 0.4rem;
 }
 
 .partnerchat {
@@ -275,4 +277,10 @@
   flex-direction: column;
   justify-content: start;
   font-size: 1.4rem;
+}
+
+.timestamp {
+  padding: 0 0.6rem;
+  font-size: 1.2rem;
+  color: gray;
 }

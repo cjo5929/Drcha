@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.ssafy.drcha.chat.enums.ChatMessageType;
-import com.ssafy.drcha.iou.dto.IouCreateResponseDto;
+import com.ssafy.drcha.iou.dto.IouPdfResponseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,11 +28,11 @@ public class ChatMessage {
 	@Field("createdAt")
 	private LocalDateTime createdAt;
 	private ChatMessageType messageType;
-	private IouCreateResponseDto iouInfo;
+	private IouPdfResponseDto iouInfo;
 
 
 	@Builder
-	public ChatMessage(String chatRoomId, String senderId, String content, ChatMessageType messageType,  IouCreateResponseDto iouInfo) {
+	public ChatMessage(String chatRoomId, String senderId, String content, ChatMessageType messageType,  IouPdfResponseDto iouInfo) {
 		this.chatRoomId = chatRoomId;
 		this.senderId = senderId;
 		this.content = content;

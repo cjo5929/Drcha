@@ -20,7 +20,7 @@ import com.ssafy.drcha.chat.repository.ChatRoomMemberRepository;
 import com.ssafy.drcha.chat.repository.ChatRoomRepository;
 import com.ssafy.drcha.global.error.ErrorCode;
 import com.ssafy.drcha.global.error.type.DataNotFoundException;
-import com.ssafy.drcha.iou.dto.IouCreateResponseDto;
+import com.ssafy.drcha.iou.dto.IouPdfResponseDto;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.repository.MemberRepository;
 
@@ -56,14 +56,14 @@ public class ChatService {
 
 
 	@Transactional
-	public void sendIouDetailsMessage(Long chatRoomId, IouCreateResponseDto iouCreateResponseDto) {
+	public void sendIouDetailsMessage(Long chatRoomId, IouPdfResponseDto iouPdfResponseDto) {
 		// 차용증 관련 상세 정보를 포함한 ChatMessage 생성
 		ChatMessage chatMessage = ChatMessage.builder()
 			.chatRoomId(String.valueOf(chatRoomId))
 			.content("차용증이 생성되었습니다. 상세 내용을 확인하세요.")
 			.messageType(ChatMessageType.IOU)
 			.senderId("0")
-			.iouInfo(iouCreateResponseDto)
+			.iouInfo(iouPdfResponseDto)
 			.build();
 
 		ChatMessageResponseDto responseDTO = ChatMessageResponseDto.from(chatMongoService.saveChatMessage(chatMessage));

@@ -27,7 +27,6 @@ import com.ssafy.drcha.global.error.type.UserNotFoundException;
 import com.ssafy.drcha.iou.dto.FinancialCalculator;
 import com.ssafy.drcha.iou.dto.IouCreateAiRequestDto;
 import com.ssafy.drcha.iou.dto.IouCreateRequestDto;
-import com.ssafy.drcha.iou.dto.IouCreateResponseDto;
 import com.ssafy.drcha.iou.dto.IouDetailResponseDto;
 import com.ssafy.drcha.iou.dto.IouPdfResponseDto;
 import com.ssafy.drcha.iou.dto.IouResponseDto;
@@ -64,21 +63,24 @@ public class IouService {
 
 		IouCreateRequestDto requestDTO = getIouDetailsFromAI(chatRoomId, messages);
 
-
 		String creditorName = null;
+		String creditorPhoneNumber = null;
 		String debtorName = null;
+		String debtorPhoneNumber = null;
 
 		for (ChatRoomMember member : chatRoom.getChatRoomMembers()) {
 			if (member.getMemberRole() == MemberRole.CREDITOR) {
 				creditorName = member.getMember().getUsername();
+				creditorPhoneNumber = member.getMember().getPhoneNumber();
 			} else if (member.getMemberRole() == MemberRole.DEBTOR) {
 				debtorName = member.getMember().getUsername();
+				debtorPhoneNumber = member.getMember().getPhoneNumber();
 			}
 		}
 
 		Iou savedIou = createAndSaveIou(chatRoom, requestDTO);
 
-		IouCreateResponseDto responseDto = new IouCreateResponseDto(
+		IouPdfResponseDto responseDto = new IouPdfResponseDto(
 			savedIou.getIouId(),
 			creditorName,
 			debtorName,
@@ -88,13 +90,14 @@ public class IouService {
 			savedIou.getInterestRate(),
 			savedIou.getBorrowerAgreement(),
 			savedIou.getLenderAgreement(),
-			FinancialCalculator.calculateTotalAmount(savedIou.getIouAmount(), savedIou.getInterestRate(), 12)
-
+			FinancialCalculator.calculateTotalAmount(savedIou.getIouAmount(), savedIou.getInterestRate(), 12),
+			creditorPhoneNumber,
+			debtorPhoneNumber
 		);
 
 		chatService.sendIouDetailsMessage(chatRoomId, responseDto);
-
 	}
+
 
 
 	@Transactional

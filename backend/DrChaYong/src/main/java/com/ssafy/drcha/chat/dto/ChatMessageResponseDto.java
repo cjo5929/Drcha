@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import com.ssafy.drcha.chat.entity.ChatMessage;
 import com.ssafy.drcha.chat.enums.ChatMessageType;
-import com.ssafy.drcha.iou.dto.IouCreateResponseDto;
+import com.ssafy.drcha.iou.dto.IouPdfResponseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +18,7 @@ public final class ChatMessageResponseDto {
 	private Long senderId;  // senderId를 Long 타입으로 변경
 	private ChatMessageType messageType;
 	private LocalDateTime createdAt;
-	private IouCreateResponseDto iouInfo;
+	private IouPdfResponseDto iouInfo;
 
 	public static ChatMessageResponseDto from(ChatMessage chatMessage) {
 		return new ChatMessageResponseDto(
@@ -33,10 +33,11 @@ public final class ChatMessageResponseDto {
 	}
 
 	private static Long convertStringToLong(String value) {
-		try {
-			return Long.parseLong(value);
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("Invalid format: " + value, e);
+		if (value == null) {
+			return 0L;
 		}
+		return Long.parseLong(value);
+
 	}
+
 }

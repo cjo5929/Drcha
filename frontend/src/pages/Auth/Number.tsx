@@ -6,6 +6,7 @@ import { useUserState } from '@/hooks/useUserState';
 import { account } from '@/services/account';
 
 import styles from './Auth.module.scss';
+import { Button } from '../../components/Button/Button';
 
 export function Number() {
   const queryParams = new URLSearchParams(window.location.search);
@@ -73,7 +74,7 @@ export function Number() {
         <span>를</span>
         <div>입력해주세요</div>
       </div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={styles.form}>
         <input
           ref={inputRef}
           type="text"
@@ -81,6 +82,9 @@ export function Number() {
           className={styles.input}
           onChange={(e) => setVerificationCode(e.target.value)}
         />
+        <Button type="submit" color="lightblue" size="small">
+          다음
+        </Button>
       </form>
     </div>
   );

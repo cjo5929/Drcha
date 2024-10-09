@@ -29,6 +29,7 @@ public final class IouDetailResponseDto {
 	private String phoneNumber;
 	private BigDecimal iouBalance;
 	private Long daysUntilDue;
+	private String virtualAccountNumber;
 
 
 	public static IouDetailResponseDto from(Iou iou, Member member, Long daysUntilDue) {
@@ -47,7 +48,8 @@ public final class IouDetailResponseDto {
 			iou.getNotificationSchedule(),
 			member.getPhoneNumber(),
 			iou.getBalance(),
-			daysUntilDue
+			daysUntilDue,
+				iou.getVirtualAccount().getAccountNumber()
 			);
 	}
 

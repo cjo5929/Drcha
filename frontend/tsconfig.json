@@ -23,7 +23,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": ["vite-plugin-svgr/client"]
+    "types": ["vite-plugin-svgr/client", "node"]
   },
   "include": ["src", "svg.d.ts", "global.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUserState } from '@/hooks/useUserState';
 
 import styles from './Auth.module.scss';
+import { Button } from '../../components/Button/Button';
 
 export function Account() {
   const queryParams = new URLSearchParams(window.location.search);
@@ -46,13 +47,16 @@ export function Account() {
           <span>를 입력해주세요</span>
         </div>
       </div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={styles.form}>
         <input
           type="text"
           placeholder="계좌번호"
           defaultValue={userInfo ? userInfo.accountNo : ''}
           className={styles.input}
         />
+        <Button type="submit" color="lightblue" size="small">
+          다음
+        </Button>
       </form>
     </div>
   );

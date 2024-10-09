@@ -17,6 +17,9 @@ export function IOUContent({ iouData, iouRef, type }: IOUContentProps) {
   const interestAmount = Math.round(iouAmount * (interestRate / 100));
   const startDate = new Date(contractStartDate);
   const endDate = new Date(contractEndDate);
+  // KST로 변경
+  startDate.setHours(startDate.getHours() + 9);
+  endDate.setHours(endDate.getHours() + 9);
 
   return (
     <div className={styles.iou} ref={iouRef}>

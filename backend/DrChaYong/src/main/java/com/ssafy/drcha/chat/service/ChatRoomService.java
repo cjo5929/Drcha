@@ -101,6 +101,11 @@ public class ChatRoomService {
 		}
 
 		ChatRoom chatRoom = findChatRoomByInvitationLink(chatRoomId);
+
+		if(chatRoom.getChatRoomMembers().size() >= 2) {
+			throw new BusinessException(ErrorCode.CHAT_ROOM_FULL);
+		}
+
 		Member debtor = findMemberByEmail(userDetails.getUsername());
 
 		ChatRoomMember chatRoomMember = addDebtorToChatRoom(chatRoom, debtor);

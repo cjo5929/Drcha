@@ -2,6 +2,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import axios from 'axios';
+
 import HamburgerSVG from '@/assets/icons/hamburger.svg?react';
 import LeftarrowSVG from '@/assets/icons/leftArrow.svg?react';
 import { CheckIouModal } from '@/components/Modal/CheckIouModal';
@@ -11,6 +13,7 @@ import { useChatWebSocket } from '@/hooks/useChatWebsocket';
 import { useUserState } from '@/hooks/useUserState';
 import { chat } from '@/services/chat';
 import { iou } from '@/services/iou';
+import { ChatRoomSummary } from '@/types/Chat';
 import { IouDatainChatroom, ManualIouData } from '@/types/iou';
 
 import styles from './Chat.module.scss';
@@ -31,10 +34,10 @@ export function Chat() {
   const [isLoading, setIsLoading] = useState(true);
   const { userInfo } = useUserState();
   const { messages, setMessages, sendMessage } = useChatWebSocket(chatRoomId!);
-  const [opponentName, setOpponentName] = useState('');
   const [isError, setIsError] = useState(false);
   const [curIou, setCurIou] = useState<IouDatainChatroom[]>([]);
   const [activeIou, setActiveIou] = useState<IouDatainChatroom | null>(null);
+  const [chatRoomData, setChatRoomData] = useState<ChatRoomSummary>();
 
   useEffect(() => {
     if (curIou && curIou.length > 0) {
@@ -53,24 +56,6 @@ export function Chat() {
   const handleCloseModal = () => {
     setModalType(null);
   };
-
-  const getExistingMessages = useCallback(async () => {
-    if (chatRoomId) {
-      try {
-        setIsLoading(true);
-        const existingMessages = await chat.getAllMessages(chatRoomId);
-        setMessages(existingMessages);
-      } catch {
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  }, [chatRoomId, setMessages]);
-
-  useEffect(() => {
-    getExistingMessages();
-  }, [chatRoomId, getExistingMessages]);
 
   const handleSend = useCallback(
     (text: string) => {
@@ -114,24 +99,6 @@ export function Chat() {
     }
   }, [chatRoomId]);
 
-  const getChatRoomInfo = useCallback(async () => {
-    if (chatRoomId) {
-      if (userInfo && !userInfo.verified) {
-        navigate(`/auth/account?chatRoomId=${chatRoomId}`);
-        return;
-      }
-      try {
-        const data = await chat.getChatRoomData(chatRoomId);
-        setOpponentName(data.opponentName);
-        setIsLoading(true);
-      } catch {
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  }, [navigate, chatRoomId, userInfo]);
-
   const createManualIou = useCallback(
     async (
       iouAmount: number,
@@ -151,15 +118,83 @@ export function Chat() {
     [chatRoomId],
   );
 
+  const enterChatRoom = useCallback(
+    async (creditorId: string) => {
+      if (!chatRoomId || !userInfo) {
+        return;
+      }
+      if (userInfo.memberId !== Number(creditorId)) {
+        try {
+          setIsLoading(true);
+          await chat.enterChatRoom(chatRoomId);
+        } catch (error) {
+          setIsError(true);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    },
+    [chatRoomId, userInfo],
+  );
+
+  const getChatRoomInfo = useCallback(async () => {
+    if (chatRoomId) {
+      if (userInfo && !userInfo.verified) {
+        navigate(`/auth/account?chatRoomId=${chatRoomId}`);
+        return;
+      }
+      try {
+        const data = await chat.getChatRoomData(chatRoomId);
+        if (
+          data.creditorId !== userInfo?.memberId &&
+          data.debtorId !== userInfo?.memberId
+        ) {
+          setIsError(true);
+          return;
+        }
+        setChatRoomData(data);
+        setIsLoading(true);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 400) {
+            await enterChatRoom(error.response.data.errorMessage);
+          }
+        }
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }, [navigate, chatRoomId, userInfo, enterChatRoom]);
+
+  const getExistingMessages = useCallback(async () => {
+    if (chatRoomId) {
+      try {
+        setIsLoading(true);
+        const existingMessages = await chat.getAllMessages(chatRoomId);
+        setMessages(existingMessages);
+      } catch (error) {
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }, [chatRoomId, setMessages]);
+
+  const handleChatRoomEnter = useCallback(async () => {
+    await getChatRoomInfo();
+    await getExistingMessages();
+  }, [getChatRoomInfo, getExistingMessages]);
+
   useEffect(() => {
     if (!userInfo) {
       setIsLoading(true);
     } else {
       setIsLoading(false);
-      getChatRoomInfo();
+      handleChatRoomEnter();
       getIou();
     }
-  }, [userInfo, getChatRoomInfo, getIou]);
+  }, [userInfo, handleChatRoomEnter, getIou]);
 
   useEffect(() => {
     // 햄버거 메뉴판 바깥 클릭 방지
@@ -192,7 +227,9 @@ export function Chat() {
             navigate(-1);
           }}
         />
-        <div className={styles.userinfo}>{opponentName}</div>
+        <div className={styles.userinfo}>
+          {chatRoomData && chatRoomData.opponentName}
+        </div>
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className={styles.hamburgerButton}

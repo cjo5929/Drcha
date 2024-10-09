@@ -25,22 +25,36 @@ export function HistoriesDetail({
       transactionUniqueNo: -1,
     };
 
-    const repaymentTransaction: Transaction = {
+    const endTransaction: Transaction = {
       amount: -1,
       balanceAfterTransaction: -1,
       balanceBeforeTransaction: -1,
-      description: '변제일',
-      transactionDate: curhistory.repaymentDate,
+      description: '변제 예정일',
+      transactionDate: curhistory.transactionEndDate,
       transactionId: -2,
-      transactionType: 'REPAYMENT',
+      transactionType: 'END',
       transactionUniqueNo: -2,
     };
 
     const allEvents = [
       startTransaction,
       ...curhistory.transactions,
-      repaymentTransaction,
+      endTransaction,
     ];
+
+    if (curhistory.repaymentDate) {
+      const repaymentTransaction: Transaction = {
+        amount: -1,
+        balanceAfterTransaction: -1,
+        balanceBeforeTransaction: -1,
+        description: '변제 완료일',
+        transactionDate: curhistory.repaymentDate,
+        transactionId: -3,
+        transactionType: 'REPAYMENT',
+        transactionUniqueNo: -3,
+      };
+      allEvents.push(repaymentTransaction);
+    }
 
     const sortedEvents = allEvents.sort(
       (a, b) =>

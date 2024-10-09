@@ -127,6 +127,7 @@ export function Chat() {
         try {
           setIsLoading(true);
           await chat.enterChatRoom(chatRoomId);
+          window.location.reload();
         } catch (error) {
           setIsError(true);
         } finally {

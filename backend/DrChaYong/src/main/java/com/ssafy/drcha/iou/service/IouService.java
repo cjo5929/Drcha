@@ -29,7 +29,6 @@ import com.ssafy.drcha.iou.dto.IouCreateAiRequestDto;
 import com.ssafy.drcha.iou.dto.IouCreateRequestDto;
 import com.ssafy.drcha.iou.dto.IouDetailResponseDto;
 import com.ssafy.drcha.iou.dto.IouPdfResponseDto;
-import com.ssafy.drcha.iou.dto.IouResponseDto;
 import com.ssafy.drcha.iou.dto.IouTransactionResponseDto;
 import com.ssafy.drcha.iou.entity.Iou;
 import com.ssafy.drcha.iou.enums.ContractStatus;
@@ -107,10 +106,10 @@ public class IouService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<IouResponseDto> getIousByChatRoomId(Long chatRoomId, String email) {
+	public List<IouPdfResponseDto> getIousByChatRoomId(Long chatRoomId, String email) {
 
 		return iouRepository.findByChatRoom_ChatRoomIdOrderByContractStartDateDesc(chatRoomId).stream()
-			.map(IouResponseDto::from)
+			.map(IouPdfResponseDto::from)
 			.collect(Collectors.toList());
 	}
 

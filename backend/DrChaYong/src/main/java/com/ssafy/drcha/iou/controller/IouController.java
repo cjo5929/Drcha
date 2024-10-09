@@ -19,7 +19,6 @@ import com.ssafy.drcha.global.error.response.ErrorResponse;
 import com.ssafy.drcha.iou.dto.IouCreateRequestDto;
 import com.ssafy.drcha.iou.dto.IouDetailResponseDto;
 import com.ssafy.drcha.iou.dto.IouPdfResponseDto;
-import com.ssafy.drcha.iou.dto.IouResponseDto;
 import com.ssafy.drcha.iou.dto.IouTransactionResponseDto;
 import com.ssafy.drcha.iou.dto.UpdateNotificationScheduleRequestDto;
 import com.ssafy.drcha.iou.service.IouService;
@@ -86,7 +85,7 @@ public class IouController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "차용증 조회 성공",
 			content = @Content(mediaType = "application/json",
-				schema = @Schema(implementation = IouResponseDto.class))),
+				schema = @Schema(implementation = IouPdfResponseDto.class))),
 		@ApiResponse(responseCode = "404", description = "채팅방을 찾을 수 없음",
 			content = @Content(mediaType = "application/json",
 				schema = @Schema(implementation = ErrorResponse.class))),
@@ -95,7 +94,7 @@ public class IouController {
 				schema = @Schema(implementation = ErrorResponse.class)))
 	})
 	@GetMapping("/{chatRoomId}")
-	public ResponseEntity<List<IouResponseDto>> getIousByChatRoomId(@PathVariable Long chatRoomId, @AuthenticationPrincipal UserDetails userDetails) {
+	public ResponseEntity<List<IouPdfResponseDto>> getIousByChatRoomId(@PathVariable Long chatRoomId, @AuthenticationPrincipal UserDetails userDetails) {
 		return ResponseEntity.ok(iouService.getIousByChatRoomId(chatRoomId, userDetails.getUsername()));
 	}
 

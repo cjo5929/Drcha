@@ -235,7 +235,7 @@ public class ChatRoomService {
 	private ChatRoomMember findChatRoomMember(ChatRoom chatRoom, Member member) {
 		log.info(chatRoom.getChatRoomId() + "  " + member.getUsername());
 		return chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member)
-			.orElseThrow(() -> new BusinessException(ErrorCode.CHAT_USER_NOT_IN_ROOM));
+			.orElseThrow(() -> new BusinessException(ErrorCode.CHAT_USER_NOT_IN_ROOM, member.getId().toString()));
 	}
 
 	private void updateLastReadMessage(ChatRoomMember chatRoomMember, List<ChatMessage> messages, Long chatRoomId) {

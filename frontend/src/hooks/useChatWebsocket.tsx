@@ -10,6 +10,7 @@ import { ChatMessage, SendChatMessage } from '@/types/ChatMessage';
 export function useChatWebSocket(chatRoomId: string): {
   messages: ChatMessage[];
   sendMessage: (contents: string, senderId: number) => void;
+  setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
 } {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [stompClient, setStompClient] = useState<Client | null>(null);
@@ -55,5 +56,5 @@ export function useChatWebSocket(chatRoomId: string): {
     [stompClient, chatRoomId],
   );
 
-  return { messages, sendMessage };
+  return { messages, setMessages, sendMessage };
 }

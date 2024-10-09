@@ -1,12 +1,14 @@
 package com.ssafy.drcha.transaction.dto;
 
-import com.ssafy.drcha.iou.entity.Iou;
-import com.ssafy.drcha.transaction.entity.TransactionHistory;
-import com.ssafy.drcha.transaction.entity.TransactionType;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.ssafy.drcha.iou.entity.Iou;
+import com.ssafy.drcha.transaction.entity.TransactionHistory;
+import com.ssafy.drcha.transaction.entity.TransactionType;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,7 +25,9 @@ public class IouTransactionHistoryResponse {
     private String debtorName;
     private LocalDateTime transactionStartDate;
     private LocalDateTime repaymentDate;
+    private LocalDateTime transactionEndDate;
     private List<TransactionDetail> transactions;
+
 
     @Getter
     @Setter
@@ -60,6 +64,7 @@ public class IouTransactionHistoryResponse {
                                             .debtorName(iou.getDebtor().getUsername())
                                             .transactionStartDate(iou.getContractStartDate())
                                             .repaymentDate(iou.getRepaymentDate())
+                                            .transactionEndDate(iou.getContractEndDate())
                                             .transactions(histories.stream()
                                                                    .map(TransactionDetail::from)
                                                                    .collect(Collectors.toList()))

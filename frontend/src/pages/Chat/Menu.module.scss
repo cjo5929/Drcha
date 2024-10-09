@@ -3,7 +3,7 @@
   top: 0;
   right: -25rem;
   width: 25rem;
-  height: 100%;
+  height: 100dvh;
   background-color: white;
   box-shadow: -0.2rem 0 0.5rem rgba(0, 0, 0, 0.1);
   transition: right 0.3s ease-in-out;
@@ -68,20 +68,54 @@
 }
 
 .transactions {
-  padding: 2rem;
+  height: 100%;
+  padding-right: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.transactionsHeader {
+  height: 8%;
+  font-weight: bold;
+  font-size: 2rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 
 .transactionList {
   list-style-type: none;
-  padding: 0;
+  height: 87%;
+  overflow-y: scroll;
+}
+
+.transactionList::-webkit-scrollbar {
+  display: none;
 }
 
 .transactionItem {
-  border-bottom: 1px solid #eee;
-  padding: 10px 0;
+  padding: 1rem 1rem;
+  background-color: #eff5ff;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.transactionItemOne {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transactionItemTwo {
+  display: flex;
 }
 
 .noTransactions {
+  height: 87%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
   text-align: center;
   color: #888;
 }

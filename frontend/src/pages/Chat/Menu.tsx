@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import LeftArrowSVG from '@/assets/icons/leftArrow.svg?react';
 import RightArrowSVG from '@/assets/icons/rightarrow.svg?react';
@@ -13,6 +14,8 @@ export function Menu({ isOpen, onClose, onOpenModal, curIou }: MenuProps) {
   const [currentView, setCurrentView] = useState<'main' | 'transactions'>(
     'main',
   );
+
+  const navigate = useNavigate();
 
   const handleCreate = () => {
     onClose();
@@ -37,6 +40,14 @@ export function Menu({ isOpen, onClose, onOpenModal, curIou }: MenuProps) {
     setCurrentView('main');
   };
 
+  const handleDetail =
+    (iou: IouDatainChatroom) => (event: React.MouseEvent) => {
+      event.preventDefault();
+      if (iou.contractStatus !== 'DRAFTING') {
+        navigate(`/detail/${iou.iouId}`);
+      }
+    };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('ko-KR');
@@ -44,17 +55,6 @@ export function Menu({ isOpen, onClose, onOpenModal, curIou }: MenuProps) {
 
   const formatCurrency = (amount: number) =>
     amount.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' });
-
-  const getStatusText = (status: IouDatainChatroom['contractStatus']) => {
-    const statusMap: Record<IouDatainChatroom['contractStatus'], string> = {
-      DRAFTING: '작성 중',
-      ACTIVE: '진행 중',
-      COMPLETED: '완료',
-      OVERDUE: '연체',
-      CANCELLED: '취소됨',
-    };
-    return statusMap[status];
-  };
 
   return (
     <div className={`${styles.menu} ${isOpen ? styles.open : ''}`}>
@@ -90,29 +90,27 @@ export function Menu({ isOpen, onClose, onOpenModal, curIou }: MenuProps) {
         </div>
       ) : (
         <div className={styles.transactions}>
-          <LeftArrowSVG
-            fill="black"
-            onClick={handleBack}
-            className={styles.backButton}
-          />
+          <div className={styles.transactionsHeader} onClick={handleBack}>
+            <LeftArrowSVG fill="black" className={styles.backButton} />
+            거래 내역
+          </div>
           {curIou && curIou.length > 0 ? (
             <ul className={styles.transactionList}>
               {curIou.map((iou) => (
-                <li key={iou.iouId} className={styles.transactionItem}>
-                  <h3>차용증 ID: {iou.iouId}</h3>
-                  <p>금액: {formatCurrency(iou.iouAmount)}</p>
-                  <p>시작일: {formatDate(iou.contractStartDate)}</p>
-                  <p>만기일: {formatDate(iou.contractEndDate)}</p>
-                  <p>이자율: {iou.interestRate}%</p>
-                  <p>총 상환액: {formatCurrency(iou.totalAmount)}</p>
-                  <p>상태: {getStatusText(iou.contractStatus)}</p>
-                  <p>
-                    차용인 동의:{' '}
-                    {iou.borrowerAgreement ? '동의함' : '동의 안함'}
-                  </p>
-                  <p>
-                    대여인 동의: {iou.lenderAgreement ? '동의함' : '동의 안함'}
-                  </p>
+                <li
+                  key={iou.iouId}
+                  className={styles.transactionItem}
+                  onClick={handleDetail(iou)}
+                >
+                  <div className={styles.transactionItemOne}>
+                    <p>금액: {formatCurrency(iou.iouAmount)}</p>
+                    <p>상태: {iou.contractStatus}</p>
+                  </div>
+                  <div className={styles.transactionItemTwo}>
+                    <p>시작일: {formatDate(iou.contractStartDate)}</p>
+                    <p>만기일: {formatDate(iou.contractEndDate)}</p>
+                    <p>이자율: {iou.interestRate}%</p>
+                  </div>
                 </li>
               ))}
             </ul>

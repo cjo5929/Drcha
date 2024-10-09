@@ -339,6 +339,11 @@ public class TransactionService {
         BigDecimal balanceBeforeTransaction = iou.getBalance().add(amount); // 입금 전 잔액
         BigDecimal balanceAfterTransaction = iou.getBalance(); // 입금 후 잔액
 
+        String description = "채무 상환";
+        if (balanceAfterTransaction.compareTo(BigDecimal.ZERO) <= 0) {
+            description = "상환 완료";
+        }
+
         TransferResponse.TransactionRecord transactionRecord = response.getRec().get(0); // 첫 번째 거래 기록 사용(출금 -> 채무자의 계좌에서 출금이니까)
 
         TransactionHistory history = TransactionHistory.builder()
@@ -349,7 +354,7 @@ public class TransactionService {
                 .transactionDate(parseTransactionDate(transactionRecord.getTransactionDate()))
                 .creditorName(iou.getCreditor().getUsername())
                 .debtorName(iou.getDebtor().getUsername())
-                .description("채무 상환")
+                .description(description)
                 .balanceBeforeTransaction(balanceBeforeTransaction)
                 .balanceAfterTransaction(balanceAfterTransaction)
                 .build();

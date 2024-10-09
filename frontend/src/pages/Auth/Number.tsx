@@ -67,11 +67,7 @@ export function Number() {
 
   return (
     <div className={styles.content}>
-      <Toast
-        code={state?.verificationCode.code}
-        accountNo={state?.verificationCode.accountNo}
-        isVisible={showToast}
-      />
+      <Toast code={state?.verificationCode.code} isVisible={showToast} />
       <div>
         <span className={styles.blue}>차용박사 뒤 숫자 4자리</span>
         <span>를</span>

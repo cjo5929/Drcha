@@ -6,6 +6,7 @@ import { member } from '@/services/member';
 import { autoHyphen } from '@/utils/autoHypen';
 
 import styles from './Auth.module.scss';
+import { Button } from '../../components/Button/Button';
 
 export function PhoneNumberPage() {
   const queryParams = new URLSearchParams(window.location.search);
@@ -60,7 +61,7 @@ export function PhoneNumberPage() {
         <span className={styles.blue}>전화번호</span>
         <span>를 입력해주세요</span>
       </div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={styles.form}>
         <input
           type="tel"
           placeholder="숫자만 입력해주세요"
@@ -73,6 +74,9 @@ export function PhoneNumberPage() {
             휴대폰 번호를 올바르게 입력해주세요
           </div>
         )}
+        <Button type="submit" color="lightblue" size="small">
+          다음
+        </Button>
       </form>
     </div>
   );

@@ -91,7 +91,8 @@ public class IouService {
 			savedIou.getLenderAgreement(),
 			FinancialCalculator.calculateTotalAmount(savedIou.getIouAmount(), savedIou.getInterestRate(), 12),
 			creditorPhoneNumber,
-			debtorPhoneNumber
+			debtorPhoneNumber,
+			savedIou.getContractStatus()
 		);
 
 		chatService.sendIouDetailsMessage(chatRoomId, responseDto);

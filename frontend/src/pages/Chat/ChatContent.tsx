@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 
+import { IOUContent } from '@/components/IOU/IOUContent';
 import { ChatMessage } from '@/types/ChatMessage';
 
 import styles from './Chat.module.scss';
@@ -27,17 +28,26 @@ export function ChatContent({
   return (
     <div className={styles.chatcontainer}>
       {messages.map((message: ChatMessage) => {
+        if (message.messageType === 'IOU') {
+          return (
+            <Doctor key={message.id}>
+              <div className={styles.iouContainer}>
+                <IOUContent iouData={message.iouInfo} type="chat" />
+              </div>
+            </Doctor>
+          );
+        }
         if (
           message.messageType === 'SYSTEM' ||
           message.messageType === 'ENTER'
         ) {
-          return <Doctor content={message.content} />;
+          return <Doctor key={message.id} content={message.content} />;
         }
         if (message.messageType === 'TALK') {
           if (message.senderId === currentUserId) {
-            return <MyChat content={message.content} />;
+            return <MyChat key={message.id} content={message.content} />;
           }
-          return <PartnerChat content={message.content} />;
+          return <PartnerChat key={message.id} content={message.content} />;
         }
         return null;
       })}

@@ -267,3 +267,12 @@
   border: none;
   cursor: pointer;
 }
+
+.iouContainer {
+  @include Pretendard;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  font-size: 1.4rem;
+}

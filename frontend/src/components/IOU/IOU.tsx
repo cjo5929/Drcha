@@ -57,7 +57,7 @@ export function IOU() {
         </button>
       </div>
       {!isError && !isLoading && iouPdfData && (
-        <IOUContent iouRef={IOURef} iouData={iouPdfData} />
+        <IOUContent iouRef={IOURef} iouData={iouPdfData} type="page" />
       )}
       {isLoading && <Loading size={100} />}
       {!isLoading && isError && (

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.ssafy.drcha.iou.entity.Iou;
 
+import com.ssafy.drcha.iou.enums.ContractStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -22,6 +23,7 @@ public final class IouPdfResponseDto {
 	private Long totalAmount;
 	private String creditorPhoneNumber;
 	private String debtorPhoneNumber;
+	private ContractStatus contractStatus;
 
 	public static IouPdfResponseDto from(Iou iou) {
 		return new IouPdfResponseDto(
@@ -36,7 +38,8 @@ public final class IouPdfResponseDto {
 			iou.getLenderAgreement(),
 			FinancialCalculator.calculateTotalAmount(iou.getIouAmount(), iou.getInterestRate(), 12),
 			iou.getCreditor().getPhoneNumber(),
-			iou.getDebtor().getPhoneNumber()
+			iou.getDebtor().getPhoneNumber(),
+			iou.getContractStatus()
 		);
 	}
 

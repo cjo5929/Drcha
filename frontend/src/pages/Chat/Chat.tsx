@@ -39,7 +39,7 @@ export function Chat() {
   useEffect(() => {
     if (curIou && curIou.length > 0) {
       const foundIou = curIou.find(
-        (Iou) => ['DRAFTING', 'ACTIVE', 'OVERDUE'].includes(Iou.contractStatus),
+        (Iou) => ['DRAFTING'].includes(Iou.contractStatus),
         // eslint-disable-next-line function-paren-newline
       );
       setActiveIou(foundIou || null);

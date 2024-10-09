@@ -33,7 +33,7 @@ public class MemberTrustService {
 
         String message = determineTraderStatus(lateTrades, debtTrades, completedTrades);
 
-        return MemberTrustInfoResponse.withTradeHistory(lateTrades, debtTrades, message);
+        return MemberTrustInfoResponse.withTradeHistory(lateTrades, debtTrades, completedTrades, message);
     }
 
     /**

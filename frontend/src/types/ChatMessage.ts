@@ -1,22 +1,13 @@
+import { IouData } from '@/types/iou';
+
 export type ChatMessage = {
   id: string;
   chatRoomId: string;
   content: string;
   senderId: number;
-  messageType: 'SYSTEM' | 'ENTER' | 'TALK' | 'QUIT';
+  messageType: 'SYSTEM' | 'ENTER' | 'TALK' | 'QUIT' | 'IOU';
   createdAt: string;
-  iouInfo: {
-    iouId: number;
-    creditorName: string;
-    debtorName: string;
-    iouAmount: number;
-    contractStartDate: string;
-    contractEndDate: string;
-    interestRate: number;
-    borrowerAgreement: boolean;
-    lenderAgreement: boolean;
-    totalAmount: number;
-  };
+  iouInfo: IouData;
 };
 
 export type SendChatMessage = {

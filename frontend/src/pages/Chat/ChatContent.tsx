@@ -25,6 +25,11 @@ export function ChatContent({
     scrollToBottom();
   }, [messages]);
 
+  const formatTime = (createdAt: string) => {
+    const date = new Date(createdAt);
+    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+  };
+
   return (
     <div className={styles.chatcontainer}>
       {messages.map((message: ChatMessage) => {
@@ -45,9 +50,21 @@ export function ChatContent({
         }
         if (message.messageType === 'TALK') {
           if (message.senderId === currentUserId) {
-            return <MyChat key={message.id} content={message.content} />;
+            return (
+              <MyChat
+                key={message.id}
+                content={message.content}
+                timestamp={formatTime(message.createdAt)}
+              />
+            );
           }
-          return <PartnerChat key={message.id} content={message.content} />;
+          return (
+            <PartnerChat
+              key={message.id}
+              content={message.content}
+              timestamp={formatTime(message.createdAt)}
+            />
+          );
         }
         return null;
       })}

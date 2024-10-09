@@ -310,7 +310,7 @@ public class IouService {
 		log.info("==================== 차용증 계약 상태 업데이트 완료 ====================");
 	}
 
-	@Scheduled(cron = "0 * * * * ?")
+	@Scheduled(cron = "0 0 1 * * ?")
 	@Transactional
 	public void scheduledOverdueCheck() {
 		updateOverdueStatus();

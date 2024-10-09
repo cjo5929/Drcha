@@ -20,6 +20,7 @@ import com.ssafy.drcha.chat.repository.ChatRoomMemberRepository;
 import com.ssafy.drcha.chat.repository.ChatRoomRepository;
 import com.ssafy.drcha.global.error.ErrorCode;
 import com.ssafy.drcha.global.error.type.DataNotFoundException;
+import com.ssafy.drcha.global.error.type.UserNotFoundException;
 import com.ssafy.drcha.iou.dto.IouPdfResponseDto;
 import com.ssafy.drcha.member.entity.Member;
 import com.ssafy.drcha.member.repository.MemberRepository;
@@ -92,12 +93,20 @@ public class ChatService {
 
 	@Transactional(readOnly = true)
 	public List<ChatMessageResponseDto> loadAllMessagesAndSend(Long chatRoomId, String email) {
-		// 모든 메시지 로드
+
+		ChatRoom chatRoom = getChatRoomById(chatRoomId);
+
+		boolean isMember = chatRoom.getChatRoomMembers().stream()
+			.anyMatch(chatRoomMember -> chatRoomMember.getMember().getUsername().equals(email));
+
+		if (!isMember) {
+			throw new UserNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
+		}
+
 		List<ChatMessageResponseDto> messages = chatMongoService.getAllMessages(String.valueOf(chatRoomId)).stream()
 			.map(ChatMessageResponseDto::from)
 			.collect(Collectors.toList());
 
-		// 읽음 처리 로직 추가
 		markMessagesAsRead(chatRoomId, email, messages);
 
 		return messages;

@@ -182,7 +182,7 @@ public class IouController {
 	public ResponseEntity<IouPdfResponseDto> getIouPdfData(
 		@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long iouId
 	){
-		return ResponseEntity.ok(iouService.getIouPdfData(iouId));
+		return ResponseEntity.ok(iouService.getIouPdfData(iouId, userDetails.getUsername()));
 	}
 
 

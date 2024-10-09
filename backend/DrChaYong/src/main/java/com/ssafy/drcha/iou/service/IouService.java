@@ -154,9 +154,18 @@ public class IouService {
 	}
 
 	@Transactional(readOnly = true)
-	public IouPdfResponseDto getIouPdfData(Long iouId) {
-		return IouPdfResponseDto.from(iouRepository.findById(iouId)
-			.orElseThrow(() -> new DataNotFoundException(ErrorCode.IOU_NOT_FOUND)));
+	public IouPdfResponseDto getIouPdfData(Long iouId, String email) {
+
+
+		Iou iou = iouRepository.findById(iouId)
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.IOU_NOT_FOUND));
+
+		if (!iou.getCreditor().getEmail().equals(email) && !iou.getDebtor().getEmail().equals(email)) {
+			throw new DataNotFoundException(ErrorCode.MEMBER_NOT_FOUND);
+		}
+
+
+		return IouPdfResponseDto.from(iou);
 	}
 
 

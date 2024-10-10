@@ -1,6 +1,7 @@
 /* eslint-disable react/no-danger */
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
+import LogoSVG from '@/assets/icons/logo.svg?react';
 import SheildSVG from '@/assets/icons/shield.svg?react';
 import { stamp } from '@/services/stamp';
 import { IouData } from '@/types/iou';
@@ -42,12 +43,12 @@ export function IOUContent({ iouData, iouRef, type }: IOUContentProps) {
     }
   };
 
-  const resizeStamp = () => {
-    const lenderStampSvg = lenderStampRef.current?.children[0];
-    const borrowerStampSvg = borrowerStampRef.current?.children[0];
-    lenderStampSvg?.setAttribute('viewBox', '25 25 70 70');
-    borrowerStampSvg?.setAttribute('viewBox', '25 25 70 70');
-  };
+  // const resizeStamp = () => {
+  //   const lenderStampSvg = lenderStampRef.current?.children[0];
+  //   const borrowerStampSvg = borrowerStampRef.current?.children[0];
+  //   lenderStampSvg?.setAttribute('viewBox', '25 25 70 70');
+  //   borrowerStampSvg?.setAttribute('viewBox', '25 25 70 70');
+  // };
 
   const renderStamp = useCallback(async () => {
     if (iouData.lenderAgreement) {
@@ -56,7 +57,7 @@ export function IOUContent({ iouData, iouRef, type }: IOUContentProps) {
     if (iouData.borrowerAgreement) {
       await createStamp('BORROWER', iouData.debtorName);
     }
-    resizeStamp();
+    // resizeStamp();
   }, [iouData]);
 
   useEffect(() => {
@@ -130,9 +131,11 @@ export function IOUContent({ iouData, iouRef, type }: IOUContentProps) {
             {lenderStamp && (
               <div
                 ref={lenderStampRef}
-                dangerouslySetInnerHTML={{ __html: lenderStamp }}
+                // dangerouslySetInnerHTML={{ __html: lenderStamp }}
                 className={`${styles.stamp} ${type === 'chat' && styles.chatStamp}`}
-              />
+              >
+                <LogoSVG />
+              </div>
             )}
           </div>
         </div>
@@ -146,9 +149,11 @@ export function IOUContent({ iouData, iouRef, type }: IOUContentProps) {
             {borrowerStamp && (
               <div
                 ref={borrowerStampRef}
-                dangerouslySetInnerHTML={{ __html: borrowerStamp }}
+                // dangerouslySetInnerHTML={{ __html: borrowerStamp }}
                 className={`${styles.stamp} ${type === 'chat' && styles.chatStamp}`}
-              />
+              >
+                <LogoSVG />
+              </div>
             )}
           </div>
         </div>

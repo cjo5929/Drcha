@@ -4,6 +4,7 @@ export type CheckModalProps = {
   isOpen: boolean;
   onClose: () => void;
   activeIou: IouDatainChatroom | null;
+  memberRole: string | undefined;
 };
 
 export type CreateModalProps = {

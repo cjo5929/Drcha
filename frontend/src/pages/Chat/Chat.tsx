@@ -227,12 +227,14 @@ export function Chat() {
         </button>
       </div>
       {/* 채팅 내용 */}
-      <ChatContent
-        messages={messages}
-        currentUserId={userInfo!.memberId}
-        isLoading={isLoading}
-        memberRole={chatRoomData?.memberRole}
-      />
+      {userInfo && (
+        <ChatContent
+          messages={messages}
+          currentUserId={userInfo.memberId}
+          isLoading={isLoading}
+          memberRole={chatRoomData?.memberRole}
+        />
+      )}
       {/* 채팅 입력창 */}
       <div className={styles.chatinput}>
         <textarea

@@ -11,6 +11,7 @@ const __dirname = path.dirname(__filename);
 const { createStamp } = signGenerator;
 
 const app = express();
+const port = 3002;
 
 app.use(cors());
 
@@ -41,3 +42,5 @@ app.use(express.static(distPath));
 app.get('*', (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
+
+app.listen(port);

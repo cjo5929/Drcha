@@ -18,7 +18,7 @@ app.use(cors());
 // 프로젝트 루트 디렉토리 찾기
 const projectRoot = path.resolve(__dirname, '..');
 
-app.get('/stamp/sign/:text', async (req, res) => {
+app.get('/sign/:text', async (req, res) => {
   try {
     const stampItems = await createStamp(req.params.text, 'fonts/HJ.ttf');
     const lastStamp = stampItems[stampItems.length - 1];

@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useCallback } from 'react';
 
 import styles from '@/pages/Mypage/Mypage.module.scss';
 import { member } from '@/services/member';
@@ -8,11 +8,11 @@ import { Certificated } from './Certificated';
 import { NonCertificated } from './NonCertificated';
 
 export function Myinfo({ myInfos }: { myInfos: Info }) {
-  const navigate = useNavigate();
-  const handleLogout = () => {
-    member.doLogout();
-    navigate('/');
-  };
+  const handleLogout = useCallback(async () => {
+    await member.doLogout();
+    window.location.reload();
+  }, []);
+
   return (
     <div className={styles.myinfo}>
       <div className={styles.kakaoinfo}>

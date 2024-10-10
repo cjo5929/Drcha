@@ -37,4 +37,8 @@ export const chat = {
 
     return data;
   },
+
+  enterChatRoom: async (chatRoomId: string): Promise<void> => {
+    await API.patch(`${chat.endpoint.default}/${chatRoomId}`);
+  },
 };

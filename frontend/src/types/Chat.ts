@@ -17,6 +17,8 @@ export type ChatRoom = {
 
 export type ChatRoomSummary = {
   chatRoomId: number;
+  creditorId: number;
+  debtorId: number;
   opponentName: string;
   lastMessageId?: number;
   lastMessage?: string;

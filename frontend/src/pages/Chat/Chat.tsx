@@ -33,9 +33,8 @@ export function Chat() {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const { userInfo } = useUserState();
-  const { messages, setMessages, sendMessage, latestIOU } = useChatWebSocket(
-    chatRoomId!,
-  );
+  const { messages, setMessages, sendMessage, latestIOU, setLatestIOU } =
+    useChatWebSocket(chatRoomId!);
   const [isError, setIsError] = useState(false);
   const [curIou, setCurIou] = useState<IouDatainChatroom[]>([]);
   const [chatRoomData, setChatRoomData] = useState<ChatRoomSummary>();
@@ -165,13 +164,19 @@ export function Chat() {
         setIsLoading(true);
         const existingMessages = await chat.getAllMessages(chatRoomId);
         setMessages(existingMessages);
+        const latestIOUMessage = existingMessages
+          .filter((m) => m.messageType === 'IOU')
+          .pop();
+        if (latestIOUMessage) {
+          setLatestIOU(latestIOUMessage.iouInfo);
+        }
       } catch (error) {
         setIsError(true);
       } finally {
         setIsLoading(false);
       }
     }
-  }, [chatRoomId, setMessages]);
+  }, [chatRoomId, setLatestIOU, setMessages]);
 
   const handleChatRoomEnter = useCallback(async () => {
     await getChatRoomInfo();

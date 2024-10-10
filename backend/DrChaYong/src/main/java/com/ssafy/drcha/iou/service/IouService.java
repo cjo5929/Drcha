@@ -200,23 +200,20 @@ public class IouService {
 
 	@Transactional
 	public void updateIouAgreementInChatMessage(Long chatRoomId, Long iouId, boolean borrowerAgreement, boolean lenderAgreement) {
-		Optional<ChatMessage> chatMessageOptional = chatMongoService.findByChatRoomIdAndIouId(chatRoomId, iouId);
+		List<ChatMessage> chatMessages = chatMongoService.findByChatRoomIdAndIouId(chatRoomId, iouId);
 
-		if (chatMessageOptional.isPresent()) {
-			ChatMessage chatMessage = chatMessageOptional.get();
+		// 여러 개의 메시지가 있을 수 있으므로 모든 메시지 업데이트
+		for (ChatMessage chatMessage : chatMessages) {
 			IouPdfResponseDto iouInfo = chatMessage.getIouInfo();
 
-			// 동의 상태 업데이트
-			iouInfo.setBorrowerAgreement(borrowerAgreement);
-			iouInfo.setLenderAgreement(lenderAgreement);
+			if (iouInfo != null) {
+				iouInfo.setBorrowerAgreement(borrowerAgreement);
+				iouInfo.setLenderAgreement(lenderAgreement);
+			}
 
-			// MongoDB에 해당 메시지 업데이트
 			chatMongoService.updateChatMessage(chatMessage);
-		} else {
-			throw new DataNotFoundException(ErrorCode.CHAT_MESSAGE_NOT_FOUND);
 		}
 	}
-
 
 	private ChatRoom getChatRoomById(Long chatRoomId) {
 		return chatRoomRepository.findById(chatRoomId)

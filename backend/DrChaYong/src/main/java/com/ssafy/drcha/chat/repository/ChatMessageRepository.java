@@ -17,6 +17,6 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage, Stri
 	Page<ChatMessage> findByChatRoomIdOrderByCreatedAtDesc(String chatRoomId, Pageable pageable);
 	List<ChatMessage> findByChatRoomIdOrderByCreatedAt(String chatRoomId);
 
-	Optional<ChatMessage> findByChatRoomIdAndIouInfo_IouId(String chatRoomId, Long iouId);
+	List<ChatMessage> findByChatRoomIdAndIouInfo_IouId(String chatRoomId, Long iouId);
 
 }

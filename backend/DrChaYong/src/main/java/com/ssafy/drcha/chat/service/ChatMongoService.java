@@ -70,7 +70,7 @@ public class ChatMongoService {
 	}
 
 
-	public Optional<ChatMessage> findByChatRoomIdAndIouId(Long chatRoomId, Long iouId) {
+	public List<ChatMessage> findByChatRoomIdAndIouId(Long chatRoomId, Long iouId) {
 		return chatMessageRepository.findByChatRoomIdAndIouInfo_IouId(String.valueOf(chatRoomId), iouId);
 	}
 

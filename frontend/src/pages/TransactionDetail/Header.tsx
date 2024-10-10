@@ -12,6 +12,7 @@ export function Header() {
         onClick={() => {
           navigate('/mypage');
         }}
+        className={styles.backButton}
       />
     </div>
   );

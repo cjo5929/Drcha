@@ -10,6 +10,7 @@ export type ChatRoom = {
   memberTrustInfoResponse: {
     lateTrades: number;
     debtTrades: number;
+    completedTrades: number;
     message: string;
   };
   member: boolean;

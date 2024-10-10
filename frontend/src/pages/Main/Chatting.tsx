@@ -1,6 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 
+import DangerIcon from '@/assets/icons/dangeruser.svg?react';
+import FirstIcon from '@/assets/icons/firstuser.svg?react';
+import SafeIcon from '@/assets/icons/safeuser.svg?react';
+import WarningIcon from '@/assets/icons/warning.svg?react';
 import AVATAR_IMAGE from '@/assets/images/avatar.png';
 import { STATUS } from '@/constants/chatting';
 import { ChatRoom } from '@/types/Chat';
@@ -21,8 +25,12 @@ export function Chatting({ chat }: ChattingProps) {
     iouAmount,
     daysUntilDue,
     unreadCount,
+    memberTrustInfoResponse,
   } = chat;
   const [status, setStatus] = useState('');
+  const [creditStatus, setCreditStatus] = useState('');
+  const [showTooltip, setShowTooltip] = useState(false);
+  const tooltipRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (contractStatus === STATUS.ACTIVE) {
@@ -34,7 +42,78 @@ export function Chatting({ chat }: ChattingProps) {
     } else {
       setStatus('상환 완료');
     }
-  }, [contractStatus, daysUntilDue]);
+
+    if (memberTrustInfoResponse.lateTrades > 0) {
+      setCreditStatus('연체중');
+    } else if (memberTrustInfoResponse.debtTrades > 1) {
+      setCreditStatus('다중채무자');
+    } else if (memberTrustInfoResponse.completedTrades === 0) {
+      setCreditStatus('첫거래');
+    } else {
+      setCreditStatus('안전');
+    }
+  }, [contractStatus, daysUntilDue, memberTrustInfoResponse]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        tooltipRef.current &&
+        !tooltipRef.current.contains(event.target as Node)
+      ) {
+        setShowTooltip(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const getCreditStatusStyle = () => {
+    switch (creditStatus) {
+      case '연체중':
+        return styles.creditStatusRed;
+      case '다중채무자':
+        return styles.creditStatusYellow;
+      case '첫거래':
+        return styles.creditStatusBlue;
+      case '안전':
+        return styles.creditStatusGreen;
+      default:
+        return '';
+    }
+  };
+
+  const getTooltipMessage = () => {
+    switch (creditStatus) {
+      case '연체중':
+        return '연체자입니다. 주의하세요.';
+      case '다중채무자':
+        return '다중 채무자입니다. 주의가 필요합니다.';
+      case '첫거래':
+        return '첫 거래 사용자입니다.';
+      case '안전':
+        return '안전한 거래 내역을 가진 사용자입니다.';
+      default:
+        return '';
+    }
+  };
+
+  const getCreditStatusIcon = () => {
+    switch (creditStatus) {
+      case '연체중':
+        return <DangerIcon className={styles.warningIcon} />;
+      case '다중채무자':
+        return <WarningIcon className={styles.warningIcon} />;
+      case '안전':
+        return <SafeIcon className={styles.warningIcon} />;
+      case '첫거래':
+        return <FirstIcon className={styles.warningIcon} />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <NavLink to={`chat/${chatRoomId}`} className={styles.chatting}>
@@ -48,7 +127,24 @@ export function Chatting({ chat }: ChattingProps) {
           className={styles.avatarImage}
         />
         <div className={styles.chattingContent}>
-          <div className={styles.name}>{name}</div>
+          <div className={styles.username}>
+            <div className={styles.name}>{name}</div>
+            <div
+              className={`${styles.credits} ${getCreditStatusStyle()}`}
+              onClick={(e) => {
+                e.preventDefault();
+                setShowTooltip(!showTooltip);
+              }}
+            >
+              {getCreditStatusIcon()}
+              {creditStatus}
+            </div>
+            {showTooltip && (
+              <div className={styles.tooltip} ref={tooltipRef}>
+                {getTooltipMessage()}
+              </div>
+            )}
+          </div>
           <div className={styles.chat}>{lastMessage || ''}</div>
         </div>
       </div>

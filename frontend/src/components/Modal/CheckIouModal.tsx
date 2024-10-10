@@ -2,7 +2,6 @@
 import { useEffect, useRef } from 'react';
 
 import { iou } from '@/services/iou';
-import { IouData } from '@/types/iou';
 import { CheckModalProps } from '@/types/ModalProps';
 
 import styles from './Modal.module.scss';
@@ -19,27 +18,10 @@ export function CheckIouModal({
 
   const handleCheck = async () => {
     if (activeIou) {
-      await iou.agreeIou(activeIou.iouId);
+      await iou.agreeIou(String(activeIou.iouId));
     }
     onClose();
   };
-
-  const Activated: IouData | null = activeIou
-    ? {
-        iouId: Number(activeIou.iouId),
-        creditorName: activeIou.creditorName,
-        debtorName: activeIou.debtorName,
-        iouAmount: activeIou.iouAmount,
-        contractStartDate: activeIou.contractStartDate,
-        contractEndDate: activeIou.contractEndDate,
-        interestRate: activeIou.interestRate,
-        borrowerAgreement: activeIou.borrowerAgreement,
-        lenderAgreement: activeIou.lenderAgreement,
-        totalAmount: activeIou.totalAmount,
-        creditorPhoneNumber: activeIou.creditorPhoneNumber,
-        debtorPhoneNumber: activeIou.debtorPhoneNumber,
-      }
-    : null;
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -62,7 +44,7 @@ export function CheckIouModal({
 
   if (!isOpen) return null;
 
-  if (!Activated) {
+  if (!activeIou) {
     return (
       <div className={styles.modalOverlay}>
         <div className={styles.modalContent} ref={modalRef}>
@@ -74,14 +56,14 @@ export function CheckIouModal({
 
   const isAgreed =
     memberRole === 'DEBTOR'
-      ? Activated.borrowerAgreement
-      : Activated.lenderAgreement;
+      ? activeIou.borrowerAgreement
+      : activeIou.lenderAgreement;
 
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent} ref={modalRef}>
         <div className={styles.modalIOU}>
-          <IOUContent iouData={Activated} iouRef={modalRef} type="chat" />
+          <IOUContent iouData={activeIou} iouRef={modalRef} type="chat" />
         </div>
         {isAgreed ? (
           <div className={styles.modalIOUExplain}>

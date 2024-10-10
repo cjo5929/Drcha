@@ -11,6 +11,7 @@ const __dirname = path.dirname(__filename);
 const { createStamp } = signGenerator;
 
 const app = express();
+const port = 3002;
 
 app.use(cors());
 
@@ -19,10 +20,7 @@ const projectRoot = path.resolve(__dirname, '..');
 
 app.get('/stamp/sign/:text', async (req, res) => {
   try {
-    const stampItems = await createStamp(
-      req.params.text,
-      'fonts/BMHANNAPro.ttf',
-    );
+    const stampItems = await createStamp(req.params.text, 'fonts/HJ.ttf');
     const lastStamp = stampItems[stampItems.length - 1];
     res.status(200).send(lastStamp);
   } catch (e) {
@@ -41,3 +39,5 @@ app.use(express.static(distPath));
 app.get('*', (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
+
+app.listen(port);

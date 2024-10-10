@@ -1,9 +1,9 @@
-import { IouDatainChatroom } from './iou';
+import { IouData } from './iou';
 
 export type CheckModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  activeIou: IouDatainChatroom | null;
+  activeIou: IouData | null;
   memberRole: string | undefined;
 };
 

@@ -55,6 +55,30 @@
     .detail {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+
+      .userDetail {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+
+        .stamp {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          svg {
+            width: 4rem;
+            height: 4rem;
+          }
+        }
+
+        .chatStamp {
+          svg {
+            width: 3rem;
+            height: 3rem;
+          }
+        }
+      }
     }
   }
 

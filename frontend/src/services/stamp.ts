@@ -2,13 +2,11 @@ import axios from 'axios';
 
 export const stamp = {
   endpoint: {
-    default: '/stamp',
+    default: '/stamp/sign',
   },
 
-  getStamp: async (username: string) => {
-    const { data } = await axios.get(
-      `${stamp.endpoint.default}/sign/${username}`,
-    );
+  getStamp: async (username: string): Promise<string> => {
+    const { data } = await axios.get(`${stamp.endpoint.default}/${username}`);
     return data;
   },
 };

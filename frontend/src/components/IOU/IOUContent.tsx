@@ -40,7 +40,9 @@ export function IOUContent({ iouData, iouRef, type }: IOUContentProps) {
         <div>아래와 같이 차용하였음을 확인하고,</div>
         <div>변제할 것을 확약합니다.</div>
       </div>
-      <div className={styles.content}>
+      <div
+        className={`${styles.content} ${type === 'chat' && styles.agreeContent}`}
+      >
         <div className={styles.detail}>
           <div className={styles.bold}>차용 일자</div>
           <div>{startDate.toLocaleString('ko-KR')}</div>
@@ -50,7 +52,9 @@ export function IOUContent({ iouData, iouRef, type }: IOUContentProps) {
           <div>{endDate.toLocaleString('ko-KR')}</div>
         </div>
       </div>
-      <div className={styles.content}>
+      <div
+        className={`${styles.content} ${type === 'chat' && styles.agreeContent}`}
+      >
         <div className={styles.detail}>
           <div className={styles.bold}>원금</div>
           <div>{iouData.iouAmount.toLocaleString('ko-KR')}원</div>
@@ -71,7 +75,9 @@ export function IOUContent({ iouData, iouRef, type }: IOUContentProps) {
         <SheildSVG />
         상호 동의 기록
       </div>
-      <div className={styles.content}>
+      <div
+        className={`${styles.content} ${type === 'chat' && styles.agreeContent}`}
+      >
         <div className={styles.detail}>
           <div className={styles.bold}>채권자</div>
           <div>

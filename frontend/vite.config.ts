@@ -8,7 +8,7 @@ import svgr from 'vite-plugin-svgr';
 export default defineConfig({
   server: {
     proxy: {
-      '/stamp': {
+      '/sign': {
         target: 'http://localhost:3002',
         changeOrigin: true,
       },

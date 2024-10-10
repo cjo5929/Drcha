@@ -45,8 +45,8 @@ export function ChatContent({
 
   const formatTime = (createdAt: string) => {
     const date = new Date(createdAt);
-    date.setDate(date.getHours() + 9);
-    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+    const formattedDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+    return `${formattedDate.getHours().toString().padStart(2, '0')}:${formattedDate.getMinutes().toString().padStart(2, '0')}`;
   };
 
   if (isLoading) {

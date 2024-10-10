@@ -50,7 +50,7 @@ public class IouTransactionHistoryResponse {
                                     .amount(history.getAmount())
                                     .balanceBeforeTransaction(history.getBalanceBeforeTransaction())
                                     .balanceAfterTransaction(history.getBalanceAfterTransaction())
-                                    .transactionDate(history.getTransactionDate())
+                                    .transactionDate(history.getModifiedAt())
                                     .transactionUniqueNo(history.getTransactionUniqueNo())
                                     .description(history.getDescription())
                                     .transactionType(history.getTransactionType())

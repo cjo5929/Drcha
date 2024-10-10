@@ -49,8 +49,10 @@ export function Menu({
   const handleDetail =
     (iou: IouDatainChatroom) => (event: React.MouseEvent) => {
       event.preventDefault();
-      if (iou.contractStatus !== 'DRAFTING') {
-        navigate(`/detail/${iou.iouId}`);
+      if (memberRole) {
+        if (memberRole === 'DEBTOR') {
+          navigate(`/mypage/detail/borrow/${iou.iouId}`);
+        } else navigate(`/mypage/detail/lend/${iou.iouId}`);
       }
     };
 

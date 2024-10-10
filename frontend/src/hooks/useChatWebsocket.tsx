@@ -6,14 +6,17 @@ import SockJS from 'sockjs-client';
 
 import { baseURL } from '@/services/api';
 import { ChatMessage, SendChatMessage } from '@/types/ChatMessage';
+import { IouData } from '@/types/iou';
 
 export function useChatWebSocket(chatRoomId: string): {
   messages: ChatMessage[];
   sendMessage: (contents: string, senderId: number) => void;
   setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
+  latestIOU: IouData | null;
 } {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [stompClient, setStompClient] = useState<Client | null>(null);
+  const [latestIOU, setLatestIOU] = useState<IouData | null>(null);
 
   useEffect(() => {
     const socket = new SockJS(`${baseURL}/wss`);
@@ -24,7 +27,16 @@ export function useChatWebSocket(chatRoomId: string): {
 
         client.subscribe(`/topic/chat.${chatRoomId}`, (message: Message) => {
           const newMessage = JSON.parse(message.body) as ChatMessage;
-          setMessages((prevMessages) => [...prevMessages, newMessage]);
+          setMessages((prevMessages) => {
+            const updatedMessages = [...prevMessages, newMessage];
+            const latestIOUMessage = updatedMessages
+              .filter((m) => m.messageType === 'IOU')
+              .pop();
+            if (latestIOUMessage) {
+              setLatestIOU(latestIOUMessage.iouInfo);
+            }
+            return updatedMessages;
+          });
         });
       },
     });
@@ -56,5 +68,5 @@ export function useChatWebSocket(chatRoomId: string): {
     [stompClient, chatRoomId],
   );
 
-  return { messages, setMessages, sendMessage };
+  return { messages, setMessages, sendMessage, latestIOU };
 }

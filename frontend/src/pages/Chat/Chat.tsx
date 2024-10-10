@@ -33,21 +33,12 @@ export function Chat() {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const { userInfo } = useUserState();
-  const { messages, setMessages, sendMessage } = useChatWebSocket(chatRoomId!);
+  const { messages, setMessages, sendMessage, latestIOU } = useChatWebSocket(
+    chatRoomId!,
+  );
   const [isError, setIsError] = useState(false);
   const [curIou, setCurIou] = useState<IouDatainChatroom[]>([]);
-  const [activeIou, setActiveIou] = useState<IouDatainChatroom | null>(null);
   const [chatRoomData, setChatRoomData] = useState<ChatRoomSummary>();
-
-  useEffect(() => {
-    if (curIou && curIou.length > 0) {
-      const foundIou = curIou.find(
-        (Iou) => ['DRAFTING'].includes(Iou.contractStatus),
-        // eslint-disable-next-line function-paren-newline
-      );
-      setActiveIou(foundIou || null);
-    }
-  }, [curIou]);
 
   const handleOpenModal = (type: 'create' | 'correction' | 'check') => {
     setModalType(type);
@@ -236,13 +227,12 @@ export function Chat() {
         </button>
       </div>
       {/* 채팅 내용 */}
-      {userInfo && (
-        <ChatContent
-          messages={messages}
-          currentUserId={userInfo.memberId}
-          isLoading={isLoading}
-        />
-      )}
+      <ChatContent
+        messages={messages}
+        currentUserId={userInfo!.memberId}
+        isLoading={isLoading}
+        memberRole={chatRoomData?.memberRole}
+      />
       {/* 채팅 입력창 */}
       <div className={styles.chatinput}>
         <textarea
@@ -290,7 +280,7 @@ export function Chat() {
         <CheckIouModal
           isOpen={modalType === 'check'}
           onClose={handleCloseModal}
-          activeIou={activeIou}
+          activeIou={latestIOU}
           memberRole={chatRoomData?.memberRole}
         />
       )}

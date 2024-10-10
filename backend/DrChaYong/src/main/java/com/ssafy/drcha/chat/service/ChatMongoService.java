@@ -7,14 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.drcha.chat.dto.ChatMessageParam;
 import com.ssafy.drcha.chat.entity.ChatMessage;
 import com.ssafy.drcha.chat.repository.ChatMessageRepository;
-import com.ssafy.drcha.chat.repository.ChatRoomMemberRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ChatMongoService {
 	private final ChatMessageRepository chatMessageRepository;
-	private final ChatRoomMemberRepository chatRoomMemberRepository;
-
 	/*
 	  메시지 저장
 	 */

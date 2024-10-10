@@ -45,7 +45,6 @@ public class ChatService {
 
 	@Transactional
 	public void sendChatMessage(ChatMessageRequestDto message) {
-		log.info(message.toString());
 		ChatMessage chatMessageEntity = message.toEntity();
 		ChatMessageResponseDto responseDTO = ChatMessageResponseDto.from(chatMongoService.saveChatMessage(chatMessageEntity));
 
@@ -129,6 +128,29 @@ public class ChatService {
 			chatRoomMember.updateLastRead(lastMessage.getId(), LocalDateTime.now());
 		}
 	}
+
+	@Transactional
+	public void leaveChatRoom(Long chatRoomId, String email) {
+		ChatRoom chatRoom = getChatRoomById(chatRoomId);
+
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+		ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member)
+			.orElseThrow(() -> new DataNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+
+		List<ChatMessageResponseDto> allMessages = chatMongoService.getAllMessages(String.valueOf(chatRoomId)).stream()
+			.map(ChatMessageResponseDto::from)
+			.toList();
+
+		if (!allMessages.isEmpty()) {
+			ChatMessageResponseDto lastMessage = allMessages.get(allMessages.size() - 1);
+			chatRoomMember.updateLastRead(lastMessage.getId(), LocalDateTime.now());
+		}
+
+		chatRoomMember.resetUnreadCount();
+	}
+
 
 
 	private ChatRoom getChatRoomById(Long chatRoomId) {

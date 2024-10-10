@@ -140,6 +140,26 @@ public class ChatController {
 			@AuthenticationPrincipal UserDetails userDetails) {
 		return ResponseEntity.ok(chatService.loadAllMessagesAndSend(chatRoomId, userDetails.getUsername()));
 	}
+
+
+	@Operation(summary = "채팅방 나가기", description = "사용자가 채팅방을 나가면서 unreadCount를 리셋합니다.")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "채팅방 나가기 성공"),
+		@ApiResponse(responseCode = "401", description = "사용자 인증 필요",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ErrorResponse.class))),
+		@ApiResponse(responseCode = "404", description = "채팅방 또는 사용자를 찾을 수 없음",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ErrorResponse.class)))
+	})
+	@PatchMapping("/{chatRoomId}/leave")
+	public ResponseEntity<Void> leaveChatRoom(
+		@PathVariable Long chatRoomId,
+		@AuthenticationPrincipal UserDetails userDetails) {
+		chatService.leaveChatRoom(chatRoomId, userDetails.getUsername());
+		return ResponseEntity.ok().build();
+	}
+
 }
 
 

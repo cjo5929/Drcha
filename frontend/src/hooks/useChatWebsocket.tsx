@@ -14,6 +14,7 @@ export function useChatWebSocket(chatRoomId: string): {
   sendMessage: (contents: string, senderId: number) => void;
   setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
   latestIOU: IouData | null;
+  setLatestIOU: React.Dispatch<React.SetStateAction<IouData | null>>;
 } {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [stompClient, setStompClient] = useState<Client | null>(null);
@@ -70,5 +71,5 @@ export function useChatWebSocket(chatRoomId: string): {
     [stompClient, chatRoomId],
   );
 
-  return { messages, setMessages, sendMessage, latestIOU };
+  return { messages, setMessages, sendMessage, latestIOU, setLatestIOU };
 }

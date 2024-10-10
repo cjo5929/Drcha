@@ -97,7 +97,7 @@ public class ChatService {
 		ChatRoom chatRoom = getChatRoomById(chatRoomId);
 
 		boolean isMember = chatRoom.getChatRoomMembers().stream()
-			.anyMatch(chatRoomMember -> chatRoomMember.getMember().getUsername().equals(email));
+			.anyMatch(chatRoomMember -> chatRoomMember.getMember().getEmail().equals(email));
 
 		if (!isMember) {
 			throw new UserNotFoundException(ErrorCode.MEMBER_NOT_FOUND);

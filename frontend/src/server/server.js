@@ -20,10 +20,7 @@ const projectRoot = path.resolve(__dirname, '..');
 
 app.get('/stamp/sign/:text', async (req, res) => {
   try {
-    const stampItems = await createStamp(
-      req.params.text,
-      'fonts/BMHANNAPro.ttf',
-    );
+    const stampItems = await createStamp(req.params.text, 'fonts/HJ.ttf');
     const lastStamp = stampItems[stampItems.length - 1];
     res.status(200).send(lastStamp);
   } catch (e) {

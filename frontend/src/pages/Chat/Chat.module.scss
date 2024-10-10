@@ -276,7 +276,6 @@
 
 .iouContainer {
   @include Pretendard;
-  min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -287,4 +286,21 @@
   padding: 0 0.6rem;
   font-size: 1.2rem;
   color: gray;
+}
+
+.modalIOU {
+  font-size: 1.3rem;
+}
+
+.modalIOUExplain {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.modalBtns {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding-top: 1rem;
 }

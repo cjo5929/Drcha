@@ -240,6 +240,7 @@ export function Chat() {
         messages={messages}
         currentUserId={userInfo!.memberId}
         isLoading={isLoading}
+        memberRole={chatRoomData?.memberRole}
       />
       {/* 채팅 입력창 */}
       <div className={styles.chatinput}>

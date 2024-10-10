@@ -1,8 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
+import { Button } from '@/components/Button/Button';
 import { IOUContent } from '@/components/IOU/IOUContent';
 import { Loading } from '@/components/Loading/Loading';
+import { iou } from '@/services/iou';
 import { ChatMessage } from '@/types/ChatMessage';
+import { IouData } from '@/types/iou';
 
 import styles from './Chat.module.scss';
 import { Doctor } from './Doctor';
@@ -13,16 +16,24 @@ export function ChatContent({
   messages,
   currentUserId,
   isLoading,
+  memberRole,
 }: {
   messages: ChatMessage[];
   currentUserId: number;
   isLoading: boolean;
+  memberRole: string | undefined;
 }) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  const handleCheck = useCallback(async (iouInfo: IouData) => {
+    if (iouInfo) {
+      await iou.agreeIou(String(iouInfo.iouId));
+    }
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
@@ -45,6 +56,27 @@ export function ChatContent({
             <Doctor key={message.id}>
               <div className={styles.iouContainer}>
                 <IOUContent iouData={message.iouInfo} type="chat" />
+              </div>
+              <div className={styles.modalIOUExplain}>
+                상기의 내용을 확인하였으며,
+                <br />
+                위의 거래에 동의하십니까?
+              </div>
+              <div className={styles.modalBtns}>
+                <Button
+                  color="lightblue"
+                  size="small"
+                  onClick={() => {
+                    if (message.iouInfo) {
+                      handleCheck(message.iouInfo);
+                    }
+                  }}
+                >
+                  동의
+                </Button>
+                <Button color="lightred" size="small">
+                  취소
+                </Button>
               </div>
             </Doctor>
           );

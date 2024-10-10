@@ -7,7 +7,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.ssafy.drcha.global.error.type.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +22,11 @@ import com.ssafy.drcha.chat.enums.MemberRole;
 import com.ssafy.drcha.chat.repository.ChatRoomMemberRepository;
 import com.ssafy.drcha.chat.repository.ChatRoomRepository;
 import com.ssafy.drcha.global.error.ErrorCode;
+import com.ssafy.drcha.global.error.type.DataNotFoundException;
+import com.ssafy.drcha.global.error.type.NeedsRegistrationException;
+import com.ssafy.drcha.global.error.type.NeedsVerificationException;
+import com.ssafy.drcha.global.error.type.NotFoundDebtorException;
+import com.ssafy.drcha.global.error.type.UserNotFoundException;
 import com.ssafy.drcha.iou.entity.Iou;
 import com.ssafy.drcha.iou.enums.ContractStatus;
 import com.ssafy.drcha.iou.repository.IouRepository;
@@ -100,7 +104,9 @@ public class ChatRoomService {
 			throw new NeedsVerificationException(ErrorCode.MEMBER_FORBIDDEN_ERROR);
 		}
 
+
 		ChatRoom chatRoom = findChatRoomByInvitationLink(chatRoomId);
+
 		Member debtor = findMemberByEmail(userDetails.getUsername());
 
 		ChatRoomMember chatRoomMember = addDebtorToChatRoom(chatRoom, debtor);

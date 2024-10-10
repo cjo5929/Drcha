@@ -208,6 +208,7 @@ public class IouService {
 		if (existingIou.isPresent()) {
 			Iou iou = existingIou.get();
 			iou.updateFromRequest(requestDTO);
+			iou.resetAgree();
 			return saveAndLinkVirtualAccount(iou);
 		}
 

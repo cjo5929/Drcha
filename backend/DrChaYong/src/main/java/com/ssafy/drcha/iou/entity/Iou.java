@@ -1,6 +1,5 @@
 package com.ssafy.drcha.iou.entity;
 
-import com.ssafy.drcha.trust.entity.MemberTrust;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -154,6 +153,11 @@ public class Iou extends BaseTimeEntity {
 		this.interestRate = requestDTO.getInterestRate();
 		this.contractEndDate = requestDTO.getContractEndDate();
 		this.balance = BigDecimal.valueOf(FinancialCalculator.calculateTotalAmount(requestDTO.getIouAmount(), requestDTO.getInterestRate(), 12));
+	}
+
+	public void resetAgree(){
+		this.borrowerAgreement = false;
+		this.lenderAgreement = false;
 	}
 
 

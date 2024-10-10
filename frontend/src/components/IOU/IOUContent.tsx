@@ -1,6 +1,8 @@
-import { RefObject } from 'react';
+/* eslint-disable react/no-danger */
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
 import SheildSVG from '@/assets/icons/shield.svg?react';
+import { stamp } from '@/services/stamp';
 import { IouData } from '@/types/iou';
 
 import styles from './IOU.module.scss';
@@ -20,6 +22,46 @@ export function IOUContent({ iouData, iouRef, type }: IOUContentProps) {
   // KST로 변경
   startDate.setHours(startDate.getHours() + 9);
   endDate.setHours(endDate.getHours() + 9);
+
+  const [borrowerStamp, setBorrowerStamp] = useState<string | null>(null);
+  const [lenderStamp, setLenderStamp] = useState<string | null>(null);
+  const lenderStampRef = useRef<HTMLDivElement>(null);
+  const borrowerStampRef = useRef<HTMLDivElement>(null);
+
+  const createStamp = async (
+    userType: 'BORROWER' | 'LENDER',
+    userName: string,
+  ) => {
+    const stampSVG = await stamp.getStamp(userName);
+    if (userType === 'BORROWER') {
+      setBorrowerStamp(stampSVG);
+      return;
+    }
+    if (userType === 'LENDER') {
+      setLenderStamp(stampSVG);
+    }
+  };
+
+  const resizeStamp = () => {
+    const lenderStampSvg = lenderStampRef.current?.children[0];
+    const borrowerStampSvg = borrowerStampRef.current?.children[0];
+    lenderStampSvg?.setAttribute('viewBox', '25 25 70 70');
+    borrowerStampSvg?.setAttribute('viewBox', '25 25 70 70');
+  };
+
+  const renderStamp = useCallback(async () => {
+    if (iouData.lenderAgreement) {
+      await createStamp('LENDER', iouData.creditorName);
+    }
+    if (iouData.borrowerAgreement) {
+      await createStamp('BORROWER', iouData.debtorName);
+    }
+    resizeStamp();
+  }, [iouData]);
+
+  useEffect(() => {
+    renderStamp();
+  }, [renderStamp]);
 
   return (
     <div className={styles.iou} ref={iouRef}>
@@ -80,19 +122,33 @@ export function IOUContent({ iouData, iouRef, type }: IOUContentProps) {
       >
         <div className={styles.detail}>
           <div className={styles.bold}>채권자</div>
-          <div>
+          <div className={styles.userDetail}>
             {iouData.creditorName}
             {iouData.creditorPhoneNumber && (
               <span>({iouData.creditorPhoneNumber})</span>
+            )}
+            {lenderStamp && (
+              <div
+                ref={lenderStampRef}
+                dangerouslySetInnerHTML={{ __html: lenderStamp }}
+                className={`${styles.stamp} ${type === 'chat' && styles.chatStamp}`}
+              />
             )}
           </div>
         </div>
         <div className={styles.detail}>
           <div className={styles.bold}>채무자</div>
-          <div>
+          <div className={styles.userDetail}>
             {iouData.debtorName}
             {iouData.debtorPhoneNumber && (
               <span>({iouData.debtorPhoneNumber})</span>
+            )}
+            {borrowerStamp && (
+              <div
+                ref={borrowerStampRef}
+                dangerouslySetInnerHTML={{ __html: borrowerStamp }}
+                className={`${styles.stamp} ${type === 'chat' && styles.chatStamp}`}
+              />
             )}
           </div>
         </div>

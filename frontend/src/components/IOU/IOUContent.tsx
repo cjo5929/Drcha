@@ -20,8 +20,8 @@ export function IOUContent({ iouData, iouRef, type }: IOUContentProps) {
   const startDate = new Date(contractStartDate);
   const endDate = new Date(contractEndDate);
   // KST로 변경
-  startDate.setHours(startDate.getHours() + 9);
-  endDate.setHours(endDate.getHours() + 9);
+  const formattedStartDate = new Date(startDate.getTime() + 9 * 60 * 60 * 1000);
+  const formattedEndDate = new Date(endDate.getTime() + 9 * 60 * 60 * 1000);
 
   const [borrowerStamp, setBorrowerStamp] = useState<string | null>(null);
   const [lenderStamp, setLenderStamp] = useState<string | null>(null);
@@ -87,11 +87,11 @@ export function IOUContent({ iouData, iouRef, type }: IOUContentProps) {
       >
         <div className={styles.detail}>
           <div className={styles.bold}>차용 일자</div>
-          <div>{startDate.toLocaleString('ko-KR')}</div>
+          <div>{formattedStartDate.toLocaleString('ko-KR')}</div>
         </div>
         <div className={styles.detail}>
           <div className={styles.bold}>변제 일자</div>
-          <div>{endDate.toLocaleString('ko-KR')}</div>
+          <div>{formattedEndDate.toLocaleString('ko-KR')}</div>
         </div>
       </div>
       <div

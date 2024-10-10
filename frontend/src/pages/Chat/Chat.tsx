@@ -225,7 +225,7 @@ export function Chat() {
         <LeftarrowSVG
           fill="blue"
           onClick={() => {
-            navigate(-1);
+            navigate('/');
           }}
         />
         <div className={styles.userinfo}>

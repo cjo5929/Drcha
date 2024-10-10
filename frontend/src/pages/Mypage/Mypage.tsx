@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { Loading } from '@/components/Loading/Loading';
 import { Navbar } from '@/components/Navbar/Navbar';
 import { useUserState } from '@/hooks/useUserState';
 import styles from '@/pages/Mypage/Mypage.module.scss';
@@ -59,7 +60,7 @@ export function Mypage() {
   }, [userInfo]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loading size={100} />;
   }
 
   if (error) {

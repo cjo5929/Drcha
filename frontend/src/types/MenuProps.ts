@@ -5,4 +5,5 @@ export type MenuProps = {
   onClose: () => void;
   onOpenModal: (modalType: 'create' | 'check' | 'correction') => void;
   curIou: IouDatainChatroom[];
+  memberRole: string | undefined;
 };

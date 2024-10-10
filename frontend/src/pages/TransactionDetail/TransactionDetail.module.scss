@@ -17,6 +17,10 @@
   padding: 3rem;
 }
 
+.backButton {
+  cursor: pointer;
+}
+
 .title {
   @include Pretendard;
   width: 100%;
@@ -176,6 +180,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
 }
 
 .historyheadtitle {

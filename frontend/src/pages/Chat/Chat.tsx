@@ -210,10 +210,6 @@ export function Chat() {
     };
   }, [menuRef]);
 
-  if (isLoading) {
-    return <div className={styles.noChatting}>채팅 정보 로딩 중..</div>;
-  }
-
   if (isError) {
     return <div className={styles.noChatting}>채팅방을 찾을 수 없습니다.</div>;
   }
@@ -227,6 +223,7 @@ export function Chat() {
           onClick={() => {
             navigate('/');
           }}
+          className={styles.leftarrowbtn}
         />
         <div className={styles.userinfo}>
           {chatRoomData && chatRoomData.opponentName}
@@ -239,7 +236,11 @@ export function Chat() {
         </button>
       </div>
       {/* 채팅 내용 */}
-      <ChatContent messages={messages} currentUserId={userInfo!.memberId} />
+      <ChatContent
+        messages={messages}
+        currentUserId={userInfo!.memberId}
+        isLoading={isLoading}
+      />
       {/* 채팅 입력창 */}
       <div className={styles.chatinput}>
         <textarea
@@ -263,6 +264,7 @@ export function Chat() {
           onClose={() => setIsMenuOpen(false)}
           onOpenModal={handleOpenModal}
           curIou={curIou}
+          memberRole={chatRoomData?.memberRole}
         />
       </div>
 
@@ -287,6 +289,7 @@ export function Chat() {
           isOpen={modalType === 'check'}
           onClose={handleCloseModal}
           activeIou={activeIou}
+          memberRole={chatRoomData?.memberRole}
         />
       )}
     </div>

@@ -10,7 +10,13 @@ import { MenuProps } from '@/types/MenuProps';
 
 import styles from './Menu.module.scss';
 
-export function Menu({ isOpen, onClose, onOpenModal, curIou }: MenuProps) {
+export function Menu({
+  isOpen,
+  onClose,
+  onOpenModal,
+  curIou,
+  memberRole,
+}: MenuProps) {
   const [currentView, setCurrentView] = useState<'main' | 'transactions'>(
     'main',
   );
@@ -54,37 +60,64 @@ export function Menu({ isOpen, onClose, onOpenModal, curIou }: MenuProps) {
   };
 
   const formatCurrency = (amount: number) =>
-    amount.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' });
+    `${amount.toLocaleString('ko-KR', {
+      maximumFractionDigits: 0,
+    })}원`;
+
+  const sortIous = (a: IouDatainChatroom, b: IouDatainChatroom): number => {
+    const order = {
+      ACTIVE: 0,
+      OVERDUE: 1,
+      COMPLETED: 2,
+      CANCELLED: 3,
+      DRAFTING: 4,
+    };
+    return order[a.contractStatus] - order[b.contractStatus];
+  };
+
+  const filteredIous = curIou
+    ? curIou.filter((iou) => iou.contractStatus !== 'DRAFTING').sort(sortIous)
+    : [];
+
+  const getStatusText = (status: IouDatainChatroom['contractStatus']) => {
+    if (status === 'OVERDUE') return '연체 중';
+    if (status === 'ACTIVE') return '상환 중';
+    if (status === 'COMPLETED') return '상환 완료';
+  };
 
   return (
     <div className={`${styles.menu} ${isOpen ? styles.open : ''}`}>
       {currentView === 'main' ? (
         <div className={styles.menudetail}>
-          <div onClick={handleCreate} className={styles.create}>
-            <div className={styles.createtitle}>
-              차용증 스마트 작성
+          {memberRole !== 'DEBTOR' && (
+            <div onClick={handleCreate} className={styles.create}>
+              <div className={styles.createtitle}>
+                차용증 스마트 작성
+                <RightArrowSVG />
+              </div>
+              <img
+                src={DOCTOR_IMAGE}
+                alt="doctor"
+                className={styles.doctorprofile}
+              />
+              <div className={styles.createdetail}>
+                <WarningSVG width="12" height="12" />
+                &nbsp;대화 내용을 기반으로 박사님이 차용증을 대신 작성해줍니다.
+              </div>
+            </div>
+          )}
+          {memberRole !== 'DEBTOR' && (
+            <div onClick={handleCorrection} className={styles.normalmenu}>
+              차용증 수동 작성
               <RightArrowSVG />
             </div>
-            <img
-              src={DOCTOR_IMAGE}
-              alt="doctor"
-              className={styles.doctorprofile}
-            />
-            <div className={styles.createdetail}>
-              <WarningSVG width="12" height="12" />
-              &nbsp;대화 내용을 기반으로 박사님이 차용증을 대신 작성해줍니다.
-            </div>
-          </div>
-          <div onClick={handleCorrection} className={styles.normalmenu}>
-            차용증 수동 작성
-            <RightArrowSVG />
-          </div>
+          )}
           <div onClick={handleCheck} className={styles.normalmenu}>
             차용증 확인 및 동의
             <RightArrowSVG />
           </div>
           <div onClick={handleTransactions} className={styles.normalmenu}>
-            거래 내역
+            {memberRole === 'DEBTOR' ? '빌린 기록' : '빌려준 기록'}
             <RightArrowSVG />
           </div>
         </div>
@@ -92,19 +125,23 @@ export function Menu({ isOpen, onClose, onOpenModal, curIou }: MenuProps) {
         <div className={styles.transactions}>
           <div className={styles.transactionsHeader} onClick={handleBack}>
             <LeftArrowSVG fill="black" className={styles.backButton} />
-            거래 내역
+            {memberRole === 'DEBTOR' ? '빌린 기록' : '빌려준 기록'}
           </div>
-          {curIou && curIou.length > 0 ? (
+          {curIou && filteredIous.length > 0 ? (
             <ul className={styles.transactionList}>
-              {curIou.map((iou) => (
+              {filteredIous.map((iou) => (
                 <li
                   key={iou.iouId}
-                  className={styles.transactionItem}
+                  className={`${styles.transactionItem} ${styles[iou.contractStatus.toLowerCase()]}`}
                   onClick={handleDetail(iou)}
                 >
                   <div className={styles.transactionItemOne}>
-                    <p>금액: {formatCurrency(iou.iouAmount)}</p>
-                    <p>상태: {iou.contractStatus}</p>
+                    <div className={styles.amount}>
+                      {formatCurrency(iou.iouAmount)}
+                    </div>
+                    <div className={styles.status}>
+                      {getStatusText(iou.contractStatus)}
+                    </div>
                   </div>
                   <div className={styles.transactionItemTwo}>
                     <p>시작일: {formatDate(iou.contractStartDate)}</p>

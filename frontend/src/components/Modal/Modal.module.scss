@@ -107,5 +107,16 @@
     border: 0.1rem solid #ccc;
     border-radius: 0.25rem;
     font-size: 1rem;
+    cursor: pointer;
   }
+}
+
+.modalIOU {
+  font-size: 1.3rem;
+}
+
+.modalIOUExplain {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.5rem;
 }

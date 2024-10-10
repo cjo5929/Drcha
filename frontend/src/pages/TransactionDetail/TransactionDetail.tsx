@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { Loading } from '@/components/Loading/Loading';
 import { Navbar } from '@/components/Navbar/Navbar';
 import { iou } from '@/services/iou';
 import { transaction } from '@/services/transaction';
@@ -57,7 +58,7 @@ export function TransactionDetail() {
   }, [fetchData]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loading size={100} />;
   }
 
   if (error) {

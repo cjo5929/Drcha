@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 import { IOUContent } from '@/components/IOU/IOUContent';
+import { Loading } from '@/components/Loading/Loading';
 import { ChatMessage } from '@/types/ChatMessage';
 
 import styles from './Chat.module.scss';
@@ -11,9 +12,11 @@ import { PartnerChat } from './PartnerChat';
 export function ChatContent({
   messages,
   currentUserId,
+  isLoading,
 }: {
   messages: ChatMessage[];
   currentUserId: number;
+  isLoading: boolean;
 }) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -29,6 +32,10 @@ export function ChatContent({
     const date = new Date(createdAt);
     return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
   };
+
+  if (isLoading) {
+    return <Loading size={100} />;
+  }
 
   return (
     <div className={styles.chatcontainer}>

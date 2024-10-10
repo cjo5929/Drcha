@@ -30,7 +30,11 @@ export function ListDetail({
       {expanding && (
         <div className={styles.details}>
           {items.map((item) => (
-            <Dealitem item={item} lendorborrow={lendorborrow} />
+            <Dealitem
+              key={item.iouId}
+              item={item}
+              lendorborrow={lendorborrow}
+            />
           ))}
         </div>
       )}

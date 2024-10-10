@@ -94,6 +94,7 @@ export function HistoriesDetail({
         const { date, time } = formatDate(item.transactionDate);
         return (
           <div
+            key={item.transactionId}
             className={`${styles.timelineItem} ${
               index === 0
                 ? styles.first

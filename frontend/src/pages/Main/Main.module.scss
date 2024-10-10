@@ -153,8 +153,70 @@
         max-width: 10rem;
       }
 
+      .username {
+        display: flex;
+        align-items: center;
+      }
+
       .name {
         font-size: 1.6rem;
+        margin-right: 1.5rem;
+      }
+
+      .credits {
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+
+        .warningIcon {
+          width: 1.4rem;
+          height: 1.4rem;
+          margin-right: 0.4rem;
+        }
+      }
+
+      .creditStatusRed {
+        color: $red;
+        .warningIcon {
+          fill: $red;
+        }
+      }
+
+      .creditStatusYellow {
+        color: $yellow;
+        .warningIcon {
+          fill: $yellow;
+        }
+      }
+
+      .creditStatusBlue {
+        color: $blue;
+        .warningIcon {
+          fill: $blue;
+        }
+      }
+
+      .creditStatusGreen {
+        color: $green;
+        .warningIcon {
+          fill: $green;
+        }
+      }
+
+      .tooltip {
+        position: absolute;
+        top: 45%;
+        left: 32%;
+        max-width: 20rem;
+        background-color: $white;
+        border: 1px solid $gray;
+        border-radius: 0.4rem;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        z-index: 1000;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        white-space: nowrap;
       }
 
       .chat {

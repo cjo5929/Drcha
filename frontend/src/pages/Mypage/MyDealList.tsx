@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import styles from '@/pages/Mypage/Mypage.module.scss';
 import { TransactionHistory } from '@/types/history';
@@ -31,6 +31,19 @@ export function MyDealList({
   const toggleBorrowExpanding = (types: string) => {
     setBorrowExpanding((prev) => ({ ...prev, [types]: !prev[types] }));
   };
+
+  useEffect(() => {
+    setLendExpanding({
+      '상환 예정': true,
+      '연체 중': true,
+      완료: false,
+    });
+    setBorrowExpanding({
+      '상환 예정': true,
+      '연체 중': true,
+      완료: false,
+    });
+  }, []);
 
   return (
     <div className={styles.listContainer}>

@@ -27,7 +27,7 @@ COPY --from=frontend-build /app/.env ./.env
 
 # 백엔드 파일 복사
 COPY --from=backend-build /app/package*.json ./
-COPY --from=backend-build /app/server.js ./
+COPY --from=backend-build /app/src/server/server.js ./server.js
 COPY --from=backend-build /app/fonts ./fonts
 
 # 프로덕션 종속성 설치

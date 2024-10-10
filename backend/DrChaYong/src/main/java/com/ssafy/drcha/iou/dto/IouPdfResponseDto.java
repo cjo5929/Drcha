@@ -7,6 +7,7 @@ import com.ssafy.drcha.iou.entity.Iou;
 import com.ssafy.drcha.iou.enums.ContractStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
@@ -18,7 +19,9 @@ public final class IouPdfResponseDto {
 	private LocalDateTime contractStartDate;
 	private LocalDateTime contractEndDate;
 	private Double interestRate;
+	@Setter
 	private Boolean borrowerAgreement;
+	@Setter
 	private Boolean lenderAgreement;
 	private Long totalAmount;
 	private String creditorPhoneNumber;
@@ -42,6 +45,5 @@ public final class IouPdfResponseDto {
 			iou.getContractStatus()
 		);
 	}
-
 
 }

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.ssafy.drcha.chat.entity.ChatMessage;
 import com.ssafy.drcha.chat.entity.ChatRoom;
 import com.ssafy.drcha.chat.entity.ChatRoomMember;
 import com.ssafy.drcha.chat.enums.MemberRole;
@@ -188,11 +189,35 @@ public class IouService {
 		}
 
 		iouRepository.save(iou);
+
+		updateIouAgreementInChatMessage(iou.getChatRoom().getChatRoomId(), iouId, iou.getBorrowerAgreement(), iou.getLenderAgreement());
 	}
 
 	/*
 	  호출용 메서드
 	 */
+
+
+	@Transactional
+	public void updateIouAgreementInChatMessage(Long chatRoomId, Long iouId, boolean borrowerAgreement, boolean lenderAgreement) {
+		Optional<ChatMessage> chatMessageOptional = chatMongoService.findByChatRoomIdAndIouId(chatRoomId, iouId);
+
+		if (chatMessageOptional.isPresent()) {
+			ChatMessage chatMessage = chatMessageOptional.get();
+			IouPdfResponseDto iouInfo = chatMessage.getIouInfo();
+
+			// 동의 상태 업데이트
+			iouInfo.setBorrowerAgreement(borrowerAgreement);
+			iouInfo.setLenderAgreement(lenderAgreement);
+
+			// MongoDB에 해당 메시지 업데이트
+			chatMongoService.updateChatMessage(chatMessage);
+		} else {
+			throw new DataNotFoundException(ErrorCode.CHAT_MESSAGE_NOT_FOUND);
+		}
+	}
+
+
 	private ChatRoom getChatRoomById(Long chatRoomId) {
 		return chatRoomRepository.findById(chatRoomId)
 			.orElseThrow(() -> new DataNotFoundException(ErrorCode.CHAT_ROOM_NOT_FOUND));

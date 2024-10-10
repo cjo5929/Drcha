@@ -1,6 +1,7 @@
 package com.ssafy.drcha.chat.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -66,6 +67,15 @@ public class ChatMongoService {
 
 	public List<ChatMessage> getAllMessages(String chatRoomId) {
 		return chatMessageRepository.findByChatRoomIdOrderByCreatedAt(chatRoomId);
+	}
+
+
+	public Optional<ChatMessage> findByChatRoomIdAndIouId(Long chatRoomId, Long iouId) {
+		return chatMessageRepository.findByChatRoomIdAndIouInfo_IouId(String.valueOf(chatRoomId), iouId);
+	}
+
+	public void updateChatMessage(ChatMessage chatMessage) {
+		chatMessageRepository.save(chatMessage);
 	}
 
 

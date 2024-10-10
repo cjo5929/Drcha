@@ -1,6 +1,7 @@
 package com.ssafy.drcha.chat.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,5 +17,6 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage, Stri
 	Page<ChatMessage> findByChatRoomIdOrderByCreatedAtDesc(String chatRoomId, Pageable pageable);
 	List<ChatMessage> findByChatRoomIdOrderByCreatedAt(String chatRoomId);
 
+	Optional<ChatMessage> findByChatRoomIdAndIouInfo_IouId(String chatRoomId, Long iouId);
 
 }

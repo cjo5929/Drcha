@@ -41,4 +41,8 @@ export const chat = {
   enterChatRoom: async (chatRoomId: string): Promise<void> => {
     await API.patch(`${chat.endpoint.default}/${chatRoomId}`);
   },
+
+  leaveChatRoom: async (chatRoomId: string): Promise<void> => {
+    await API.patch(`${chat.endpoint.default}/${chatRoomId}/leave`);
+  },
 };

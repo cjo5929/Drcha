@@ -5,6 +5,7 @@ import { Client, Message } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
 import { baseURL } from '@/services/api';
+import { chat } from '@/services/chat';
 import { ChatMessage, SendChatMessage } from '@/types/ChatMessage';
 import { IouData } from '@/types/iou';
 
@@ -45,6 +46,7 @@ export function useChatWebSocket(chatRoomId: string): {
 
     return () => {
       if (client.active) {
+        chat.leaveChatRoom(chatRoomId);
         client.deactivate();
       }
     };

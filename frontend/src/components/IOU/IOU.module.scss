@@ -1,0 +1,111 @@
+@import '@/styles/theme.module.scss';
+@import '@/styles/font.module.scss';
+
+.container {
+  @include Pretendard;
+  padding: 0 2rem;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  font-size: 1.8rem;
+}
+
+.header {
+  padding: 3rem 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.iou {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .title {
+    padding: 2rem 0;
+    font-size: 3rem;
+    font-weight: bold;
+  }
+
+  .chatTitle {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  .description {
+    padding: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 2.4rem;
+  }
+
+  .content {
+    width: 100%;
+    padding: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2.5rem;
+
+    .detail {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .userDetail {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+
+        .stamp {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          svg {
+            width: 4rem;
+            height: 4rem;
+          }
+        }
+
+        .chatStamp {
+          svg {
+            width: 3rem;
+            height: 3rem;
+          }
+        }
+      }
+    }
+  }
+
+  .agreeContent {
+    gap: 1.5rem;
+  }
+
+  .agreement {
+    width: 100%;
+    padding: 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 2.3rem;
+    font-weight: bold;
+    color: #1c5ad4;
+  }
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.noContent {
+  @include Pretendard;
+  padding: 4rem 0;
+  font-size: 3rem;
+  font-weight: bold;
+  text-align: center;
+}

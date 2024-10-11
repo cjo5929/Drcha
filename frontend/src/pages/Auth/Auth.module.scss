@@ -1,0 +1,77 @@
+@import '@/styles/theme.module.scss';
+@import '@/styles/font.module.scss';
+
+.backwardButton {
+  padding: 5.5rem 0 0 3rem;
+}
+
+.content {
+  @include Pretendard;
+  padding: 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  font-size: 2.4rem;
+  font-weight: bold;
+  line-height: 3.5rem;
+
+  .blue {
+    color: $blue;
+  }
+}
+
+.input {
+  @include Pretendard;
+  width: 100%;
+  font-size: 2.4rem;
+  font-weight: bold;
+  line-height: 3.5rem;
+  border: none;
+  border-bottom: 1px solid $gray;
+  outline: none;
+
+  &:focus {
+    border-bottom: 2px solid $blue;
+  }
+}
+
+.invalid {
+  &:focus {
+    border-bottom: 2px solid $red;
+  }
+}
+
+.accountAuthContent {
+  height: calc(100% - 7.6rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+}
+
+.coin {
+  width: 12rem;
+  height: 12rem;
+}
+
+.complete {
+  height: calc(100% - 7.6rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+}
+
+.alert {
+  font-size: 1.2rem;
+  color: $red;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 1rem;
+}

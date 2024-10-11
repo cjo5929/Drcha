@@ -1,0 +1,167 @@
+.menu {
+  position: absolute;
+  top: 0;
+  right: -25rem;
+  width: 25rem;
+  height: 100dvh;
+  background-color: white;
+  box-shadow: -0.2rem 0 0.5rem rgba(0, 0, 0, 0.1);
+  transition: right 0.3s ease-in-out;
+  z-index: 1000;
+
+  &.open {
+    right: 0;
+  }
+}
+
+.menudetail {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.create {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  background-color: #b4dbff;
+  padding: 2rem;
+  cursor: pointer;
+}
+
+.createtitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4.5rem;
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0.06rem 0.06rem 0.13rem rgba(0, 0, 0, 0.5);
+}
+
+.doctorprofile {
+  width: 8em;
+  height: 8rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.createdetail {
+  background-color: #eff5ff;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  font-size: 1.4rem;
+  text-align: center;
+  line-height: 1.8rem;
+  box-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.2);
+}
+
+.normalmenu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.transactions {
+  height: 100%;
+  padding-right: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.transactionsHeader {
+  height: 8%;
+  font-weight: bold;
+  font-size: 2rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  cursor: pointer;
+}
+
+.transactionList {
+  list-style-type: none;
+  height: 87%;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.transactionList::-webkit-scrollbar {
+  display: none;
+}
+
+.transactionItem {
+  padding: 1rem;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  height: 15rem;
+  justify-content: space-around;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &.overdue {
+    background-color: #ffe5e5;
+    border: 1px solid #ffcccc;
+    .status {
+      color: #ff4d4d;
+    }
+  }
+
+  &.active {
+    background-color: #e5f0ff;
+    border: 1px solid #cce0ff;
+    .status {
+      color: #3399ff;
+    }
+  }
+
+  &.completed {
+    background-color: #f0f0f0;
+    border: 1px solid #e0e0e0;
+    .status {
+      color: #4caf50;
+    }
+  }
+}
+
+.transactionItemOne {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.amount {
+  font-weight: bold;
+  font-size: 1.8rem;
+}
+
+.status {
+  font-weight: bold;
+  font-size: 1.4rem;
+}
+
+.transactionItemTwo {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.3rem;
+  gap: 0.8rem;
+}
+
+.noTransactions {
+  height: 87%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  text-align: center;
+  color: #888;
+}

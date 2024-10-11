@@ -1,0 +1,37 @@
+@import '@/styles/theme.module.scss';
+@import '@/styles/font.module.scss';
+
+.navbar {
+  @include Pretendard;
+  position: fixed;
+  bottom: 0;
+  max-width: 43rem;
+  width: 100%;
+  height: 6.5rem;
+  background-color: white;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  color: black;
+  z-index: 1000;
+  box-shadow: 0rem -0.1rem 1rem rgba(0, 0, 0, 0.3);
+  border-radius: 2rem 2rem 0 0;
+}
+
+.navItem {
+  @include Pretendard;
+  display: flex;
+  flex-direction: column;
+  font-size: 1.2rem;
+  text-align: center;
+  cursor: pointer;
+  flex-grow: 1;
+  flex-basis: 0;
+  padding: 10px;
+  align-items: center;
+  gap: 0.7rem;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}

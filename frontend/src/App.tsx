@@ -1,9 +1,18 @@
-import { Main } from '@/pages/Main';
+import { RouterProvider } from 'react-router-dom';
+
+import { UserProvider } from '@/contexts/user';
+import { useRouter } from '@/hooks/useRouter';
 
 import './reset.css';
 
 function App() {
-  return <Main />;
+  const router = useRouter();
+
+  return (
+    <UserProvider>
+      <RouterProvider router={router} />
+    </UserProvider>
+  );
 }
 
 export default App;

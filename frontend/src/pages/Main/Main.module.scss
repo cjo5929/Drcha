@@ -1,0 +1,251 @@
+@import '@/styles/theme.module.scss';
+@import '@/styles/font.module.scss';
+
+.container {
+  @include Pretendard;
+  display: flex;
+  flex-direction: column;
+
+  .mainHeader {
+    padding-bottom: 2rem;
+    position: sticky;
+    top: 0;
+    background-color: $white;
+    z-index: 10;
+  }
+
+  .error {
+    padding: 4rem 0;
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+  }
+}
+
+.filter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .filterButton {
+    @include Pretendard;
+    padding: 3rem 4rem;
+    flex: 1 0 0;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: $darkgray;
+
+    @media screen and (max-width: 420px) {
+      padding: 2rem 3rem;
+      font-size: 2rem;
+    }
+  }
+
+  .active {
+    color: $black;
+    text-decoration: underline;
+    text-underline-position: under;
+  }
+
+  .divider {
+    height: 6rem;
+    border: 1px solid $gray;
+  }
+}
+
+.mainContent {
+  padding: 1rem 2.6rem 9.5rem 2.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.status {
+  @include Pretendard;
+
+  .statusButton {
+    @include Pretendard;
+    padding: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+
+    .rotate {
+      transform: rotate(-90deg);
+    }
+  }
+
+  .chattingList {
+    width: 100%;
+    padding-top: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+  }
+}
+
+.chatting {
+  @include Pretendard;
+  position: relative;
+  height: 8.6rem;
+  width: 100%;
+  padding: 1.1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  background-color: $lightblue-50;
+  border-radius: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+
+  .unreadCount {
+    min-width: 2.2rem;
+    min-height: 2.2rem;
+    padding: 0.6rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+    color: $white;
+    background-color: $blue;
+    border-radius: 2.2rem;
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .chattingBody {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+
+    @media screen and (max-width: 420px) {
+      gap: 1.2rem;
+    }
+
+    .avatarImage {
+      width: 5.6rem;
+      height: 5.6rem;
+      border-radius: 1rem;
+    }
+
+    .chattingContent {
+      height: 4.6rem;
+      max-width: 15rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      div {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        word-break: break-all;
+      }
+
+      @media screen and (max-width: 420px) {
+        max-width: 12rem;
+      }
+
+      @media screen and (max-width: 360px) {
+        max-width: 10rem;
+      }
+
+      .username {
+        display: flex;
+        align-items: center;
+      }
+
+      .name {
+        font-size: 1.6rem;
+        margin-right: 1.5rem;
+      }
+
+      .credits {
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+
+        .warningIcon {
+          width: 1.4rem;
+          height: 1.4rem;
+          margin-right: 0.4rem;
+        }
+      }
+
+      .creditStatusRed {
+        color: $red;
+        .warningIcon {
+          fill: $red;
+        }
+      }
+
+      .creditStatusYellow {
+        color: $yellow;
+        .warningIcon {
+          fill: $yellow;
+        }
+      }
+
+      .creditStatusBlue {
+        color: $blue;
+        .warningIcon {
+          fill: $blue;
+        }
+      }
+
+      .creditStatusGreen {
+        color: $green;
+        .warningIcon {
+          fill: $green;
+        }
+      }
+
+      .tooltip {
+        position: absolute;
+        top: 45%;
+        left: 32%;
+        max-width: 20rem;
+        background-color: $white;
+        border: 1px solid $gray;
+        border-radius: 0.4rem;
+        padding: 0.8rem;
+        font-size: 1.2rem;
+        z-index: 1000;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        white-space: nowrap;
+      }
+
+      .chat {
+        font-size: 1.4rem;
+        font-style: normal;
+        font-weight: 400;
+        color: $darkgray;
+      }
+    }
+  }
+
+  .chatStatus {
+    height: 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    .statusDetail {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      word-break: break-all;
+
+      .statusDday {
+        @media screen and (max-width: 420px) {
+          display: none;
+        }
+      }
+    }
+  }
+}

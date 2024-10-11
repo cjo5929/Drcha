@@ -3,6 +3,7 @@ package com.ssafy.drcha.global.config;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
@@ -18,6 +19,7 @@ import org.springframework.data.redis.connection.lettuce.LettuceClientConfigurat
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -78,6 +80,15 @@ public class RedisConfig {
         return redisTemplate;
     }
 
+    @Bean
+    public RedisTemplate<String, Object> redisTemplateForPublisher() {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory());
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
+        return template;
+    }
+
     /**
      * RedisCacheManager 를 생성하는 빈을 설정
      * 애플리케이션의 캐시 설정을 관리하며, TTL 및 직렬화 방식 등을 설정
@@ -102,4 +113,8 @@ public class RedisConfig {
                 .withInitialCacheConfigurations(cacheConfigurations)
                 .build();
     }
+
+
+
+
 }

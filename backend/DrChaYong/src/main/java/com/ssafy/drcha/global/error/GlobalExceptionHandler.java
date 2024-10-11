@@ -1,16 +1,12 @@
 package com.ssafy.drcha.global.error;
 
+import com.ssafy.drcha.global.error.type.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.ssafy.drcha.global.error.response.ErrorResponse;
-import com.ssafy.drcha.global.error.type.BadRequestException;
-import com.ssafy.drcha.global.error.type.BusinessException;
-import com.ssafy.drcha.global.error.type.DataNotFoundException;
-import com.ssafy.drcha.global.error.type.ForbiddenException;
-import com.ssafy.drcha.global.error.type.UserNotFoundException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,6 +19,9 @@ public class GlobalExceptionHandler {
 			errorCode.getHttpStatus());
 	}
 
+	private ResponseEntity<ErrorResponse> createErrorResponse(NotFoundDebtorException e) {
+		return new ResponseEntity<>(ErrorResponse.of(e.getCode(), e.getMessage()), HttpStatus.BAD_REQUEST);
+	}
 
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException e) {
@@ -55,6 +54,24 @@ public class GlobalExceptionHandler {
 		return createErrorResponse(e.getErrorCode());
 	}
 
+	@ExceptionHandler(NotFoundDebtorException.class)
+	public ResponseEntity<ErrorResponse> handleNotFoundDeptorException(NotFoundDebtorException e){
+		log.error("Error: ", e);
+		return createErrorResponse(e);
+	}
+
+	@ExceptionHandler(NeedsRegistrationException.class)
+	public ResponseEntity<ErrorResponse> handleNeedsRegistrationException(NeedsRegistrationException e) {
+		log.error("NeedsRegistrationException: ", e);
+		return createErrorResponse(e.getErrorCode());
+
+	}
+
+	@ExceptionHandler(NeedsVerificationException.class)
+	public ResponseEntity<ErrorResponse> handleNeedsVerificationException(NeedsVerificationException e) {
+		log.error("NeedsVerificationException: ", e);
+		return createErrorResponse(e.getErrorCode());
+	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleException(Exception e) {

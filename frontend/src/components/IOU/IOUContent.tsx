@@ -3,7 +3,7 @@ import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
 import LogoSVG from '@/assets/icons/logo.svg?react';
 import SheildSVG from '@/assets/icons/shield.svg?react';
-import { stamp } from '@/services/stamp';
+// import { stamp } from '@/services/stamp';
 import { IouData } from '@/types/iou';
 
 import styles from './IOU.module.scss';
@@ -24,22 +24,26 @@ export function IOUContent({ iouData, iouRef, type }: IOUContentProps) {
   const formattedStartDate = new Date(startDate.getTime() + 9 * 60 * 60 * 1000);
   const formattedEndDate = new Date(endDate.getTime() + 9 * 60 * 60 * 1000);
 
-  const [borrowerStamp, setBorrowerStamp] = useState<string | null>(null);
-  const [lenderStamp, setLenderStamp] = useState<string | null>(null);
+  // const [borrowerStamp, setBorrowerStamp] = useState<string | null>(null);
+  // const [lenderStamp, setLenderStamp] = useState<string | null>(null);
+  const [borrowerStamp, setBorrowerStamp] = useState<boolean>(false);
+  const [lenderStamp, setLenderStamp] = useState<boolean>(false);
   const lenderStampRef = useRef<HTMLDivElement>(null);
   const borrowerStampRef = useRef<HTMLDivElement>(null);
 
   const createStamp = async (
     userType: 'BORROWER' | 'LENDER',
-    userName: string,
+    // userName: string,
   ) => {
-    const stampSVG = await stamp.getStamp(userName);
+    // const stampSVG = await stamp.getStamp(userName);
     if (userType === 'BORROWER') {
-      setBorrowerStamp(stampSVG);
+      // setBorrowerStamp(stampSVG);
+      setBorrowerStamp(true);
       return;
     }
     if (userType === 'LENDER') {
-      setLenderStamp(stampSVG);
+      // setLenderStamp(stampSVG);
+      setLenderStamp(true);
     }
   };
 
@@ -52,10 +56,12 @@ export function IOUContent({ iouData, iouRef, type }: IOUContentProps) {
 
   const renderStamp = useCallback(async () => {
     if (iouData.lenderAgreement) {
-      await createStamp('LENDER', iouData.creditorName);
+      // await createStamp('LENDER', iouData.creditorName);
+      await createStamp('LENDER');
     }
     if (iouData.borrowerAgreement) {
-      await createStamp('BORROWER', iouData.debtorName);
+      // await createStamp('BORROWER', iouData.debtorName);
+      await createStamp('BORROWER');
     }
     // resizeStamp();
   }, [iouData]);

@@ -18,7 +18,7 @@ public class Account extends BaseTimeEntity {
     @Column(name = "account_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
@@ -28,12 +28,33 @@ public class Account extends BaseTimeEntity {
     @Column(name = "account_number", nullable = false, length = 20)
     private String accountNumber;
 
-    @Column(name = "account_holder_name", nullable = false, length = 100)
-    private String accountHolderName;
-
     @Column(name = "balance", nullable = false, precision = 15, scale = 2)
     private BigDecimal balance;
 
     @Column(name = "is_primary", nullable = false)
     private boolean isPrimary;
+
+    //==생성 메서드==//
+    public static Account createAccount(Member member, String bankName, String accountNumber) {
+        return Account.builder()
+                .member(member)
+                .bankName(bankName)
+                .accountNumber(accountNumber)
+                .balance(BigDecimal.ZERO)
+                .isPrimary(true)
+                .build();
+    }
+
+    //==비즈니스 로직==//
+    public void changeBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
+
+    // ==== Member - Account 간의 연관관계 메서드 ===== //
+    public void setMember(Member member) {
+        this.member = member;
+        if (member != null && member.getAccount() != this) {
+            member.setAccount(this);
+        }
+    }
 }

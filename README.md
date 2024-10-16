@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="/dr_chayongV1-removebg-preview.png" width="200" height="200" alt="차용박사 로고">
+  <img src="/ChayongBanner.png" width="1000"alt="차용박사 로고">
 </p>
 
 # 차용박사

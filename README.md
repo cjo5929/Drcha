@@ -57,7 +57,54 @@
 
 ## 👥 팀 정보
 
-
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/jijongkwon">
+        <img src="https://github.com/jijongkwon.png" width="100px;" alt="지종권"/>
+        <br />
+        <sub><b>:crown:지종권</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/cjo5929">
+        <img src="https://github.com/cjo5929.png" width="100px;" alt="강민서"/>
+        <br />
+        <sub><b>강민서</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/LEEJW1953">
+        <img src="https://github.com/LEEJW1953.png" width="100px;" alt="이지원"/>
+        <br />
+        <sub><b>이지원</b></sub>
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/LineHero">
+        <img src="https://github.com/LineHero.png" width="100px;" alt="김선웅"/>
+        <br />
+        <sub><b>김선웅</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/g16rim">
+        <img src="https://github.com/g16rim.png" width="100px;" alt="박경림"/>
+        <br />
+        <sub><b>박경림</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/HyunSoo730">
+        <img src="https://github.com/HyunSoo730.png" width="100px;" alt="조현수"/>
+        <br />
+        <sub><b>조현수</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
 
 © 2024 차용박사. All Rights Reserved.
 

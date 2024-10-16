@@ -48,12 +48,24 @@
 
 ## 🔧 기술 스택
 
-- Frontend: [기술 스택 추가]
-- Backend: [기술 스택 추가]
-- Database: [데이터베이스 추가]
-- Authentication: SSAFY 1원 인증 API
-- Messaging: SMS, 카카오 알림톡
-- Payment: [결제 시스템 추가]
+<p align="center">
+<img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white">
+<img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
+<img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white">
+<img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white">
+<img src="https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white">
+<img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white">
+<img src="https://img.shields.io/badge/Amazon%20EC2-FF9900?style=for-the-badge&logo=Amazon%20EC2&logoColor=white">
+<img src="https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white">
+<img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white">
+<img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=HTML5&logoColor=white">
+<img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=CSS3&logoColor=white">
+<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white">
+<img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white">
+<img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=Express&logoColor=white"/>
+<img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white"/>
+<img src="https://img.shields.io/badge/Typescript-3178C6?style=for-the-badge&logo=Typescript&logoColor=white"/>
+</p>
 
 ## 👥 팀 정보
 
@@ -61,21 +73,21 @@
   <tr>
     <td align="center">
       <a href="https://github.com/jijongkwon">
-        <img src="https://github.com/jijongkwon.png" width="100px;" alt="지종권"/>
+        <img src="https://github.com/jijongkwon.png" width="150px;" alt="지종권"/>
         <br />
-        <sub><b>:crown:지종권</b></sub>
+        <sub><b>지종권</b></sub>
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/cjo5929">
-        <img src="https://github.com/cjo5929.png" width="100px;" alt="강민서"/>
+        <img src="https://github.com/cjo5929.png" width="150px;" alt="강민서"/>
         <br />
         <sub><b>강민서</b></sub>
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/LEEJW1953">
-        <img src="https://github.com/LEEJW1953.png" width="100px;" alt="이지원"/>
+        <img src="https://github.com/LEEJW1953.png" width="150px;" alt="이지원"/>
         <br />
         <sub><b>이지원</b></sub>
       </a>
@@ -84,21 +96,21 @@
   <tr>
     <td align="center">
       <a href="https://github.com/LineHero">
-        <img src="https://github.com/LineHero.png" width="100px;" alt="김선웅"/>
+        <img src="https://github.com/LineHero.png" width="150px;" alt="김선웅"/>
         <br />
         <sub><b>김선웅</b></sub>
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/g16rim">
-        <img src="https://github.com/g16rim.png" width="100px;" alt="박경림"/>
+        <img src="https://github.com/g16rim.png" width="150px;" alt="박경림"/>
         <br />
         <sub><b>박경림</b></sub>
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/HyunSoo730">
-        <img src="https://github.com/HyunSoo730.png" width="100px;" alt="조현수"/>
+        <img src="https://github.com/HyunSoo730.png" width="150px;" alt="조현수"/>
         <br />
         <sub><b>조현수</b></sub>
       </a>

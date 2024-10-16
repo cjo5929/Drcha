@@ -1,4 +1,7 @@
-<p align="center"><img src="/dr_chayongV1-removebg-preview.png" width=200px height=200px></p>
+
+<p align="center">
+  <img src="/dr_chayongV1-removebg-preview.png" width="200" height="200" alt="차용박사 로고">
+</p>
 
 # 차용박사
 

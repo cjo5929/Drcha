@@ -79,10 +79,10 @@
   </tr>
   <tr>
     <td align="center">
-      <img src="./asset/main.png" width="100%">
+      <img src="./asset/main.png" height="500px">
     </td>
     <td align="center">
-      <img src="./asset/cert.png" width="100%">
+      <img src="./asset/cert.png"  height="500px">
     </td>
   </tr>
 </table>

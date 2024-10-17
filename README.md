@@ -1,6 +1,5 @@
-
 <p align="center">
-  <img src="/ChayongBanner.png" width="1000"alt="차용박사 로고">
+  <img src="./asset/ChayongBanner.png" width="1000"alt="차용박사 로고">
 </p>
 
 # 차용박사
@@ -18,25 +17,30 @@
 ## 🛠 주요 기능
 
 ### 1. 차용증 관리
+
 - 온라인 차용증 작성 및 보관
 - 1원 송금을 통한 계좌 인증 기반의 신뢰성 있는 차용증 발행
 - 상환 기일 자동 알림 서비스
 - 차용증 PDF 출력 기능
 
 ### 2. 거래 시스템
+
 - 에스크로 기반 안전 거래
 - 분할 상환 시스템
 
 ### 3. 실시간 채팅 기능
+
 - 거래 당사자 간 1:1 채팅
 - 채팅 내역 보관 및 검색
 - 채팅 알림 설정
 
 ### 4. 거래 현황 대시보드
+
 - 진행 중인 거래 목록 및 상세 정보 제공
 - 거래 이력 조회 및 통계 기능
 
 ### 5. 알림 센터
+
 - 상환, 독촉 알림
 - 앱 내 알림 및 SNS(카카오톡) 알림 전송
 
@@ -45,6 +49,47 @@
 1. 개인 간 금전 거래의 안전성 및 신뢰도 향상
 2. 금전 거래 관련 분쟁 감소
 3. 사용자 편의성 증대로 인한 P2P 대출 시장 활성화
+
+## :computer: 화면 구성
+
+<table>
+  <tr>
+    <td align="center"><b>시연</b></td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./asset/차용증배속.gif" width="100%">
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><b>첫 화면</b></td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./asset/login.gif" width="100%">
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><b>거래 내역</b></td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./asset/mypage.gif" width="100%">
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><b>거래목록</b></td>
+    <td align="center"><b>1원 인증</b></td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./asset/main.png" width="100%">
+    </td>
+    <td align="center">
+      <img src="./asset/cert.png" width="100%">
+    </td>
+  </tr>
+</table>
 
 ## 🔧 기술 스택
 
@@ -73,50 +118,47 @@
   <tr>
     <td align="center">
       <a href="https://github.com/jijongkwon">
-        <img src="https://github.com/jijongkwon.png" width="150px;" alt="지종권"/>
+        <img src="https://github.com/jijongkwon.png" width="110px;" alt="지종권"/>
         <br />
-        <sub><b>지종권</b></sub>
+        <sub><b>지종권(Infra)</b></sub>
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/cjo5929">
-        <img src="https://github.com/cjo5929.png" width="150px;" alt="강민서"/>
+        <img src="https://github.com/cjo5929.png" width="110px;" alt="강민서"/>
         <br />
-        <sub><b>강민서</b></sub>
+        <sub><b>강민서(Backend)</b></sub>
       </a>
     </td>
-    <td align="center">
-      <a href="https://github.com/LEEJW1953">
-        <img src="https://github.com/LEEJW1953.png" width="150px;" alt="이지원"/>
-        <br />
-        <sub><b>이지원</b></sub>
-      </a>
-    </td>
-  </tr>
-  <tr>
     <td align="center">
       <a href="https://github.com/LineHero">
-        <img src="https://github.com/LineHero.png" width="150px;" alt="김선웅"/>
+        <img src="https://github.com/LineHero.png" width="110px;" alt="김선웅"/>
         <br />
-        <sub><b>김선웅</b></sub>
+        <sub><b>김선웅(Frontend)</b></sub>
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/g16rim">
-        <img src="https://github.com/g16rim.png" width="150px;" alt="박경림"/>
+        <img src="https://github.com/g16rim.png" width="110px;" alt="박경림"/>
         <br />
-        <sub><b>박경림</b></sub>
+        <sub><b>박경림(Backend)</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/LEEJW1953">
+        <img src="https://github.com/LEEJW1953.png" width="110px;" alt="이지원"/>
+        <br />
+        <sub><b>이지원(Frontend)</b></sub>
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/HyunSoo730">
-        <img src="https://github.com/HyunSoo730.png" width="150px;" alt="조현수"/>
+        <img src="https://github.com/HyunSoo730.png" width="110px;" alt="조현수"/>
         <br />
-        <sub><b>조현수</b></sub>
+        <sub><b>조현수(Backend)</b></sub>
       </a>
     </td>
   </tr>
 </table>
 
 © 2024 차용박사. All Rights Reserved.
-

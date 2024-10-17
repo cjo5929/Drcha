@@ -6,7 +6,7 @@
 
 ## 📌 프로젝트 소개
 
-차용박사는 온라인 차용증 관리와 에스크로 기반의 안전한 금전 거래를 결합한 P2P 대출 중개 서비스입니다. 신뢰성, 편의성, 투명성을 핵심 가치로 제공하여 개인 간 금전 거래의 새로운 패러다임을 제시합니다.
+차용박사는 AI 기반의 자동 차용증 작성과 에스크로 기반의 안전한 금전 거래를 결합한 P2P 대출 중개 서비스입니다. 신뢰성, 편의성, 투명성을 핵심 가치로 제공하여 개인 간 금전 거래의 새로운 패러다임을 제시합니다.
 
 ### 💻기간 및 인원
 
@@ -16,13 +16,14 @@
 ### 🌟 핵심 가치
 
 - **신뢰성**: 법적 효력이 있는 차용증과 안전한 에스크로 거래
-- **편의성**: 원스톱 금전 거래 및 관리
+- **편의성**: AI를 활용한 자동 차용증 작성 & 원스톱 금전 거래 및 관리
 - **투명성**: 실시간 거래 현황 및 이력 조회
 
 ## 🛠 주요 기능
 
-### 1. 차용증 관리
+### 1. AI 차용증 자동 생성 및 관리
 
+- 채팅 대화 기반을 통해 LLM 모델이 자동으로 차용증 작성
 - 온라인 차용증 작성 및 보관
 - 1원 송금을 통한 계좌 인증 기반의 신뢰성 있는 차용증 발행
 - 상환 기일 자동 알림 서비스
@@ -53,7 +54,7 @@
 
 1. 개인 간 금전 거래의 안전성 및 신뢰도 향상
 2. 금전 거래 관련 분쟁 감소
-3. 사용자 편의성 증대로 인한 P2P 대출 시장 활성화
+3. AI 자동 차용증 작성을 통해 사용자의 번거로움을 해소
 
 ## :computer: 화면 구성
 
@@ -111,6 +112,8 @@
 <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=Express&logoColor=white"/>
 <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white"/>
 <img src="https://img.shields.io/badge/Typescript-3178C6?style=for-the-badge&logo=Typescript&logoColor=white"/>
+<img src="https://img.shields.io/badge/-RabbitMQ-%23FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white"/>
+
 </p>
 
 ## 👥 팀 정보

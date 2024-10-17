@@ -60,7 +60,7 @@
 
 <table>
   <tr>
-    <td align="center" colspan="2"><b>시연</b></td>
+    <td align="center" colspan="2"><b>1 : 1 채팅 기반 AI 차용증 자동 생성</b></td>
   </tr>
   <tr>
     <td align="center" colspan="2">

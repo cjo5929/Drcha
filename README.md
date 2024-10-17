@@ -54,27 +54,23 @@
 
 <table>
   <tr>
-    <td align="center"><b>시연</b></td>
+    <td align="center" colspan="2"><b>시연</b></td>
   </tr>
   <tr>
-    <td align="center">
+    <td align="center" colspan="2">
       <img src="./asset/차용증배속.gif" width="100%">
     </td>
   </tr>
   <tr>
     <td align="center"><b>첫 화면</b></td>
-  </tr>
-  <tr>
-    <td align="center">
-      <img src="./asset/login.gif" width="100%">
-    </td>
-  </tr>
-  <tr>
     <td align="center"><b>거래 내역</b></td>
   </tr>
   <tr>
     <td align="center">
-      <img src="./asset/mypage.gif" width="100%">
+      <img src="./asset/login.gif" width="50%">
+    </td>
+    <td align="center">
+      <img src="./asset/mypage.gif" width="50%">
     </td>
   </tr>
   <tr>
